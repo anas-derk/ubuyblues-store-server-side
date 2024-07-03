@@ -8,7 +8,7 @@ const { hash, compare } = require("bcryptjs");
 
 // Define Create New User Function
 
-async function createNewUser(email, password) {
+async function createNewUser(email, password, language) {
     try {
         // Check If Email Is Exist
         const user = await userModel.findOne({ email });
@@ -23,6 +23,7 @@ async function createNewUser(email, password) {
         const newUser = new userModel({
             email,
             password: await hash(password, 10),
+            language
         });
         // Save The New User As Document In User Collection
         await newUser.save();

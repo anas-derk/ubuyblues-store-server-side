@@ -330,6 +330,16 @@ const userSchema = mongoose.Schema({
             default: "",
         },
     },
+    language: {
+        type: String,
+        enum: [
+            "ar",
+            "en",
+            "de",
+            "tr"
+        ],
+        default: "en"
+    },
 });
 
 // Create User Model From User Schema

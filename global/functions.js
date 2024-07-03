@@ -117,7 +117,7 @@ async function sendCongratulationsOnCreatingNewAccountEmail(email, language) {
             transporterObj(result.data).sendMail({
                 from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
-                subject: "Congratulations From Ubuyblues",
+                subject: "Welcome Message From Ubuyblues",
                 html: htmlContentAfterCompilingEjsTemplateFile,
             }, function (error, info) {
                 if (error) reject(error);

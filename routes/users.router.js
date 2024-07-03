@@ -4,7 +4,7 @@ const usersController = require("../controllers/users.controller");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
-const { validateJWT, validateEmail, validatePassword, validateUserType } = require("../middlewares/global.middlewares");
+const { validateJWT, validateEmail, validatePassword, validateUserType, validateLanguage } = require("../middlewares/global.middlewares");
 
 const usersMiddlewares = require("../middlewares/users.midddlewares");
 
@@ -56,14 +56,16 @@ usersRouter.get("/forget-password",
 
 usersRouter.post("/create-new-user",
     async (req, res, next) => {
-        const emailAndPassword = req.body;
+        const userData = req.body;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Email", fieldValue: emailAndPassword.email, dataType: "string", isRequiredValue: true },
-            { fieldName: "Password", fieldValue: emailAndPassword.password, dataType: "string", isRequiredValue: true },
+            { fieldName: "Email", fieldValue: userData.email, dataType: "string", isRequiredValue: true },
+            { fieldName: "Password", fieldValue: userData.password, dataType: "string", isRequiredValue: true },
+            { fieldName: "Language", fieldValue: userData.language, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.body.email, res, next),
     (req, res, next) => validatePassword(req.body.password, res, next),
+    (req, res, next) => validateLanguage(req.body.language, res, next),
     usersController.createNewUser
 );
 

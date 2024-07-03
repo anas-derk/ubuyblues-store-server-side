@@ -63,10 +63,10 @@ async function postNewStore(req, res) {
         }
         const imagePath = req.file.path;
         const result = await storesManagmentFunctions.createNewStore(Object.assign({}, { ...req.body, imagePath }));
-        res.json(result);
         if (result.error) {
             unlinkSync(imagePath);
         }
+        res.json(result);
     }
     catch(err) {
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
