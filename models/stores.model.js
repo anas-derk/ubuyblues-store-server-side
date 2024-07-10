@@ -85,7 +85,10 @@ async function createNewStore(storeDetails) {
         return {
             msg: "Creating Licence Request New Store Process Has Been Successfully !!",
             error: false,
-            data: {},
+            data: {
+                email: storeDetails.ownerEmail,
+                language: storeDetails.language
+            },
         }
     }
     catch(err) {

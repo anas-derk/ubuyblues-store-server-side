@@ -1,4 +1,11 @@
-const { getResponseObject, sendApproveStoreEmail, sendRejectStoreEmail, sendBlockStoreEmail, sendDeleteStoreEmail } = require("../global/functions");
+const {
+    getResponseObject,
+    sendApproveStoreEmail,
+    sendRejectStoreEmail,
+    sendBlockStoreEmail,
+    sendDeleteStoreEmail,
+    sendConfirmRequestAddStoreArrivedEmail
+} = require("../global/functions");
 
 const storesManagmentFunctions = require("../models/stores.model");
 
@@ -66,6 +73,7 @@ async function postNewStore(req, res) {
         if (result.error) {
             unlinkSync(imagePath);
         }
+        await sendConfirmRequestAddStoreArrivedEmail(result.data.email, result.data.language);
         res.json(result);
     }
     catch(err) {

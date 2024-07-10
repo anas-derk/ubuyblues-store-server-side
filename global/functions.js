@@ -157,6 +157,31 @@ async function sendRejectStoreEmail(email, language) {
     return result;
 }
 
+async function sendConfirmRequestAddStoreArrivedEmail(email, language) {
+    const result = await getPasswordForBussinessEmail(process.env.BUSSINESS_EMAIL);
+    if (!result.error) {
+        const templateContent = readFileSync(join(__dirname, "..", "assets", "email_templates", "confirm_request_add_store_arrived.ejs"), "utf-8");
+        const compiledTemplate = compile(templateContent);
+        const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ language });
+        return new Promise((resolve, reject) => {
+            transporterObj(result.data).sendMail({
+                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                to: email,
+                subject: "Confirmation Of Store Addition Request At Ubuyblues",
+                html: htmlContentAfterCompilingEjsTemplateFile,
+            }, function (error, info) {
+                if (error) reject(error);
+                resolve({
+                    msg: "Sending Confirmation Of Store Addition Request At Ubuyblues Email Process Has Been Successfully !!",
+                    error: false,
+                    data: {},
+                });
+            });
+        });
+    }
+    return result;
+}
+
 async function sendBlockStoreEmail(email, adminId, storeId, language) {
     const result = await getPasswordForBussinessEmail(process.env.BUSSINESS_EMAIL);
     if (!result.error) {
@@ -272,6 +297,7 @@ module.exports = {
     sendRejectStoreEmail,
     sendBlockStoreEmail,
     sendDeleteStoreEmail,
+    sendConfirmRequestAddStoreArrivedEmail,
     getResponseObject,
     checkIsExistValueForFieldsAndDataTypes,
     validateIsExistValueForFieldsAndDataTypes,
