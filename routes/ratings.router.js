@@ -10,7 +10,7 @@ ratingsRouter.post("/select-product-rating", validateJWT, ratingsController.post
 
 ratingsRouter.get("/product-rating-by-user-id/:productId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);

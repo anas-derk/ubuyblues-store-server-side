@@ -7,7 +7,7 @@ const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functio
 const { validateJWT, validateEmail, validatePassword } = require("../middlewares/global.middlewares");
 
 adminsRouter.get("/login",
-    async (req, res, next) => {
+    (req, res, next) => {
         const emailAndPassword = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Email", fieldValue: emailAndPassword.email, dataType: "string", isRequiredValue: true },
@@ -25,7 +25,7 @@ adminsRouter.get("/admins-count", validateJWT, adminsController.getAdminsCount);
 
 adminsRouter.get("/all-admins-inside-the-page",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         const filters = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "page Number", fieldValue: Number(filters.pageNumber), dataType: "number", isRequiredValue: true },
@@ -37,7 +37,7 @@ adminsRouter.get("/all-admins-inside-the-page",
 
 adminsRouter.post("/add-new-admin",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         const adminInfo = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "First Name", fieldValue: adminInfo.firstName, dataType: "string", isRequiredValue: true },
@@ -53,7 +53,7 @@ adminsRouter.post("/add-new-admin",
 
 adminsRouter.put("/update-admin-info/:adminId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Admin Id", fieldValue: req.params.adminId, dataType: "ObjectId", isRequiredValue: false },
         ], res, next);
@@ -63,7 +63,7 @@ adminsRouter.put("/update-admin-info/:adminId",
 
 adminsRouter.delete("/delete-admin/:adminId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Admin Id", fieldValue: req.params.adminId, dataType: "ObjectId", isRequiredValue: false },
         ], res, next);

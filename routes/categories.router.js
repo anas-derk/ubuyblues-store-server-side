@@ -8,7 +8,7 @@ const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functio
 
 categoriesRouter.post("/add-new-category",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Category Name", fieldValue: req.body.categoryName, dataType: "string", isRequiredValue: true },
         ], res, next);
@@ -17,7 +17,7 @@ categoriesRouter.post("/add-new-category",
 );
 
 categoriesRouter.get("/category-info/:categoryId",
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Category Id", fieldValue: req.params.categoryId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
@@ -30,7 +30,7 @@ categoriesRouter.get("/all-categories", categoriesController.getAllCategories);
 categoriesRouter.get("/categories-count", categoriesController.getCategoriesCount);
 
 categoriesRouter.get("/all-categories-inside-the-page",
-    async (req, res, next) => {
+    (req, res, next) => {
         const filters = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "page Number", fieldValue: Number(filters.pageNumber), dataType: "number", isRequiredValue: true },
@@ -42,7 +42,7 @@ categoriesRouter.get("/all-categories-inside-the-page",
 
 categoriesRouter.delete("/:categoryId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "category Id", fieldValue: req.params.categoryId, dataType: "string", isRequiredValue: true },
         ], res, next);
@@ -52,7 +52,7 @@ categoriesRouter.delete("/:categoryId",
 
 categoriesRouter.put("/:categoryId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "category Id", fieldValue: req.params.categoryId, dataType: "ObjectId", isRequiredValue: true },
             { fieldName: "new Category Name", fieldValue: req.body.newCategoryName, dataType: "string", isRequiredValue: true },

@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 storesRouter.get("/stores-count", storesController.getStoresCount);
 
 storesRouter.get("/all-stores-inside-the-page",
-    async (req, res, next) => {
+    (req, res, next) => {
         const filters = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "page Number", fieldValue: Number(filters.pageNumber), dataType: "number", isRequiredValue: true },
@@ -32,7 +32,7 @@ storesRouter.get("/all-stores-inside-the-page",
 );
 
 storesRouter.get("/store-details/:storeId",
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
@@ -61,7 +61,7 @@ storesRouter.post("/create-new-store",
             cb(null, true);
         }
     }).single("storeImg"),
-    async (req, res, next) => {
+    (req, res, next) => {
         const storeDetails = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Name", fieldValue: storeDetails.name, dataType: "string", isRequiredValue: true },
@@ -80,7 +80,7 @@ storesRouter.post("/create-new-store",
 
 storesRouter.post("/approve-store/:storeId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
             { fieldName: "Password", fieldValue: req.query.password, dataType: "string", isRequiredValue: true },
@@ -92,7 +92,7 @@ storesRouter.post("/approve-store/:storeId",
 
 storesRouter.put("/update-store-info/:storeId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: false },
         ], res, next);
@@ -102,7 +102,7 @@ storesRouter.put("/update-store-info/:storeId",
 
 storesRouter.put("/blocking-store/:storeId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
             { fieldName: "Blocking Reason", fieldValue: req.query.blockingReason, dataType: "string", isRequiredValue: true },
@@ -113,7 +113,7 @@ storesRouter.put("/blocking-store/:storeId",
 
 storesRouter.put("/cancel-blocking/:storeId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
@@ -123,7 +123,7 @@ storesRouter.put("/cancel-blocking/:storeId",
 
 storesRouter.put("/change-store-image/:storeId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
@@ -151,7 +151,7 @@ storesRouter.put("/change-store-image/:storeId",
 
 storesRouter.delete("/delete-store/:storeId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: false },
         ], res, next);
@@ -161,7 +161,7 @@ storesRouter.delete("/delete-store/:storeId",
 
 storesRouter.delete("/reject-store/:storeId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);

@@ -7,7 +7,7 @@ const { validateJWT, validateNumberIsPositive, validateNumberIsNotFloat, validat
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
 ordersRouter.get("/orders-count",
-    async (req, res, next) => {
+    (req, res, next) => {
         const { pageNumber, pageSize } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: false },
@@ -46,7 +46,7 @@ ordersRouter.get("/orders-count",
 );
 
 ordersRouter.get("/all-orders-inside-the-page",
-    async (req, res, next) => {
+    (req, res, next) => {
         const filters = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "page Number", fieldValue: Number(filters.pageNumber), dataType: "number", isRequiredValue: true },
@@ -61,7 +61,7 @@ ordersRouter.get("/all-orders-inside-the-page",
 );
 
 ordersRouter.get("/order-details/:orderId",
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Order Id", fieldValue: req.params.orderId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
@@ -70,7 +70,7 @@ ordersRouter.get("/order-details/:orderId",
 );
 
 ordersRouter.post("/create-new-order",
-    async (req, res, next) => {
+    (req, res, next) => {
         const orderDetails = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Customer Id", fieldValue: orderDetails.customerId, dataType: "ObjectId", isRequiredValue: false },
@@ -106,7 +106,7 @@ ordersRouter.post("/create-payment-order-by-tap", ordersController.postNewPaymen
 
 ordersRouter.post("/update-order/:orderId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Order Id", fieldValue: req.params.orderId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
@@ -116,7 +116,7 @@ ordersRouter.post("/update-order/:orderId",
 
 ordersRouter.put("/products/update-product/:orderId/:productId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Order Id", fieldValue: req.params.orderId, dataType: "ObjectId", isRequiredValue: true },
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
@@ -127,7 +127,7 @@ ordersRouter.put("/products/update-product/:orderId/:productId",
 
 ordersRouter.delete("/delete-order/:orderId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Order Id", fieldValue: req.params.orderId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
@@ -137,7 +137,7 @@ ordersRouter.delete("/delete-order/:orderId",
 
 ordersRouter.delete("/products/delete-product/:orderId/:productId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Order Id", fieldValue: req.params.orderId, dataType: "ObjectId", isRequiredValue: true },
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },

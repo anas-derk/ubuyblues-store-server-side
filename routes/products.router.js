@@ -40,7 +40,7 @@ productsRouter.post("/add-new-product",
         { name: "productImage", maxCount: 1 },
         { name: "galleryImages", maxCount: 10 },
     ]),
-    async (req, res, next) => {
+    (req, res, next) => {
         const productImages = Object.assign({}, req.files);
         const productInfo = {
             ...Object.assign({}, req.body),
@@ -79,7 +79,7 @@ productsRouter.post("/adding-new-images-to-product-gallery/:productId",
         cb(null, true);
     }
     }).array("productGalleryImage", 10),
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
@@ -92,7 +92,7 @@ productsRouter.post("/products-by-ids", productsController.getProductsByIds);
 productsRouter.post("/products-by-ids-and-store-id", productsController.getProductsByIdsAndStoreId);
 
 productsRouter.get("/product-info/:productId",
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
@@ -105,7 +105,7 @@ productsRouter.get("/products-count", productsController.getProductsCount);
 productsRouter.get("/flash-products-count", productsController.getFlashProductsCount);
 
 productsRouter.get("/all-flash-products-inside-the-page",
-    async (req, res, next) => {
+    (req, res, next) => {
         const queryObject = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "page Number", fieldValue: queryObject.pageNumber, dataType: "string", isRequiredValue: true },
@@ -118,7 +118,7 @@ productsRouter.get("/all-flash-products-inside-the-page",
 );
 
 productsRouter.get("/all-products-inside-the-page",
-    async (req, res, next) => {
+    (req, res, next) => {
         const queryObject = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "page Number", fieldValue: queryObject.pageNumber, dataType: "string", isRequiredValue: true },
@@ -131,7 +131,7 @@ productsRouter.get("/all-products-inside-the-page",
 );
 
 productsRouter.get("/sample-from-related-products-in-the-product/:productId",
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "string", isRequiredValue: true },
         ], res, next);
@@ -141,7 +141,7 @@ productsRouter.get("/sample-from-related-products-in-the-product/:productId",
 
 productsRouter.delete("/:productId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
@@ -151,7 +151,7 @@ productsRouter.delete("/:productId",
 
 productsRouter.delete("/gallery-images/:productId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "string", isRequiredValue: true },
             { fieldName: "Gallery Image Path", fieldValue: req.query.galleryImagePath, dataType: "string", isRequiredValue: true },
@@ -162,7 +162,7 @@ productsRouter.delete("/gallery-images/:productId",
 
 productsRouter.put("/:productId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         const productId = req.params.productId;
         const newProductData = req.body;
         validateIsExistValueForFieldsAndDataTypes([
@@ -197,9 +197,9 @@ productsRouter.put("/update-product-gallery-image/:productId",
             cb(null, true);
         }
     }).single("productGalleryImage"),
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "string", isRequiredValue: true },
+            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
             { fieldName: "Old Gallery Image Path", fieldValue: req.query.oldGalleryImagePath, dataType: "string", isRequiredValue: true },
         ], res, next);
     },

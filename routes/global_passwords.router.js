@@ -8,7 +8,7 @@ const { validateJWT, validateEmail } = require("../middlewares/global.middleware
 
 globalPasswordRouter.put("/change-bussiness-email-password",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         const emailAndPasswordAndNewPassword = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Bussiness Email", fieldValue: emailAndPasswordAndNewPassword.email, dataType: "string", isRequiredValue: true },

@@ -7,7 +7,7 @@ const { validateEmail } = require("../middlewares/global.middlewares");
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
 referalsRouter.post("/add-new-referal",
-    async (req, res, next) => {
+    (req, res, next) => {
         const referalDetails = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: referalDetails.productId, dataType: "string", isRequiredValue: true },
@@ -21,7 +21,7 @@ referalsRouter.post("/add-new-referal",
 );
 
 referalsRouter.get("/product-referals-count/:productId",
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "string", isRequiredValue: true },
         ], res, next);
@@ -30,7 +30,7 @@ referalsRouter.get("/product-referals-count/:productId",
 );
 
 referalsRouter.get("/all-product-referals-inside-the-page/:productId",
-    async (req, res, next) => {
+    (req, res, next) => {
         const filters = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "string", isRequiredValue: true },

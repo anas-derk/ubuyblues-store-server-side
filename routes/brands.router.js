@@ -37,7 +37,7 @@ brandsRouter.post("/add-new-brand",
             cb(null, true);
         }
     }).single("brandImg"),
-    async (req, res, next) => {
+    (req, res, next) => {
         const brandInfo = {
             ...Object.assign({}, req.body),
             imagePath: req.file.path,
@@ -55,7 +55,7 @@ brandsRouter.get("/last-seven-brands-by-store-id", brandsController.getLastSeven
 brandsRouter.get("/brands-count", brandsController.getBrandsCount);
 
 brandsRouter.get("/all-brands-inside-the-page",
-    async (req, res, next) => {
+    (req, res, next) => {
         const filters = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "page Number", fieldValue: Number(filters.pageNumber), dataType: "number", isRequiredValue: true },
@@ -67,7 +67,7 @@ brandsRouter.get("/all-brands-inside-the-page",
 
 brandsRouter.delete("/:brandId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "brand Id", fieldValue: req.params.brandId, dataType: "string", isRequiredValue: true },
         ], res, next);
@@ -77,7 +77,7 @@ brandsRouter.delete("/:brandId",
 
 brandsRouter.put("/:brandId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "brand Id", fieldValue: req.params.brandId, dataType: "string", isRequiredValue: true },
             { fieldName: "New Brand Title", fieldValue: req.body.newBrandTitle, dataType: "string", isRequiredValue: true },
@@ -88,7 +88,7 @@ brandsRouter.put("/:brandId",
 
 brandsRouter.put("/change-brand-image/:brandId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "brand Id", fieldValue: req.params.brandId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);

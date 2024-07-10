@@ -10,7 +10,7 @@ walletRouter.get("/wallet-products-count", validateJWT, walletController.getWall
 
 walletRouter.get("/all-wallet-products-inside-the-page",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         const filters = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "page Number", fieldValue: Number(filters.pageNumber), dataType: "number", isRequiredValue: true },
@@ -22,7 +22,7 @@ walletRouter.get("/all-wallet-products-inside-the-page",
 
 walletRouter.delete("/:productId",
     validateJWT,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);

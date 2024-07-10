@@ -9,7 +9,7 @@ const { validateJWT, validateEmail, validatePassword, validateUserType, validate
 const usersMiddlewares = require("../middlewares/users.midddlewares");
 
 usersRouter.get("/login",
-    async (req, res, next) => {
+    (req, res, next) => {
         const emailAndPassword = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Email", fieldValue: emailAndPassword.email, dataType: "string", isRequiredValue: true },
@@ -22,7 +22,7 @@ usersRouter.get("/login",
 );
 
 usersRouter.get("/login-with-google",
-    async (req, res, next) => {
+    (req, res, next) => {
         const loginData = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Email", fieldValue: loginData.email, dataType: "string", isRequiredValue: true },
@@ -42,7 +42,7 @@ usersRouter.get("/user-info",
 usersRouter.get("/all-users", usersController.getAllUsers);
 
 usersRouter.get("/forget-password",
-    async (req, res, next) => {
+    (req, res, next) => {
         const userData = req.query;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Email", fieldValue: userData.email, dataType: "string", isRequiredValue: true },
@@ -55,7 +55,7 @@ usersRouter.get("/forget-password",
 );
 
 usersRouter.post("/create-new-user",
-    async (req, res, next) => {
+    (req, res, next) => {
         const userData = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Email", fieldValue: userData.email, dataType: "string", isRequiredValue: true },
@@ -71,7 +71,7 @@ usersRouter.post("/create-new-user",
 
 usersRouter.post("/send-account-verification-code",
     usersMiddlewares.sendingVerificationCodeLimiterMiddleware,
-    async (req, res, next) => {
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Email", fieldValue: req.query.email, dataType: "string", isRequiredValue: true },
         ], res, next);
@@ -83,10 +83,11 @@ usersRouter.post("/send-account-verification-code",
 usersRouter.put("/update-user-info", validateJWT, usersController.putUserInfo);
 
 usersRouter.put("/update-verification-status",
-    async (req, res, next) => {
+    (req, res, next) => {
+        const { email, code } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Email", fieldValue: req.query.email, dataType: "string", isRequiredValue: true },
-            { fieldName: "Code", fieldValue: req.query.code, dataType: "string", isRequiredValue: true },
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "Code", fieldValue: code, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.query.email, res, next),
@@ -94,13 +95,13 @@ usersRouter.put("/update-verification-status",
 );
 
 usersRouter.put("/reset-password",
-    async (req, res, next) => {
-        const userData = req.query;
+    (req, res, next) => {
+        const { email, userType, code, newPassword } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Email", fieldValue: userData.email, dataType: "string", isRequiredValue: true },
-            { fieldName: "User Type", fieldValue: userData.userType, dataType: "string", isRequiredValue: true },
-            { fieldName: "Code", fieldValue: userData.code, dataType: "string", isRequiredValue: true },
-            { fieldName: "New Password", fieldValue: userData.newPassword, dataType: "string", isRequiredValue: true },
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "User Type", fieldValue: userType, dataType: "string", isRequiredValue: true },
+            { fieldName: "Code", fieldValue: code, dataType: "string", isRequiredValue: true },
+            { fieldName: "New Password", fieldValue: newPassword, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.query.email, res, next),
