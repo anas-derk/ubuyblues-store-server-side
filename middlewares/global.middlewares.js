@@ -69,6 +69,14 @@ function validateNumberIsNotFloat(number, res, nextFunc) {
     nextFunc();
 }
 
+function validateCountry(country, res, nextFunc) {
+    if (!["kuwait", "germany" , "turkey"].includes(country)) {
+        res.status(400).json(getResponseObject("Sorry, Please Send Valid Country ( kuwait Or Germany Or Turkey ) !!", true, {}));
+        return;
+    }
+    nextFunc();
+}
+
 function keyGeneratorForRequestsRateLimit(req) {
     const ipAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     const ipWithoutPort = ipAddress.split(',')[0];
@@ -84,5 +92,6 @@ module.exports = {
     validateLanguage,
     validateNumberIsPositive,
     validateNumberIsNotFloat,
+    validateCountry,
     keyGeneratorForRequestsRateLimit,
 }

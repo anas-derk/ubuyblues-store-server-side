@@ -2,7 +2,7 @@ const ordersRouter = require("express").Router();
 
 const ordersController = require("../controllers/orders.controller");
 
-const { validateJWT, validateNumberIsPositive, validateNumberIsNotFloat } = require("../middlewares/global.middlewares");
+const { validateJWT, validateNumberIsPositive, validateNumberIsNotFloat, validateCountry } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -74,6 +74,7 @@ ordersRouter.post("/create-new-order",
         const orderDetails = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Customer Id", fieldValue: orderDetails.customerId, dataType: "ObjectId", isRequiredValue: false },
+            { fieldName: "Country", fieldValue: req.query.country, dataType: "string", isRequiredValue: true },
             { fieldName: "First Name In Billing Address", fieldValue: orderDetails.billing_address.firstName, dataType: "string", isRequiredValue: true },
             { fieldName: "Last Name In Billing Address", fieldValue: orderDetails.billing_address.lastName, dataType: "string", isRequiredValue: true },
             { fieldName: "Company Name In Billing Address", fieldValue: orderDetails.billing_address.company_name, dataType: "string", isRequiredValue: false },
@@ -97,6 +98,7 @@ ordersRouter.post("/create-new-order",
             { fieldName: "Request Notes", fieldValue: orderDetails.requestNotes, dataType: "string", isRequiredValue: false },
         ], res, next);
     },
+    (req, res, next) => validateCountry(req.query.country, res, next),
     ordersController.postNewOrder
 );
 
