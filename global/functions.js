@@ -243,6 +243,22 @@ function getResponseObject(msg, isError, data) {
 function checkIsExistValueForFieldsAndDataTypes(fieldNamesAndValuesAndDataTypes) {
     for (let fieldnameAndValueAndDataType of fieldNamesAndValuesAndDataTypes) {
         if (fieldnameAndValueAndDataType.isRequiredValue) {
+            if (fieldnameAndValueAndDataType.dataType === "array") {
+                if (Array.isArray(fieldnameAndValueAndDataType.fieldValue)){
+                    if (fieldnameAndValueAndDataType.fieldValue.length === 0) {
+                        return getResponseObject(
+                            `Invalid Request, Please Send ${fieldnameAndValueAndDataType.fieldName} Value !!`,
+                            true,
+                            {}
+                        );
+                    }
+                }
+                else return getResponseObject(
+                    `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${fieldnameAndValueAndDataType.dataType} ) !!`,
+                    true,
+                    {}
+                );
+            }
             if (!fieldnameAndValueAndDataType.fieldValue) 
                 return getResponseObject(
                     `Invalid Request, Please Send ${fieldnameAndValueAndDataType.fieldName} Value !!`,
@@ -259,6 +275,13 @@ function checkIsExistValueForFieldsAndDataTypes(fieldNamesAndValuesAndDataTypes)
                 );
             } 
             if (fieldnameAndValueAndDataType.dataType === "ObjectId" && !Types.ObjectId.isValid(fieldnameAndValueAndDataType.fieldValue))  {
+                return getResponseObject(
+                    `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${fieldnameAndValueAndDataType.dataType} ) !!`,
+                    true,
+                    {}
+                );
+            }
+            if (fieldnameAndValueAndDataType.dataType === "array" && !Array.isArray(fieldnameAndValueAndDataType.fieldValue))  {
                 return getResponseObject(
                     `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${fieldnameAndValueAndDataType.dataType} ) !!`,
                     true,
