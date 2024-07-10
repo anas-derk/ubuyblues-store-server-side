@@ -53,6 +53,22 @@ function validateLanguage(language, res, nextFunc) {
     nextFunc();
 }
 
+function validateNumberIsPositive(number, res, nextFunc) {
+    if (number < 0) {
+        res.status(400).json(getResponseObject("Sorry, Please Send Valid Number ( Number Must Be Greater Than Zero ) !!", true, {}));
+        return;
+    }
+    nextFunc();
+}
+
+function validateNumberIsNotFloat(number, res, nextFunc) {
+    if (number % 1 !== 0) {
+        res.status(400).json(getResponseObject("Sorry, Please Send Valid Number ( Number Must Be Not Float ) !!", true, {}));
+        return;
+    }
+    nextFunc();
+}
+
 function keyGeneratorForRequestsRateLimit(req) {
     const ipAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     const ipWithoutPort = ipAddress.split(',')[0];
@@ -66,5 +82,7 @@ module.exports = {
     validatePassword,
     validateCode,
     validateLanguage,
+    validateNumberIsPositive,
+    validateNumberIsNotFloat,
     keyGeneratorForRequestsRateLimit,
 }
