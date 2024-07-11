@@ -234,28 +234,28 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    first_name: {
+    firstName: {
         type: String,
         default: "",
     },
-    last_name: {
+    lastName: {
         type: String,
         default: "",
     },
-    preview_name: {
+    previewName: {
         type: String,
         default: "",
     },
-    billing_address: {
-        first_name: {
+    billingAddress: {
+        firstName: {
             type: String,
             default: "",
         },
-        last_name: {
+        lastName: {
             type: String,
             default: "",
         },
-        company_name: {
+        companyName: {
             type: String,
             default: "",
         },
@@ -263,11 +263,11 @@ const userSchema = mongoose.Schema({
             type: String,
             default: "Kuwait",
         },
-        street_address: {
+        streetAddress: {
             type: String,
             default: "",
         },
-        apartment_number: {
+        apartmentNumber: {
             type: Number,
             default: 1,
         },
@@ -275,11 +275,11 @@ const userSchema = mongoose.Schema({
             type: String,
             default: "",
         },
-        postal_code: {
+        postalCode: {
             type: Number,
             default: 1,
         },
-        phone_number: {
+        phoneNumber: {
             type: String,
             default: "0096560048235",
         },
@@ -288,16 +288,16 @@ const userSchema = mongoose.Schema({
             default: "",
         },
     },
-    shipping_address: {
-        first_name: {
+    shippingAddress: {
+        firstName: {
             type: String,
             default: "",
         },
-        last_name: {
+        lastName: {
             type: String,
             default: "",
         },
-        company_name: {
+        companyName: {
             type: String,
             default: "",
         },
@@ -305,11 +305,11 @@ const userSchema = mongoose.Schema({
             type: String,
             default: "Kuwait",
         },
-        street_address: {
+        streetAddress: {
             type: String,
             default: "",
         },
-        apartment_number: {
+        apartmentNumber: {
             type: Number,
             default: 1,
         },
@@ -317,7 +317,7 @@ const userSchema = mongoose.Schema({
             type: String,
             default: "",
         },
-        postal_code: {
+        postalCode: {
             type: Number,
             default: 1,
         },
@@ -413,11 +413,11 @@ const orderSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    order_amount: {
+    orderAmount: {
         type: Number,
         default: 0,
     },
-    checkout_status: {
+    checkoutStatus: {
         type: String,
         default: "Checkout Incomplete",
         enum: [
@@ -429,16 +429,16 @@ const orderSchema = mongoose.Schema({
         type: String,
         default: "pending",
     },
-    billing_address: {
-        first_name: {
+    billingAddress: {
+        firstName: {
             type: String,
             default: "none",
         },
-        last_name: {
+        lastName: {
             type: String,
             default: "none",
         },
-        company_name: {
+        companyName: {
             type: String,
             default: "none",
         },
@@ -446,11 +446,11 @@ const orderSchema = mongoose.Schema({
             type: String,
             default: "none",
         },
-        street_address: {
+        streetAddress: {
             type: String,
             default: "none",
         },
-        apartment_number: {
+        apartmentNumber: {
             type: Number,
             default: 1,
         },
@@ -458,7 +458,7 @@ const orderSchema = mongoose.Schema({
             type: String,
             default: "none",
         },
-        postal_code: {
+        postalCode: {
             type: Number,
             default: 0,
         },
@@ -471,16 +471,16 @@ const orderSchema = mongoose.Schema({
             default: "none",
         },
     },
-    shipping_address: {
-        first_name: {
+    shippingAddress: {
+        firstName: {
             type: String,
             default: "none",
         },
-        last_name: {
+        lastName: {
             type: String,
             default: "none",
         },
-        company_name: {
+        companyName: {
             type: String,
             default: "none",
         },
@@ -488,11 +488,11 @@ const orderSchema = mongoose.Schema({
             type: String,
             default: "none",
         },
-        street_address: {
+        streetAddress: {
             type: String,
             default: "none",
         },
-        apartment_number: {
+        apartmentNumber: {
             type: Number,
             default: 1,
         },
@@ -500,7 +500,7 @@ const orderSchema = mongoose.Schema({
             type: String,
             default: "none",
         },
-        postal_code: {
+        postalCode: {
             type: Number,
             default: 0,
         },
@@ -513,7 +513,7 @@ const orderSchema = mongoose.Schema({
             default: "none",
         },
     },
-    order_products: [{
+    products: [{
         productId: {
             type: String,
             required: true,
@@ -526,7 +526,7 @@ const orderSchema = mongoose.Schema({
             type: String,
             default: "none",
         },
-        unit_price: {
+        unitPrice: {
             type: Number,
             default: 0,
         },
@@ -534,16 +534,16 @@ const orderSchema = mongoose.Schema({
             type: Number,
             default: 0,
         },
-        total_amount: {
+        totalAmount: {
             type: Number,
             default: 0,
         },
-        image_path: {
+        imagePath: {
             type: String,
             default: "none",
         },
     }],
-    added_date: {
+    addedDate: {
         type: Date,
         default: Date.now(),
     },

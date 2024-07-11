@@ -96,8 +96,16 @@ ordersRouter.post("/create-new-order",
             { fieldName: "Phone In Shipping Address", fieldValue: orderDetails?.shipping_address?.phone, dataType: "number", isRequiredValue: true },
             { fieldName: "Email In Shipping Address", fieldValue: orderDetails?.shipping_address?.email, dataType: "string", isRequiredValue: true },
             { fieldName: "Request Notes", fieldValue: orderDetails?.requestNotes, dataType: "string", isRequiredValue: false },
-            { fieldName: "Order Products", fieldValue: orderDetails?.order_products, dataType: "array", isRequiredValue: true },
+            { fieldName: "Order Products", fieldValue: orderDetails?.products, dataType: "array", isRequiredValue: true },
         ], res, next);
+    },
+    (req, res, next) => {
+        const { products } = req.body;
+        validateIsExistValueForFieldsAndDataTypes(
+            ...products.map((product) => (
+                { fieldName: "Product Id", fieldValue: product?.productId, dataType: "ObjectId", isRequiredValue: true }
+            ))
+        , res, next);
     },
     (req, res, next) => validateCountry(req.query.country, res, next),
     ordersController.postNewOrder

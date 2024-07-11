@@ -10,10 +10,10 @@ const usersMiddlewares = require("../middlewares/users.midddlewares");
 
 usersRouter.get("/login",
     (req, res, next) => {
-        const emailAndPassword = req.query;
+        const { email, password } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Email", fieldValue: emailAndPassword.email, dataType: "string", isRequiredValue: true },
-            { fieldName: "Password", fieldValue: emailAndPassword.password, dataType: "string", isRequiredValue: true },
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "Password", fieldValue: password, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.query.email, res, next),
@@ -23,12 +23,12 @@ usersRouter.get("/login",
 
 usersRouter.get("/login-with-google",
     (req, res, next) => {
-        const loginData = req.query;
+        const { email, firstName, lastName, previewName } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Email", fieldValue: loginData.email, dataType: "string", isRequiredValue: true },
-            { fieldName: "First Name", fieldValue: loginData.first_name, dataType: "string", isRequiredValue: true },
-            { fieldName: "Last Name", fieldValue: loginData.last_name, dataType: "string", isRequiredValue: true },
-            { fieldName: "Preview Name", fieldValue: loginData.preview_name, dataType: "string", isRequiredValue: true },
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "First Name", fieldValue: firstName, dataType: "string", isRequiredValue: true },
+            { fieldName: "Last Name", fieldValue: lastName, dataType: "string", isRequiredValue: true },
+            { fieldName: "Preview Name", fieldValue: previewName, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     usersController.loginWithGoogle
@@ -43,10 +43,10 @@ usersRouter.get("/all-users", usersController.getAllUsers);
 
 usersRouter.get("/forget-password",
     (req, res, next) => {
-        const userData = req.query;
+        const { email, userType } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Email", fieldValue: userData.email, dataType: "string", isRequiredValue: true },
-            { fieldName: "User Type", fieldValue: userData.userType, dataType: "string", isRequiredValue: true },
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "User Type", fieldValue: userType, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.query.email, res, next),
@@ -56,11 +56,11 @@ usersRouter.get("/forget-password",
 
 usersRouter.post("/create-new-user",
     (req, res, next) => {
-        const userData = req.body;
+        const { email, password, language } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Email", fieldValue: userData.email, dataType: "string", isRequiredValue: true },
-            { fieldName: "Password", fieldValue: userData.password, dataType: "string", isRequiredValue: true },
-            { fieldName: "Language", fieldValue: userData.language, dataType: "string", isRequiredValue: true },
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "Password", fieldValue: password, dataType: "string", isRequiredValue: true },
+            { fieldName: "Language", fieldValue: language, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.body.email, res, next),
@@ -80,7 +80,36 @@ usersRouter.post("/send-account-verification-code",
     usersController.postAccountVerificationCode
 );
 
-usersRouter.put("/update-user-info", validateJWT, usersController.putUserInfo);
+usersRouter.put("/update-user-info",
+    validateJWT,
+    (req, res, next) => {
+        const { firstName, lastName, previewName, email, password } = req.body;
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "First Name", fieldValue: firstName, dataType: "string", isRequiredValue: false },
+            { fieldName: "Last Name", fieldValue: lastName, dataType: "string", isRequiredValue: false },
+            { fieldName: "Preview Name", fieldValue: previewName, dataType: "string", isRequiredValue: false },
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: false },
+            { fieldName: "Password", fieldValue: password, dataType: "string", isRequiredValue: false },
+        ], res, next);
+    },
+    (req, res, next) => {
+        const { email } = req.body;
+        if (email) {
+            validateEmail(email, res, next);
+            return;
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { password } = req.body;
+        if (password) {
+            validateEmail(password, res, next);
+            return;
+        }
+        next();
+    },
+    usersController.putUserInfo
+);
 
 usersRouter.put("/update-verification-status",
     (req, res, next) => {
