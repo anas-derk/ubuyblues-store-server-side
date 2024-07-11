@@ -13,73 +13,73 @@ function validateJWT(req, res, next) {
     });
 }
 
-function validateEmail(email, res, nextFunc) {
+function validateEmail(email, res, nextFunc, msg = "Sorry, Please Send Valid Email !!") {
     if (!isEmail(email)) {
-        res.status(400).json(getResponseObject("Sorry, Please Send Valid Email !!", true, {}));
+        res.status(400).json(getResponseObject(msg, true, {}));
         return;
     }
     nextFunc();
 }
 
-function validateUserType(userType, res, nextFunc) {
+function validateUserType(userType, res, nextFunc, msg = "Sorry, Please Send Valid User Type !!") {
     if (userType !== "user" && userType !== "admin") {
-        res.status(400).json(getResponseObject("Sorry, Please Send Valid User Type !!", true, {}));
+        res.status(400).json(getResponseObject(msg, true, {}));
         return;
     }
     nextFunc();
 }
 
-function validatePassword(password, res, nextFunc) {
+function validatePassword(password, res, nextFunc, msg = "Sorry, Please Send Valid Password !!") {
     if (!isValidPassword(password)) {
-        res.status(400).json(getResponseObject("Sorry, Please Send Valid Password !!", true, {}));
+        res.status(400).json(getResponseObject(msg, true, {}));
         return;
     }
     nextFunc();
 }
 
-function validateCode(code, res, nextFunc) {
+function validateCode(code, res, nextFunc, msg = "Please Send Valid Code !!") {
     if (code.length !== 4) {
-        res.status(400).json(getResponseObject("Please Send Valid Code !!", true, {}));
+        res.status(400).json(getResponseObject(msg, true, {}));
         return;
     }
     nextFunc();
 }
 
-function validateLanguage(language, res, nextFunc) {
+function validateLanguage(language, res, nextFunc, msg = "Sorry, Please Send Valid Language !!") {
     if (!isValidLanguage(language)) {
-        res.status(400).json(getResponseObject("Sorry, Please Send Valid Language !!", true, {}));
+        res.status(400).json(getResponseObject(msg, true, {}));
         return;
     }
     nextFunc();
 }
 
-function validateNumberIsPositive(number, res, nextFunc) {
+function validateNumberIsPositive(number, res, nextFunc, msg = "Sorry, Please Send Valid Number ( Number Must Be Greater Than Zero ) !!") {
     if (number < 0) {
-        res.status(400).json(getResponseObject("Sorry, Please Send Valid Number ( Number Must Be Greater Than Zero ) !!", true, {}));
+        res.status(400).json(getResponseObject(msg, true, {}));
         return;
     }
     nextFunc();
 }
 
-function validateNumberIsNotFloat(number, res, nextFunc) {
+function validateNumberIsNotFloat(number, res, nextFunc, msg = "Sorry, Please Send Valid Number ( Number Must Be Not Float ) !!") {
     if (number % 1 !== 0) {
-        res.status(400).json(getResponseObject("Sorry, Please Send Valid Number ( Number Must Be Not Float ) !!", true, {}));
+        res.status(400).json(getResponseObject(msg, true, {}));
         return;
     }
     nextFunc();
 }
 
-function validateCountry(country, res, nextFunc) {
+function validateCountry(country, res, nextFunc, msg = "Sorry, Please Send Valid Country ( kuwait Or Germany Or Turkey ) !!") {
     if (!["kuwait", "germany" , "turkey"].includes(country)) {
-        res.status(400).json(getResponseObject("Sorry, Please Send Valid Country ( kuwait Or Germany Or Turkey ) !!", true, {}));
+        res.status(400).json(getResponseObject(msg, true, {}));
         return;
     }
     nextFunc();
 }
 
-function validateName(name, res, nextFunc) {
+function validateName(name, res, nextFunc, msg = "Sorry, Please Send Valid Name !!") {
     if (!name.match(/^([\u0600-\u06FF\s]+|[a-zA-Z\s]+)$/)) {
-        res.status(400).json(getResponseObject("Sorry, Please Send Valid Name !!", true, {}));
+        res.status(400).json(getResponseObject(msg, true, {}));
         return;
     }
     nextFunc();
