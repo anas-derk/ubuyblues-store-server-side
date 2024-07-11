@@ -2,7 +2,7 @@ const ordersRouter = require("express").Router();
 
 const ordersController = require("../controllers/orders.controller");
 
-const { validateJWT, validateNumberIsPositive, validateNumberIsNotFloat, validateCountry } = require("../middlewares/global.middlewares");
+const { validateJWT, validateNumberIsPositive, validateNumberIsNotFloat, validateCountry, validateName } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -75,16 +75,16 @@ ordersRouter.post("/create-new-order",
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Customer Id", fieldValue: orderDetails?.customerId, dataType: "ObjectId", isRequiredValue: false },
             { fieldName: "Country", fieldValue: req.query.country, dataType: "string", isRequiredValue: true },
-            { fieldName: "First Name In Billing Address", fieldValue: orderDetails?.billing_address?.firstName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Last Name In Billing Address", fieldValue: orderDetails?.billing_address?.lastName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Company Name In Billing Address", fieldValue: orderDetails?.billing_address?.company_name, dataType: "string", isRequiredValue: false },
-            { fieldName: "Country In Billing Address", fieldValue: orderDetails?.billing_address?.country, dataType: "string", isRequiredValue: true },
-            { fieldName: "Street Address In Billing Address", fieldValue: orderDetails?.billing_address?.street_address, dataType: "string", isRequiredValue: true },
-            { fieldName: "Apartment Number In Billing Address", fieldValue: orderDetails?.billing_address?.apartment_number, dataType: "number", isRequiredValue: false },
-            { fieldName: "City In Billing Address", fieldValue: orderDetails?.billing_address?.city, dataType: "string", isRequiredValue: true },
-            { fieldName: "Postal Code In Billing Address", fieldValue: orderDetails?.billing_address?.postal_code, dataType: "number", isRequiredValue: true },
-            { fieldName: "Phone In Billing Address", fieldValue: orderDetails?.billing_address?.phone, dataType: "number", isRequiredValue: true },
-            { fieldName: "Email In Billing Address", fieldValue: orderDetails?.billing_address?.email, dataType: "string", isRequiredValue: true },
+            { fieldName: "First Name In Billing Address", fieldValue: orderDetails?.billingAddress?.firstName, dataType: "string", isRequiredValue: true },
+            { fieldName: "Last Name In Billing Address", fieldValue: orderDetails?.billingAddress?.lastName, dataType: "string", isRequiredValue: true },
+            { fieldName: "Company Name In Billing Address", fieldValue: orderDetails?.billingAddress?.company_name, dataType: "string", isRequiredValue: false },
+            { fieldName: "Country In Billing Address", fieldValue: orderDetails?.billingAddress?.country, dataType: "string", isRequiredValue: true },
+            { fieldName: "Street Address In Billing Address", fieldValue: orderDetails?.billingAddress?.street_address, dataType: "string", isRequiredValue: true },
+            { fieldName: "Apartment Number In Billing Address", fieldValue: orderDetails?.billingAddress?.apartment_number, dataType: "number", isRequiredValue: false },
+            { fieldName: "City In Billing Address", fieldValue: orderDetails?.billingAddress?.city, dataType: "string", isRequiredValue: true },
+            { fieldName: "Postal Code In Billing Address", fieldValue: orderDetails?.billingAddress?.postal_code, dataType: "number", isRequiredValue: true },
+            { fieldName: "Phone In Billing Address", fieldValue: orderDetails?.billingAddress?.phone, dataType: "number", isRequiredValue: true },
+            { fieldName: "Email In Billing Address", fieldValue: orderDetails?.billingAddress?.email, dataType: "string", isRequiredValue: true },
             { fieldName: "First Name In Shipping Address", fieldValue: orderDetails?.shipping_address?.firstName, dataType: "string", isRequiredValue: true },
             { fieldName: "Last Name In Shipping Address", fieldValue: orderDetails?.shipping_address?.lastName, dataType: "string", isRequiredValue: true },
             { fieldName: "Company Name In Shipping Address", fieldValue: orderDetails?.shipping_address?.company_name, dataType: "string", isRequiredValue: false },
@@ -103,10 +103,13 @@ ordersRouter.post("/create-new-order",
         const { products } = req.body;
         validateIsExistValueForFieldsAndDataTypes(
             ...products.map((product) => (
-                { fieldName: "Product Id", fieldValue: product?.productId, dataType: "ObjectId", isRequiredValue: true }
+                { fieldName: "Product Id", fieldValue: product?.productId, dataType: "ObjectId", isRequiredValue: true },
+                { fieldName: "Quantity", fieldValue: product?.quantity, dataType: "number", isRequiredValue: true }
             ))
         , res, next);
     },
+    (req, res, next) => validateCountry(req.query.country, res, next),
+    (req, res, next) => validateName(req.body.billingAddress.firstName, res, next),
     (req, res, next) => validateCountry(req.query.country, res, next),
     ordersController.postNewOrder
 );
