@@ -321,7 +321,7 @@ const userSchema = mongoose.Schema({
             type: Number,
             default: 1,
         },
-        phone_number: {
+        phoneNumber: {
             type: String,
             default: "0096560048235",
         },

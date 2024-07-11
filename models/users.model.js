@@ -212,49 +212,46 @@ async function isExistUserAccount(email, userType) {
 
 async function updateUserInfo(userId, newUserData) {
     try {
-        if (newUserData.password && newUserData.newPassword) {
-            const userInfo = await userModel.findById(userId);
-            if (userInfo) {
-                const isTruePassword = await compare(newUserData.password, userInfo.password);
-                if (isTruePassword) {
-                    await userModel.updateOne({ _id: userId }, {
-                        ...newUserData,
-                        password: await hash(newUserData.newPassword, 10),
-                    });
+        const userInfo = await userModel.findById(userId);
+        if (userInfo) {
+            let newUserInfo = newUserData;
+            if (newUserData.password && newUserData.newPassword) {
+                if (!await compare(newUserData.password, userInfo.password)) {
                     return {
-                        msg: "Updating User Info Process Has Been Successfuly !!",
-                        error: false,
+                        msg: "Sorry, This Password Is Uncorrect !!",
+                        error: true,
                         data: {},
-                    };
+                    }
                 }
-                return {
-                    msg: "Sorry, This Password Is Uncorrect !!",
-                    error: true,
-                    data: {},
-                };
+                newUserInfo = {
+                    ...newUserData,
+                    password: await hash(newUserData.newPassword, 10),
+                }
             }
-            return {
-                msg: "Sorry, This User Is Not Found !!",
-                error: true,
-                data: {},
-            };
-        }
-        const user = await userModel.findOneAndUpdate({ _id: userId }, {
-            ...newUserData,
-        });
-        if (user) {
+            if (newUserData.email && newUserData.email !== userInfo.email) {
+                const user = await userModel.findOne({ email: newUserData.email });
+                if (user) {
+                    return {
+                        msg: "Sorry, This Email Are Already Exist !!",
+                        error: true,
+                        data: {},
+                    }
+                }
+            }
+            await userModel.updateOne({ _id: userId }, newUserInfo);
             return {
                 msg: "Updating User Info Process Has Been Successfuly !!",
                 error: false,
                 data: {},
-            };
+            }
         }
         return {
             msg: "Sorry, This User Is Not Found !!",
             error: true,
             data: {},
-        };
+        }
     } catch (err) {
+        console.log(err)
         throw Error(err);
     }
 }

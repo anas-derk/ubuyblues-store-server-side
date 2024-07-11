@@ -103,7 +103,7 @@ usersRouter.put("/update-user-info",
     (req, res, next) => {
         const { password } = req.body;
         if (password) {
-            validateEmail(password, res, next);
+            validatePassword(password, res, next);
             return;
         }
         next();
