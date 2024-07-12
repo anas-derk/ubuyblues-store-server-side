@@ -102,10 +102,10 @@ ordersRouter.post("/create-new-order",
     (req, res, next) => {
         const { products } = req.body;
         validateIsExistValueForFieldsAndDataTypes(
-            products.map((product) => (
-                { fieldName: "Product Id", fieldValue: product?.productId, dataType: "ObjectId", isRequiredValue: true },
-                { fieldName: "Quantity", fieldValue: product?.quantity, dataType: "number", isRequiredValue: true }
-            ))
+            products.flatMap((product, index) => ([
+                { fieldName: `Id In Product ${index + 1}`, fieldValue: product?.productId, dataType: "ObjectId", isRequiredValue: true },
+                { fieldName: `Quantity In Product ${index + 1}`, fieldValue: product?.quantity, dataType: "number", isRequiredValue: true },
+            ]))
         , res, next);
     },
     (req, res, next) => validateCountry(req.query.country, res, next),
