@@ -113,6 +113,7 @@ ordersRouter.post("/create-new-order",
     (req, res, next) => validateName(req.body.billingAddress.firstName, res, next, "Sorry, Please Send Valid First Name In Billing Address !!"),
     (req, res, next) => validateName(req.body.billingAddress.lastName, res, next, "Sorry, Please Send Valid Last Name In Billing Address !!"),
     (req, res, next) => validateName(req.body.billingAddress.country, res, next, "Sorry, Please Send Valid Country Name In Billing Address !!"),
+    (req, res, next) => validateName(req.body.billingAddress.city, res, next, "Sorry, Please Send Valid City Name In Billing Address !!"),
     (req, res, next) => {
         const { billingAddress } = req.body;
         if (billingAddress?.apartmentNumber) {
@@ -130,9 +131,10 @@ ordersRouter.post("/create-new-order",
         next();
     },
     (req, res, next) => validateEmail(req.body.billingAddress.email, res, next, "Sorry, Please Send Valid Email In Billing Address !!"),
-    (req, res, next) => validateName(req.body.shippingAddress.firstName, res, next, "Sorry, Please Send Valid First Name In Billing Address !!"),
-    (req, res, next) => validateName(req.body.shippingAddress.lastName, res, next, "Sorry, Please Send Valid Last Name In Billing Address !!"),
-    (req, res, next) => validateName(req.body.shippingAddress.country, res, next, "Sorry, Please Send Valid Country Name In Billing Address !!"),
+    (req, res, next) => validateName(req.body.shippingAddress.firstName, res, next, "Sorry, Please Send Valid First Name In Shipping Address !!"),
+    (req, res, next) => validateName(req.body.shippingAddress.lastName, res, next, "Sorry, Please Send Valid Last Name In Shipping Address !!"),
+    (req, res, next) => validateName(req.body.shippingAddress.country, res, next, "Sorry, Please Send Valid Country Name In Shipping Address !!"),
+    (req, res, next) => validateName(req.body.shippingAddress.city, res, next, "Sorry, Please Send Valid City Name In Shipping Address !!"),
     (req, res, next) => {
         const { billingAddress } = req.body;
         if (billingAddress?.apartmentNumber) {
@@ -149,7 +151,7 @@ ordersRouter.post("/create-new-order",
         }
         next();
     },
-    (req, res, next) => validateEmail(req.body.shippingAddress.email, res, next, "Sorry, Please Send Valid Email In Billing Address !!"),
+    (req, res, next) => validateEmail(req.body.shippingAddress.email, res, next, "Sorry, Please Send Valid Email In Shipping Address !!"),
     (req, res, next) => {
         const { products } = req.body;
         let productsQuantity = [], errorMsgs = [];
