@@ -2,7 +2,7 @@ const ordersRouter = require("express").Router();
 
 const ordersController = require("../controllers/orders.controller");
 
-const { validateJWT, validateNumberIsPositive, validateNumberIsNotFloat, validateCountry, validateName, validateEmail } = require("../middlewares/global.middlewares");
+const { validateJWT, validateNumbersIsPositive, validateNumberIsNotFloat, validateCountry, validateName, validateEmail } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -17,14 +17,14 @@ ordersRouter.get("/orders-count",
     (req, res, next) => {
         const { pageNumber } = req.query;
         if (pageNumber) {
-            return validateNumberIsPositive(req.query.pageNumber, res, next);
+            return validateNumbersIsPositive(req.query.pageNumber, res, next);
         }
         next();
     },
     (req, res, next) => {
         const { pageNumber } = req.query;
         if (pageNumber) {
-            return validateNumberIsPositive(req.query.pageSize, res, next);
+            return validateNumbersIsPositive(req.query.pageSize, res, next);
         }
         next();
     },
@@ -53,8 +53,8 @@ ordersRouter.get("/all-orders-inside-the-page",
             { fieldName: "page Size", fieldValue: Number(filters.pageSize), dataType: "number", isRequiredValue: true },
         ], res, next);
     },
-    (req, res, next) => validateNumberIsPositive(req.query.pageNumber, res, next),
-    (req, res, next) => validateNumberIsPositive(req.query.pageSize, res, next),
+    (req, res, next) => validateNumbersIsPositive(req.query.pageNumber, res, next),
+    (req, res, next) => validateNumbersIsPositive(req.query.pageSize, res, next),
     (req, res, next) => validateNumberIsNotFloat(req.query.pageNumber, res, next),
     (req, res, next) => validateNumberIsNotFloat(req.query.pageSize, res, next),
     ordersController.getAllOrdersInsideThePage
@@ -82,8 +82,8 @@ ordersRouter.post("/create-new-order",
             { fieldName: "Street Address In Billing Address", fieldValue: orderDetails?.billingAddress?.streetAddress, dataType: "string", isRequiredValue: true },
             { fieldName: "Apartment Number In Billing Address", fieldValue: orderDetails?.billingAddress?.apartmentNumber, dataType: "number", isRequiredValue: false },
             { fieldName: "City In Billing Address", fieldValue: orderDetails?.billingAddress?.city, dataType: "string", isRequiredValue: true },
-            { fieldName: "Postal Code In Billing Address", fieldValue: orderDetails?.billingAddress?.postalCode, dataType: "number", isRequiredValue: true },
-            { fieldName: "Phone In Billing Address", fieldValue: orderDetails?.billingAddress?.phone, dataType: "number", isRequiredValue: true },
+            { fieldName: "Postal Code In Billing Address", fieldValue: orderDetails?.billingAddress?.postalCode, dataType: "string", isRequiredValue: true },
+            { fieldName: "Phone In Billing Address", fieldValue: orderDetails?.billingAddress?.phone, dataType: "string", isRequiredValue: true },
             { fieldName: "Email In Billing Address", fieldValue: orderDetails?.billingAddress?.email, dataType: "string", isRequiredValue: true },
             { fieldName: "First Name In Shipping Address", fieldValue: orderDetails?.shippingAddress?.firstName, dataType: "string", isRequiredValue: true },
             { fieldName: "Last Name In Shipping Address", fieldValue: orderDetails?.shippingAddress?.lastName, dataType: "string", isRequiredValue: true },
@@ -92,8 +92,8 @@ ordersRouter.post("/create-new-order",
             { fieldName: "Street Address In Shipping Address", fieldValue: orderDetails?.shippingAddress?.streetAddress, dataType: "string", isRequiredValue: true },
             { fieldName: "Apartment Number In Shipping Address", fieldValue: orderDetails?.shippingAddress?.apartmentNumber, dataType: "number", isRequiredValue: false },
             { fieldName: "City In Shipping Address", fieldValue: orderDetails?.shippingAddress?.city, dataType: "string", isRequiredValue: true },
-            { fieldName: "Postal Code In Shipping Address", fieldValue: orderDetails?.shippingAddress?.postalCode, dataType: "number", isRequiredValue: true },
-            { fieldName: "Phone In Shipping Address", fieldValue: orderDetails?.shippingAddress?.phone, dataType: "number", isRequiredValue: true },
+            { fieldName: "Postal Code In Shipping Address", fieldValue: orderDetails?.shippingAddress?.postalCode, dataType: "string", isRequiredValue: true },
+            { fieldName: "Phone In Shipping Address", fieldValue: orderDetails?.shippingAddress?.phone, dataType: "string", isRequiredValue: true },
             { fieldName: "Email In Shipping Address", fieldValue: orderDetails?.shippingAddress?.email, dataType: "string", isRequiredValue: true },
             { fieldName: "Request Notes", fieldValue: orderDetails?.requestNotes, dataType: "string", isRequiredValue: false },
             { fieldName: "Order Products", fieldValue: orderDetails?.products, dataType: "array", isRequiredValue: true },
@@ -102,7 +102,7 @@ ordersRouter.post("/create-new-order",
     (req, res, next) => {
         const { products } = req.body;
         validateIsExistValueForFieldsAndDataTypes(
-            ...products.map((product) => (
+            products.map((product) => (
                 { fieldName: "Product Id", fieldValue: product?.productId, dataType: "ObjectId", isRequiredValue: true },
                 { fieldName: "Quantity", fieldValue: product?.quantity, dataType: "number", isRequiredValue: true }
             ))
@@ -116,7 +116,7 @@ ordersRouter.post("/create-new-order",
     (req, res, next) => {
         const { billingAddress } = req.body;
         if (billingAddress?.apartmentNumber) {
-            validateNumberIsPositive(req.body.billingAddress.apartmentNumber, res, next, "Sorry, Please Send Valid Apartment Number In Billing Address ( Number Must Be Greater Than Zero ) !!");
+            validateNumbersIsPositive([req.body.billingAddress.apartmentNumber], res, next, [], "Sorry, Please Send Valid Apartment Number In Billing Address ( Number Must Be Greater Than Zero ) !!");
             return;
         }
         next();
@@ -136,7 +136,7 @@ ordersRouter.post("/create-new-order",
     (req, res, next) => {
         const { billingAddress } = req.body;
         if (billingAddress?.apartmentNumber) {
-            validateNumberIsPositive(req.body.billingAddress.apartmentNumber, res, next, "Sorry, Please Send Valid Apartment Number In Shipping Address ( Number Must Be Greater Than Zero ) !!");
+            validateNumbersIsPositive([req.body.billingAddress.apartmentNumber], res, next, [], "Sorry, Please Send Valid Apartment Number In Shipping Address ( Number Must Be Greater Than Zero ) !!");
             return;
         }
         next();
@@ -150,6 +150,15 @@ ordersRouter.post("/create-new-order",
         next();
     },
     (req, res, next) => validateEmail(req.body.shippingAddress.email, res, next, "Sorry, Please Send Valid Email In Billing Address !!"),
+    (req, res, next) => {
+        const { products } = req.body;
+        let productsQuantity = [], errorMsgs = [];
+        for(let i = 0; i < products.length; i++) {
+            productsQuantity.push(products[i].quantity);
+            errorMsgs.push([`Sorry, Please Send Valid Quantity For Product ${i} In Shipping Address ( Number Must Be Greater Than Zero ) !!`]);
+        }
+        validateNumbersIsPositive(productsQuantity, res, next, errorMsgs);
+    },
     ordersController.postNewOrder
 );
 
