@@ -2,7 +2,7 @@ const ordersRouter = require("express").Router();
 
 const ordersController = require("../controllers/orders.controller");
 
-const { validateJWT, validateNumbersIsPositive, validateNumberIsNotFloat, validateCountry, validateName, validateEmail } = require("../middlewares/global.middlewares");
+const { validateJWT, validateNumbersIsPositive, validateNumberIsNotFloat, validateCountry, validateName, validateEmail, validateIsNotExistDublicateProductId } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -152,12 +152,13 @@ ordersRouter.post("/create-new-order",
         next();
     },
     (req, res, next) => validateEmail(req.body.shippingAddress.email, res, next, "Sorry, Please Send Valid Email In Shipping Address !!"),
+    (req, res, next) => validateIsNotExistDublicateProductId(req.body.products, res, next),
     (req, res, next) => {
         const { products } = req.body;
         let productsQuantity = [], errorMsgs = [];
         for(let i = 0; i < products.length; i++) {
             productsQuantity.push(products[i].quantity);
-            errorMsgs.push([`Sorry, Please Send Valid Quantity For Product ${i} In Shipping Address ( Number Must Be Greater Than Zero ) !!`]);
+            errorMsgs.push(`Sorry, Please Send Valid Quantity For Product ${i + 1} ( Number Must Be Greater Than Zero ) !!`);
         }
         validateNumbersIsPositive(productsQuantity, res, next, errorMsgs);
     },
