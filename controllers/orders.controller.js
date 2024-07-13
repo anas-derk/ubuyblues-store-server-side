@@ -57,7 +57,6 @@ async function postNewOrder(req, res) {
         res.json(await ordersManagmentFunctions.createNewOrder(req.body));
     }
     catch(err) {
-        console.log(err);
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
     }
 }
