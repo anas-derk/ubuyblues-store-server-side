@@ -76,17 +76,24 @@ async function createNewOrder(orderDetails) {
         }
         for(let product of orderDetails.products) {
             for(let existProduct of existOrderProducts) {
-                if ((new mongoose.Types.ObjectId(product.productId)).equals(existProduct._id) && product.quantity > existProduct.quantity) {
-                    return {
-                        msg: `Sorry, Quantity For Product Id: ${product.productId} Greater Than Specific Quantity ( ${product.quantity} ) !!`,
-                        error: true,
-                        data: {},
+                if ((new mongoose.Types.ObjectId(product.productId)).equals(existProduct._id)) {
+                    if (existProduct.quantity === 0) {
+                        return {
+                            msg: `Sorry, The Product With The ID ${product.productId} Is Not Available ( Quantity Is 0 ) !!`,
+                            error: true,
+                            data: {},
+                        }
+                    }
+                    if (product.quantity > existProduct.quantity) {
+                        return {
+                            msg: `Sorry, Quantity For Product Id: ${product.productId} Greater Than Specific Quantity ( ${existProduct.quantity} ) !!`,
+                            error: true,
+                            data: {},
+                        }
                     }
                 }
             }
         }
-        
-
         // const ordersCount = await orderModel.countDocuments();
         // const newOrder = new orderModel({ ...orderDetails, orderNumber: ordersCount + 1 });
         // const { _id, orderNumber } = await newOrder.save();
