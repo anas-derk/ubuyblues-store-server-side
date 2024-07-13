@@ -74,39 +74,51 @@ async function createNewOrder(orderDetails) {
                 }
             }
         }
-        for(let product of orderDetails.products) {
-            for(let existProduct of existOrderProducts) {
-                if ((new mongoose.Types.ObjectId(product.productId)).equals(existProduct._id)) {
-                    if (existProduct.quantity === 0) {
-                        return {
-                            msg: `Sorry, The Product With The ID ${product.productId} Is Not Available ( Quantity Is 0 ) !!`,
-                            error: true,
-                            data: {},
-                        }
+        const orderedProducts = orderDetails.products.map((product) => existOrderProducts.find((existProduct) => (new mongoose.Types.ObjectId(product.productId)).equals(existProduct._id)));
+        for(let i = 0; i < orderedProducts.length; i++) {
+            if ((new mongoose.Types.ObjectId(orderDetails.products[i].productId)).equals(orderedProducts[i]._id)) {
+                if (orderedProducts[i].quantity === 0) {
+                    return {
+                        msg: `Sorry, The Product With The ID ${orderedProducts[i]._id} Is Not Available ( Quantity Is 0 ) !!`,
+                        error: true,
+                        data: {},
                     }
-                    if (product.quantity > existProduct.quantity) {
-                        return {
-                            msg: `Sorry, Quantity For Product Id: ${product.productId} Greater Than Specific Quantity ( ${existProduct.quantity} ) !!`,
-                            error: true,
-                            data: {},
-                        }
+                }
+                if (orderDetails.products[i].quantity > orderedProducts[i].quantity) {
+                    return {
+                        msg: `Sorry, Quantity For Product Id: ${orderedProducts[i]._id} Greater Than Specific Quantity ( ${orderedProducts[i].quantity} ) !!`,
+                        error: true,
+                        data: {},
                     }
                 }
             }
         }
+        // let orderProductsDetails = [];
+        // for(let product of orderDetails.products) {
+        //     orderProductsDetails.push({
+        //         productId: product._id,
+        //         // name: product.name,
+        //         // unit_price: product.price,
+        //         // discount: isExistOfferOnProduct(currentDate, product.startDiscountPeriod, product.endDiscountPeriod) ? product.discountInOfferPeriod : product.discount,
+        //         // total_amount: product.price * getProductQuantity(product._id),
+        //         quantity: getProductQuantity(product._id),
+        //         // image_path: product.imagePath,
+        //     });
+        // }
         // const ordersCount = await orderModel.countDocuments();
+        
         // const newOrder = new orderModel({ ...orderDetails, orderNumber: ordersCount + 1 });
         // const { _id, orderNumber } = await newOrder.save();
         // if (orderDetails.customerId) {
         //     const user = await userModel.findOne({ _id: orderDetails.customerId });
         //     if (user) {
         //         let newProductsForUserInsideTheWallet = [];
-        //         const orderProducts = await productsWalletModel.find({ productId: { $in: orderDetails.order_products.map((product) => product.productId) }, userId: orderDetails.customerId });
+        //         const orderProducts = await productsWalletModel.find({ productId: { $in: orderDetails.products.map((product) => product.productId) }, userId: orderDetails.customerId });
         //         for (let i = 0; i < orderDetails.order_products.length; i++) {
         //             const wallet_productIndex = orderProducts.findIndex((wallet_product) => wallet_product.productId == orderDetails.order_products[i].productId);
         //             if (wallet_productIndex == -1) {
         //                 newProductsForUserInsideTheWallet.push({
-        //                     name: orderDetails.order_products[i].name,
+        //                     name: orderProducts[i].name,
         //                     price: orderDetails.order_products[i].unit_price,
         //                     imagePath: orderDetails.order_products[i].image_path,
         //                     productId: orderDetails.order_products[i].productId,
@@ -131,7 +143,8 @@ async function createNewOrder(orderDetails) {
             msg: "Creating New Order Has Been Successfuly !!",
             error: false,
             data: {
-                existOrderProducts
+                // orderId: _id,
+                // orderNumber: orderNumber
             },
         }
     } catch (err) {
