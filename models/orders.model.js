@@ -91,6 +91,17 @@ async function createNewOrder(orderDetails) {
                 }
             }
         }
+        let storeIdsAssociatedWithTheirProducts = [existOrderProducts[0].storeId];
+        for(let product of existOrderProducts) {
+            if (storeIdsAssociatedWithTheirProducts.includes(product.storeId)) {
+                continue;
+            }
+            return {
+                msg: "Sorry, All Products Must Be From The Same Store !!",
+                error: true,
+                data: {},
+            }
+        }
         const orderedProducts = orderDetails.products.map((product) => existOrderProducts.find((existProduct) => (new mongoose.Types.ObjectId(product.productId)).equals(existProduct._id)));
         for(let i = 0; i < orderedProducts.length; i++) {
             if ((new mongoose.Types.ObjectId(orderDetails.products[i].productId)).equals(orderedProducts[i]._id)) {
