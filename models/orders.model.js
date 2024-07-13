@@ -65,6 +65,16 @@ const isExistOfferOnProduct = (startDateAsString, endDateAsString) => {
 
 async function createNewOrder(orderDetails) {
     try {
+        // if (orderDetails.customerId) {
+        //     const user = await userModel.findById(orderDetails.customerId);
+        //     if (user) {
+        //         return {
+        //             msg: "Sorry, This User Is Not Exist !!",
+        //             error: true,
+        //             data: {},
+        //         }
+        //     }
+        // }
         const existOrderProducts = await productModel.find({ _id: { $in: orderDetails.products.map((product) => product.productId) }});
         if (existOrderProducts.length === 0) {
             return {
@@ -133,47 +143,52 @@ async function createNewOrder(orderDetails) {
                 imagePath: orderedProducts[i].imagePath,
             });
         }
-        console.log(orderProductsDetails)
-        // const ordersCount = await orderModel.countDocuments();
-        
-        // const newOrder = new orderModel({ ...orderDetails, orderNumber: ordersCount + 1 });
-        // const { _id, orderNumber } = await newOrder.save();
-        // if (orderDetails.customerId) {
-        //     const user = await userModel.findOne({ _id: orderDetails.customerId });
-        //     if (user) {
-        //         let newProductsForUserInsideTheWallet = [];
-        //         const orderProducts = await productsWalletModel.find({ productId: { $in: orderDetails.products.map((product) => product.productId) }, userId: orderDetails.customerId });
-        //         for (let i = 0; i < orderDetails.order_products.length; i++) {
-        //             const wallet_productIndex = orderProducts.findIndex((wallet_product) => wallet_product.productId == orderDetails.order_products[i].productId);
-        //             if (wallet_productIndex == -1) {
-        //                 newProductsForUserInsideTheWallet.push({
-        //                     name: orderProducts[i].name,
-        //                     price: orderDetails.order_products[i].unit_price,
-        //                     imagePath: orderDetails.order_products[i].image_path,
-        //                     productId: orderDetails.order_products[i].productId,
-        //                     userId: orderDetails.customerId
-        //                 });
-        //             }
-        //         }
-        //         if (newProductsForUserInsideTheWallet.length > 0) {
-        //             await productsWalletModel.insertMany(newProductsForUserInsideTheWallet);
-        //         }
-        //     }
-        //     else {
-        //         await orderModel.deleteOne({ orderNumber });
-        //         return {
-        //             msg: "Sorry, This User Is Not Exist !!",
-        //             error: true,
-        //             data: {},
-        //         }
-        //     }
-        // }
+        const totalPrices = {
+            totalPriceBeforeDiscount: 0,
+            totalDiscount: 0,
+            totalPriceAfterDiscount: 0
+        }
+        for(let product of orderProductsDetails){
+            totalPrices.totalPriceBeforeDiscount += product.totalAmount;
+            totalPrices.totalDiscount += product.discount;
+        }
+        totalPrices.totalPriceAfterDiscount = totalPrices.totalPriceBeforeDiscount - totalPrices.totalDiscount;
+        const ordersCount = await orderModel.countDocuments();
+        const newOrder = new orderModel({
+            storeId: existOrderProducts[0].storeId,
+            orderNumber: ordersCount + 1,
+            orderAmount: totalPrices.totalPriceAfterDiscount,
+            customerId: orderDetails.customerId ? orderDetails.customerId : "",
+            billingAddress: orderDetails.billingAddress,
+            shippingAddress: orderDetails.shippingAddress,
+            products: orderProductsDetails,
+        });
+        const { _id, orderNumber } = await newOrder.save();
+        if (orderDetails.customerId) {
+            let newProductsForUserInsideTheWallet = [];
+            const orderProducts = await productsWalletModel.find({ productId: { $in: orderProductsDetails.map((product) => product.productId) }, userId: orderDetails.customerId });
+            for (let i = 0; i < orderProductsDetails.length; i++) {
+                const wallet_productIndex = orderProducts.findIndex((wallet_product) => wallet_product.productId == orderProductsDetails[i].productId);
+                if (wallet_productIndex == -1) {
+                    newProductsForUserInsideTheWallet.push({
+                        name: orderProductsDetails[i].name,
+                        price: orderProductsDetails[i].unitPrice,
+                        imagePath: orderProductsDetails[i].imagePath,
+                        productId: orderProductsDetails[i].productId,
+                        userId: orderDetails.customerId
+                    });
+                }
+            }
+            if (newProductsForUserInsideTheWallet.length > 0) {
+                await productsWalletModel.insertMany(newProductsForUserInsideTheWallet);
+            }
+        }
         return {
             msg: "Creating New Order Has Been Successfuly !!",
             error: false,
             data: {
-                // orderId: _id,
-                // orderNumber: orderNumber
+                orderId: _id,
+                orderNumber: orderNumber
             },
         }
     } catch (err) {
