@@ -46,6 +46,23 @@ async function getOrderDetails(orderId) {
     }
 }
 
+const isExistOfferOnProduct = (startDateAsString, endDateAsString) => {
+    if (
+        startDateAsString &&
+        endDateAsString
+    ) {
+        const currentDate = new Date();
+        if (
+            currentDate >= new Date(startDateAsString) &&
+            currentDate <= new Date(endDateAsString)
+        ) {
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
+
 async function createNewOrder(orderDetails) {
     try {
         const existOrderProducts = await productModel.find({ _id: { $in: orderDetails.products.map((product) => product.productId) }});
@@ -93,18 +110,19 @@ async function createNewOrder(orderDetails) {
                 }
             }
         }
-        // let orderProductsDetails = [];
-        // for(let product of orderDetails.products) {
-        //     orderProductsDetails.push({
-        //         productId: product._id,
-        //         // name: product.name,
-        //         // unit_price: product.price,
-        //         // discount: isExistOfferOnProduct(currentDate, product.startDiscountPeriod, product.endDiscountPeriod) ? product.discountInOfferPeriod : product.discount,
-        //         // total_amount: product.price * getProductQuantity(product._id),
-        //         quantity: getProductQuantity(product._id),
-        //         // image_path: product.imagePath,
-        //     });
-        // }
+        let orderProductsDetails = [];
+        for(let product of orderedProducts) {
+            orderProductsDetails.push({
+                productId: product._id,
+                name: product.name,
+                unitPrice: product.price,
+                discount: isExistOfferOnProduct(product.startDiscountPeriod, product.endDiscountPeriod) ? product.discountInOfferPeriod : product.discount,
+                totalAmount: product.price * product.quantity,
+                quantity: product.quantity,
+                imagePath: product.imagePath,
+            });
+        }
+        console.log(orderProductsDetails)
         // const ordersCount = await orderModel.countDocuments();
         
         // const newOrder = new orderModel({ ...orderDetails, orderNumber: ordersCount + 1 });
