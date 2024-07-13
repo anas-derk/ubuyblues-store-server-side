@@ -122,15 +122,15 @@ async function createNewOrder(orderDetails) {
             }
         }
         let orderProductsDetails = [];
-        for(let product of orderedProducts) {
+        for(let i = 0; i < orderedProducts.length; i++) {
             orderProductsDetails.push({
-                productId: product._id,
-                name: product.name,
-                unitPrice: product.price,
-                discount: isExistOfferOnProduct(product.startDiscountPeriod, product.endDiscountPeriod) ? product.discountInOfferPeriod : product.discount,
-                totalAmount: product.price * product.quantity,
-                quantity: product.quantity,
-                imagePath: product.imagePath,
+                productId: orderedProducts[i]._id,
+                name: orderedProducts[i].name,
+                unitPrice: orderedProducts[i].price,
+                discount: isExistOfferOnProduct(orderedProducts[i].startDiscountPeriod, orderedProducts[i].endDiscountPeriod) ? orderedProducts[i].discountInOfferPeriod : orderedProducts[i].discount,
+                totalAmount: orderedProducts[i].price * orderDetails.products[i].quantity,
+                quantity: orderDetails.products[i].quantity,
+                imagePath: orderedProducts[i].imagePath,
             });
         }
         console.log(orderProductsDetails)
