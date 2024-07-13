@@ -1,6 +1,6 @@
 // Import  Order Model Object
 
-const { orderModel, userModel, adminModel, productsWalletModel } = require("../models/all.models");
+const { orderModel, userModel, adminModel, productsWalletModel, productModel, mongoose } = require("../models/all.models");
 
 async function getOrdersCount(filters) {
     try {
@@ -48,45 +48,83 @@ async function getOrderDetails(orderId) {
 
 async function createNewOrder(orderDetails) {
     try {
-        const ordersCount = await orderModel.countDocuments();
-        const newOrder = new orderModel({ ...orderDetails, orderNumber: ordersCount + 1 });
-        const { _id, orderNumber } = await newOrder.save();
-        if (orderDetails.customerId) {
-            const user = await userModel.findOne({ _id: orderDetails.customerId });
-            if (user) {
-                let newProductsForUserInsideTheWallet = [];
-                const orderProducts = await productsWalletModel.find({ productId: { $in: orderDetails.order_products.map((product) => product.productId) }, userId: orderDetails.customerId });
-                for (let i = 0; i < orderDetails.order_products.length; i++) {
-                    const wallet_productIndex = orderProducts.findIndex((wallet_product) => wallet_product.productId == orderDetails.order_products[i].productId);
-                    if (wallet_productIndex == -1) {
-                        newProductsForUserInsideTheWallet.push({
-                            name: orderDetails.order_products[i].name,
-                            price: orderDetails.order_products[i].unit_price,
-                            imagePath: orderDetails.order_products[i].image_path,
-                            productId: orderDetails.order_products[i].productId,
-                            userId: orderDetails.customerId
-                        });
+        const existOrderProducts = await productModel.find({ _id: { $in: orderDetails.products.map((product) => product.productId) }});
+        if (existOrderProducts.length === 0) {
+            return {
+                msg: "Sorry, Please Send At Least One Product !!",
+                error: true,
+                data: {},
+            }
+        }
+        if (existOrderProducts.length < orderDetails.products.length) {
+            for(let product of orderDetails.products) {
+                let isExistProduct = false;
+                for(let existProduct of existOrderProducts) {
+                    if ((new mongoose.Types.ObjectId(product.productId)).equals(existProduct._id)) {
+                        isExistProduct = true;
+                        break;
                     }
                 }
-                if (newProductsForUserInsideTheWallet.length > 0) {
-                    await productsWalletModel.insertMany(newProductsForUserInsideTheWallet);
-                }
-            }
-            else {
-                await orderModel.deleteOne({ orderNumber });
-                return {
-                    msg: "Sorry, This User Is Not Exist !!",
-                    error: true,
-                    data: {},
+                if (!isExistProduct) {
+                    return {
+                        msg: `Sorry, Product Id: ${product.productId} Is Not Exist !!`,
+                        error: true,
+                        data: {},
+                    }
                 }
             }
         }
+        for(let product of orderDetails.products) {
+            for(let existProduct of existOrderProducts) {
+                if ((new mongoose.Types.ObjectId(product.productId)).equals(existProduct._id) && product.quantity > existProduct.quantity) {
+                    return {
+                        msg: `Sorry, Quantity For Product Id: ${product.productId} Greater Than Specific Quantity ( ${product.quantity} ) !!`,
+                        error: true,
+                        data: {},
+                    }
+                }
+            }
+        }
+        
+
+        // const ordersCount = await orderModel.countDocuments();
+        // const newOrder = new orderModel({ ...orderDetails, orderNumber: ordersCount + 1 });
+        // const { _id, orderNumber } = await newOrder.save();
+        // if (orderDetails.customerId) {
+        //     const user = await userModel.findOne({ _id: orderDetails.customerId });
+        //     if (user) {
+        //         let newProductsForUserInsideTheWallet = [];
+        //         const orderProducts = await productsWalletModel.find({ productId: { $in: orderDetails.order_products.map((product) => product.productId) }, userId: orderDetails.customerId });
+        //         for (let i = 0; i < orderDetails.order_products.length; i++) {
+        //             const wallet_productIndex = orderProducts.findIndex((wallet_product) => wallet_product.productId == orderDetails.order_products[i].productId);
+        //             if (wallet_productIndex == -1) {
+        //                 newProductsForUserInsideTheWallet.push({
+        //                     name: orderDetails.order_products[i].name,
+        //                     price: orderDetails.order_products[i].unit_price,
+        //                     imagePath: orderDetails.order_products[i].image_path,
+        //                     productId: orderDetails.order_products[i].productId,
+        //                     userId: orderDetails.customerId
+        //                 });
+        //             }
+        //         }
+        //         if (newProductsForUserInsideTheWallet.length > 0) {
+        //             await productsWalletModel.insertMany(newProductsForUserInsideTheWallet);
+        //         }
+        //     }
+        //     else {
+        //         await orderModel.deleteOne({ orderNumber });
+        //         return {
+        //             msg: "Sorry, This User Is Not Exist !!",
+        //             error: true,
+        //             data: {},
+        //         }
+        //     }
+        // }
         return {
             msg: "Creating New Order Has Been Successfuly !!",
             error: false,
             data: {
-                orderId: _id,
-                orderNumber: orderNumber
+                existOrderProducts
             },
         }
     } catch (err) {
