@@ -276,8 +276,8 @@ const userSchema = mongoose.Schema({
             default: "",
         },
         postalCode: {
-            type: Number,
-            default: 1,
+            type: String,
+            default: "",
         },
         phoneNumber: {
             type: String,
