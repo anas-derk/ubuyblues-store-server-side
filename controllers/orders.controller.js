@@ -57,7 +57,6 @@ async function postNewOrder(req, res) {
         res.json(await ordersManagmentFunctions.createNewOrder(req.body));
     }
     catch(err) {
-        console.log(err);
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
     }
 }
@@ -65,35 +64,39 @@ async function postNewOrder(req, res) {
 async function postNewPaymentOrderByTap(req, res) {
     try{
         const orderData = req.body;
-        const newOrder = await ordersManagmentFunctions.createNewOrder(orderData);
-        const response = await post(`${process.env.TAP_PAYMENT_GATEWAY_BASE_API_URL}/charges`, {
-            amount: orderData.order_amount,
-            currency: "USD",
-            receipt: {
-                email: true,
-                sms: false
-            },
-            customer: {
-                first_name: orderData.billing_address.first_name,
-                last_name: orderData.billing_address.last_name,
-                email: orderData.billing_address.email
-            },
-            source: {
-                id: "src_all"
-            },
-            reference: {
-                transaction: newOrder.data.orderId,
-                order: newOrder.data.orderNumber,
-            },
-            redirect: {
-                url: `${process.env.NODE_ENV === "test" ? "http://localhost:3000" : "https://ubuyblues.com"}/confirmation/${newOrder.data.orderId}?country=${req.query.country}`
-            }
-        }, {
-            headers: {
-                Authorization: `Bearer ${process.env.TAP_PAYMENT_GATEWAY_SECRET_KEY}`
-            }
-        });
-        res.json(getResponseObject("Creating New Payment Order By Tap Process Has Been Successfully !!", false, response.data));
+        const result = await ordersManagmentFunctions.createNewOrder(orderData);
+        if (!result.error) {
+            const response = await post(`${process.env.TAP_PAYMENT_GATEWAY_BASE_API_URL}/charges`, {
+                amount: result.data.orderAmount,
+                currency: "USD",
+                receipt: {
+                    email: true,
+                    sms: false
+                },
+                customer: {
+                    first_name: orderData.billingAddress.firstName,
+                    last_name: orderData.billingAddress.lastName,
+                    email: orderData.billingAddress.email
+                },
+                source: {
+                    id: "src_all"
+                },
+                reference: {
+                    transaction: result.data.orderId,
+                    order: result.data.orderNumber,
+                },
+                redirect: {
+                    url: `${process.env.NODE_ENV === "test" ? "http://localhost:3000" : "https://ubuyblues.com"}/confirmation/${newOrder.data.orderId}?country=${req.query.country}`
+                }
+            }, {
+                headers: {
+                    Authorization: `Bearer ${process.env.TAP_PAYMENT_GATEWAY_SECRET_KEY}`
+                }
+            });
+            res.json(getResponseObject("Creating New Payment Order By Tap Process Has Been Successfully !!", false, response.data));
+            return;
+        }
+        return result;
     }
     catch(err) {
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));

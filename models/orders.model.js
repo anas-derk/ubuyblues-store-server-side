@@ -163,7 +163,7 @@ async function createNewOrder(orderDetails) {
             shippingAddress: orderDetails.shippingAddress,
             products: orderProductsDetails,
         });
-        const { _id, orderNumber } = await newOrder.save();
+        const { _id, orderNumber, orderAmount } = await newOrder.save();
         const bulkOps = orderProductsDetails.map((product) => ({
             updateOne: {
                 filter: { _id: new mongoose.Types.ObjectId(product.productId) },
@@ -195,7 +195,8 @@ async function createNewOrder(orderDetails) {
             error: false,
             data: {
                 orderId: _id,
-                orderNumber: orderNumber
+                orderNumber: orderNumber,
+                orderAmount
             },
         }
     } catch (err) {
