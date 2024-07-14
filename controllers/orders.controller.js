@@ -96,7 +96,7 @@ async function postNewPaymentOrderByTap(req, res) {
             res.json(getResponseObject("Creating New Payment Order By Tap Process Has Been Successfully !!", false, response.data));
             return;
         }
-        return result;
+        res.json(result);
     }
     catch(err) {
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
