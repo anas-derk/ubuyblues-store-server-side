@@ -99,6 +99,14 @@ function validateIsNotExistDublicateProductId(products, res, nextFunc) {
     nextFunc();
 }
 
+function validateCheckoutStatus(checkoutStatus, res, nextFunc, errorMsg = "Sorry, Please Send Valid Checkout Status ( 'Checkout Incomplete' Or 'Checkout Successfull' ) !!") {
+    if (!["Checkout Incomplete", "Checkout Successfull"].includes(checkoutStatus)) {
+        res.status(400).json(getResponseObject(errorMsg, true, {}));
+        return;
+    }
+    nextFunc();
+}
+
 function keyGeneratorForRequestsRateLimit(req) {
     const ipAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     const ipWithoutPort = ipAddress.split(',')[0];
@@ -117,5 +125,6 @@ module.exports = {
     validateCountry,
     validateName,
     validateIsNotExistDublicateProductId,
+    validateCheckoutStatus,
     keyGeneratorForRequestsRateLimit,
 }

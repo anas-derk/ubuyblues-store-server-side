@@ -2,7 +2,7 @@ const ordersRouter = require("express").Router();
 
 const ordersController = require("../controllers/orders.controller");
 
-const { validateJWT, validateNumbersIsPositive, validateNumberIsNotFloat, validateCountry, validateName, validateEmail, validateIsNotExistDublicateProductId } = require("../middlewares/global.middlewares");
+const { validateJWT, validateNumbersIsPositive, validateNumberIsNotFloat, validateCountry, validateName, validateEmail, validateIsNotExistDublicateProductId, validateCheckoutStatus } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -73,8 +73,9 @@ ordersRouter.post("/create-new-order",
     (req, res, next) => {
         const orderDetails = req.body;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Customer Id", fieldValue: orderDetails?.customerId, dataType: "ObjectId", isRequiredValue: false },
             { fieldName: "Country", fieldValue: req.query.country, dataType: "string", isRequiredValue: true },
+            { fieldName: "Customer Id", fieldValue: orderDetails?.customerId, dataType: "ObjectId", isRequiredValue: false },
+            { fieldName: "Checkout Status", fieldValue: orderDetails?.checkoutStatus, dataType: "string", isRequiredValue: false },
             { fieldName: "First Name In Billing Address", fieldValue: orderDetails?.billingAddress?.firstName, dataType: "string", isRequiredValue: true },
             { fieldName: "Last Name In Billing Address", fieldValue: orderDetails?.billingAddress?.lastName, dataType: "string", isRequiredValue: true },
             { fieldName: "Company Name In Billing Address", fieldValue: orderDetails?.billingAddress?.companyName, dataType: "string", isRequiredValue: false },
@@ -108,8 +109,16 @@ ordersRouter.post("/create-new-order",
             ]))
         , res, next);
     },
-    (req, res, next) => validateCountry(req.query.country, res, next),
     (req, res, next) => validateName(req.query.country, res, next, "Sorry, Please Send Valid Country Name !!"),
+    (req, res, next) => validateCountry(req.query.country, res, next),
+    (req, res, next) => {
+        const { checkoutStatus } = req.body;
+        if (checkoutStatus) {
+            validateCheckoutStatus(checkoutStatus, res, next);
+            return;
+        }
+        next();
+    },
     (req, res, next) => validateName(req.body.billingAddress.firstName, res, next, "Sorry, Please Send Valid First Name In Billing Address !!"),
     (req, res, next) => validateName(req.body.billingAddress.lastName, res, next, "Sorry, Please Send Valid Last Name In Billing Address !!"),
     (req, res, next) => validateName(req.body.billingAddress.country, res, next, "Sorry, Please Send Valid Country Name In Billing Address !!"),
