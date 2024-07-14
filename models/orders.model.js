@@ -65,16 +65,16 @@ const isExistOfferOnProduct = (startDateAsString, endDateAsString) => {
 
 async function createNewOrder(orderDetails) {
     try {
-        // if (orderDetails.customerId) {
-        //     const user = await userModel.findById(orderDetails.customerId);
-        //     if (user) {
-        //         return {
-        //             msg: "Sorry, This User Is Not Exist !!",
-        //             error: true,
-        //             data: {},
-        //         }
-        //     }
-        // }
+        if (orderDetails.customerId) {
+            const user = await userModel.findById(orderDetails.customerId);
+            if (!user) {
+                return {
+                    msg: "Sorry, This User Is Not Exist !!",
+                    error: true,
+                    data: {},
+                }
+            }
+        }
         const existOrderProducts = await productModel.find({ _id: { $in: orderDetails.products.map((product) => product.productId) }});
         if (existOrderProducts.length === 0) {
             return {
@@ -164,6 +164,13 @@ async function createNewOrder(orderDetails) {
             products: orderProductsDetails,
         });
         const { _id, orderNumber } = await newOrder.save();
+        const bulkOps = orderProductsDetails.map((product) => ({
+            updateOne: {
+                filter: { _id: new mongoose.Types.ObjectId(product.productId) },
+                update: { $inc: { numberOfOrders: 1, quantity: -1 * product.quantity} }
+            }
+        }));
+        await productModel.bulkWrite(bulkOps);
         if (orderDetails.customerId) {
             let newProductsForUserInsideTheWallet = [];
             const orderProducts = await productsWalletModel.find({ productId: { $in: orderProductsDetails.map((product) => product.productId) }, userId: orderDetails.customerId });
