@@ -28,10 +28,10 @@ function isValidLanguage(language) {
     return ["ar", "en", "de", "tr"].includes(language);
 }
 
-function calcOrderAmount(order_lines) {
+function calcOrderAmount(products) {
     let newOrderAmount = 0;
-    for (let i = 0; i < order_lines.length; i++) {
-        newOrderAmount += order_lines[i].total_amount;
+    for (let i = 0; i < products.length; i++) {
+        newOrderAmount += products[i].totalAmount;
     }
     return newOrderAmount;
 }

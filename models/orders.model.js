@@ -271,14 +271,14 @@ async function updateOrderProduct(authorizationId, orderId, productId, newOrderP
                 const order = await orderModel.findOne({ _id: orderId });
                 if (order) {
                     if (order.storeId === admin.storeId) {
-                        const productIndex = order.order_products.findIndex((order_product) => order_product.productId == productId);
+                        const productIndex = order.products.findIndex((order_product) => order_product.productId == productId);
                         if (productIndex >= 0) {
-                            order.order_products[productIndex].quantity = newOrderProductDetails.quantity;
-                            order.order_products[productIndex].name = newOrderProductDetails.name;
-                            order.order_products[productIndex].unit_price = newOrderProductDetails.unit_price;
-                            order.order_products[productIndex].total_amount = newOrderProductDetails.total_amount;
+                            order.products[productIndex].quantity = newOrderProductDetails.quantity;
+                            order.products[productIndex].name = newOrderProductDetails.name;
+                            order.products[productIndex].unitPrice = newOrderProductDetails.unitPrice;
+                            order.products[productIndex].totalAmount = newOrderProductDetails.totalAmount;
                             const { calcOrderAmount } = require("../global/functions");
-                            await orderModel.updateOne({ _id: orderId }, { order_products: order.order_products, order_amount: calcOrderAmount(order.order_products) });
+                            await orderModel.updateOne({ _id: orderId }, { products: order.products, orderAmount: calcOrderAmount(order.products) });
                             return {
                                 msg: "Updating Order Details Process Has Been Successfuly !!",
                                 error: false,
