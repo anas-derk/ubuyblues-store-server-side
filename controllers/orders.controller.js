@@ -86,7 +86,10 @@ async function postNewPaymentOrderByTap(req, res) {
                     order: result.data.orderNumber,
                 },
                 redirect: {
-                    url: `${process.env.NODE_ENV === "test" ? "http://localhost:3000" : "https://ubuyblues.com"}/confirmation/${newOrder.data.orderId}?country=${req.query.country}`
+                    url: `${process.env.NODE_ENV === "test" ? "http://localhost:3000" : "https://ubuyblues.com"}/confirmation/${result.data.orderId}?country=${req.query.country}`
+                },
+                post: {
+                    url: `https://api.ubuyblues.com/orders/handle-tap-checkout-complete/${result.data.orderId}`
                 }
             }, {
                 headers: {
@@ -97,6 +100,15 @@ async function postNewPaymentOrderByTap(req, res) {
             return;
         }
         res.json(result);
+    }
+    catch(err) {
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
+}
+
+async function postTapCheckoutComplete(req, res) {
+    try{
+        res.json(await ordersManagmentFunctions.changeCheckoutStatusToSuccessfull(req.params.orderId));
     }
     catch(err) {
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
@@ -174,6 +186,7 @@ module.exports = {
     getOrderDetails,
     postNewOrder,
     postNewPaymentOrderByTap,
+    postTapCheckoutComplete,
     putOrder,
     putOrderProduct,
     deleteOrder,

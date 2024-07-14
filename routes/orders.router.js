@@ -279,6 +279,15 @@ ordersRouter.post("/create-payment-order-by-tap",
     ordersController.postNewPaymentOrderByTap
 );
 
+ordersRouter.post("/handle-tap-checkout-complete/:orderId",
+    (req, res, next) => {
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Order Id", fieldValue: req.params.orderId, dataType: "ObjectId", isRequiredValue: true },
+        ], res, next);
+    },
+    ordersController.postTapCheckoutComplete
+);
+
 ordersRouter.post("/update-order/:orderId",
     validateJWT,
     (req, res, next) => {

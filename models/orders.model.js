@@ -229,7 +229,7 @@ async function updateOrder(authorizationId, orderId, newOrderDetails) {
                     msg: "Sorry, This Order Is Not Found !!",
                     error: true,
                     data: {},
-                };
+                }
             }
             return {
                 msg: "Sorry, Permission Denied !!",
@@ -244,6 +244,22 @@ async function updateOrder(authorizationId, orderId, newOrderDetails) {
         }
     } catch (err) {
         throw Error(err);
+    }
+}
+
+async function changeCheckoutStatusToSuccessfull(orderId) {
+    const order = await orderModel.findOneAndUpdate({ _id: orderId }, { checkoutStatus: "Checkout Successfull" });
+    if (order) {
+        return {
+            msg: "Updating Order Checkout Status Process Has Been Successfully !!",
+            error: false,
+            data: {},
+        }
+    }
+    return {
+        msg: "Sorry, This Order Is Not Found !!",
+        error: true,
+        data: {},
     }
 }
 
@@ -406,6 +422,7 @@ module.exports = {
     getOrderDetails,
     createNewOrder,
     updateOrder,
+    changeCheckoutStatusToSuccessfull,
     updateOrderProduct,
     deleteOrder,
     deleteProductFromOrder,
