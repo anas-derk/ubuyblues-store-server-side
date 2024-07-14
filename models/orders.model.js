@@ -150,9 +150,10 @@ async function createNewOrder(orderDetails) {
         }
         for(let product of orderProductsDetails){
             totalPrices.totalPriceBeforeDiscount += product.totalAmount;
-            totalPrices.totalDiscount += product.discount;
+            totalPrices.totalDiscount += product.discount * product.quantity;
         }
         totalPrices.totalPriceAfterDiscount = totalPrices.totalPriceBeforeDiscount - totalPrices.totalDiscount;
+        console.log(totalPrices)
         const ordersCount = await orderModel.countDocuments();
         const newOrder = new orderModel({
             storeId: existOrderProducts[0].storeId,
