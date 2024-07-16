@@ -74,6 +74,36 @@
             <p>
                 تفاصيل الدفع:
             </p>
+            <table style="text-align: center; width: 100%;">
+                <thead>
+                    <th style="padding: 10px 0;">صورة المنتج</th>
+                    <th style="padding: 10px 0;">اسم المنتج</th>
+                    <th style="padding: 10px 0;">العدد</th>
+                    <th style="padding: 10px 0;">الخصم</th>
+                    <th style="padding: 10px 0;">السعر</th>
+                </thead>
+                <tbody>
+                    <% for( let i = 0; i < orderDetails.products.length; i++ ) { %>
+                        <tr>
+                            <td style="padding: 10px 0;">
+                                <img src="https://api.ubuyblues.com/<%= orderDetails.products[i].imagePath %>" alt="<%= orderDetails.products[i].name %> Image">
+                            </td>
+                            <td style="padding: 10px 0;">
+                                <%= orderDetails.products[i].name %>
+                            </td>
+                            <td style="padding: 10px 0;">
+                                <%= orderDetails.products[i].quantity %>
+                            </td>
+                            <td style="padding: 10px 0;">
+                                <%= orderDetails.products[i].discount %>
+                            </td>
+                            <td style="padding: 10px 0;">
+                                <%= orderDetails.products[i].unitPrice %>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
             <p>
                 المبلغ الإجمالي: <%= orderDetails.totalPriceBeforeDiscount %>
             </p>
