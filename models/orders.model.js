@@ -256,10 +256,30 @@ async function updateOrder(authorizationId, orderId, newOrderDetails) {
 async function changeCheckoutStatusToSuccessfull(orderId) {
     const order = await orderModel.findOneAndUpdate({ _id: orderId }, { checkoutStatus: "Checkout Successfull" });
     if (order) {
+        const totalPrices = {
+            totalPriceBeforeDiscount: 0,
+            totalDiscount: 0,
+            totalPriceAfterDiscount: 0
+        }
+        for(let product of order.products){
+            totalPrices.totalPriceBeforeDiscount += product.totalAmount;
+            totalPrices.totalDiscount += product.discount * product.quantity;
+            totalPrices.totalPriceAfterDiscount = totalPrices.totalPriceBeforeDiscount - totalPrices.totalDiscount;
+        }
         return {
             msg: "Updating Order Checkout Status Process Has Been Successfully !!",
             error: false,
-            data: {},
+            data: {
+                orderId: order._id,
+                orderNumber: order.orderNumber,
+                billingAddress: order.billingAddress,
+                shippingAddress: order.shippingAddress,
+                products: order.products,
+                totalPriceBeforeDiscount: totalPrices.totalPriceBeforeDiscount,
+                totalDiscount: totalPrices.totalDiscount,
+                totalPriceAfterDiscount: totalPrices.totalPriceAfterDiscount,
+                shippingFee: order.shippingFee
+            },
         }
     }
     return {

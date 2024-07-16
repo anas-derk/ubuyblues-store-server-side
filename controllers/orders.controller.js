@@ -122,7 +122,11 @@ async function postNewPaymentOrderByTap(req, res) {
 
 async function postTapCheckoutComplete(req, res) {
     try{
-        res.json(await ordersManagmentFunctions.changeCheckoutStatusToSuccessfull(req.params.orderId));
+        const result = await ordersManagmentFunctions.changeCheckoutStatusToSuccessfull(req.params.orderId);
+        res.json(result);
+        if (!result.error) {
+            await sendReceiveOrderEmail(result.data.billingAddress.email, result.data, "ar");
+        }
     }
     catch(err) {
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
