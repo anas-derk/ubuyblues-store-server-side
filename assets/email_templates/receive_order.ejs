@@ -48,19 +48,43 @@
                 معلومات الطلب الخاص بك :
             </p>
             <p>
-                عنوان التوصيل: 11
+                عنوان التوصيل:
+            </p>
+            <ul>
+                <li>الاسم الكامل: <%= orderDetails.shippingAddress.firstName %> <%= orderDetails.shippingAddress.lastName %></li>
+                <li>الدولة: <%= orderDetails.shippingAddress.country %></li>
+                <li>المدينة: <%= orderDetails.shippingAddress.city %></li>
+                <li>عنوان الشارع / الحي: <%= orderDetails.shippingAddress.streetAddress %></li>
+                <% if (orderDetails.shippingAddress.apartmentNumber) { %>
+                    <li>رقم الشقة: <%= orderDetails.shippingAddress.apartmentNumber %></li>
+                <% } %>
+            </ul>
+            <p>
+                عنوان الدفع:
+            </p>
+            <ul>
+                <li>الاسم الكامل: <%= orderDetails.shippingAddress.firstName %> <%= orderDetails.shippingAddress.lastName %></li>
+                <li>الدولة: <%= orderDetails.shippingAddress.country %></li>
+                <li>المدينة: <%= orderDetails.shippingAddress.city %></li>
+                <li>عنوان الشارع / الحي: <%= orderDetails.shippingAddress.streetAddress %></li>
+                <% if (orderDetails.shippingAddress.apartmentNumber) { %>
+                    <li>رقم الشقة: <%= orderDetails.shippingAddress.apartmentNumber %></li>
+                <% } %>
+            </ul>
+            <p>
+                تفاصيل الدفع:
             </p>
             <p>
-                عنوان الدفع: 11
-            </p>
-            <p>
-                تفاصيل الدفع: 11
-            </p>
-            <p>
-                المبلغ الإجمالي: 11
+                المبلغ الإجمالي: <%= orderDetails.totalPriceBeforeDiscount %>
             </p>
             <p>
                 رسوم الشحن: <%= orderDetails.shippingFee %>
+            </p>
+            <p>
+                الخصم الإجمالي: <%= orderDetails.totalDiscount %>
+            </p>
+            <p>
+                المبلغ النهائي: <%= orderDetails.totalPriceAfterDiscount %>
             </p>
             <p>
                 هل لديك أي استفسارات حول طلبك ؟
