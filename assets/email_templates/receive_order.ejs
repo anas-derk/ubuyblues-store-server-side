@@ -39,7 +39,7 @@
             </p>
             </p>
             <p>
-                رقم الطلب: 1
+                رقم الطلب: <%= orderDetails.orderNumber %>
             </p>
             <p>
                 سنعمل على تجهيزه على الفور .
@@ -56,6 +56,24 @@
             <p>
                 تفاصيل الدفع: 11
             </p>
+            <p>
+                المبلغ الإجمالي: 11
+            </p>
+            <p>
+                رسوم الشحن: <%= orderDetails.shippingFee %>
+            </p>
+            <p>
+                هل لديك أي استفسارات حول طلبك ؟
+            </p>
+            <p>
+                فريق خدمة الزبائن جاهز لمساعدتك على الإيميل:
+            </p>
+            <a href="mailto:support@ubuyblues.com">support@ubuyblues.com</a>
+            <div class="notes" style="text-align: center; border: 1px solid #000;">
+                <h3>تم إرسال هذا البريد الالكتروني بشكل تلقائي .</h3>
+                <h3>يرجى عدم الدم على هذه الرسالة .</h3>
+                <h3>جميع الحقوق محفوظة لـ Ubuyblues</h3>
+            </div>
             <h4>أطيب التحيات,</h4>
             <h4 style="line-height: 0; color: #6A017A;">فريق عمل Ubuyblues</h4> 
         </section>

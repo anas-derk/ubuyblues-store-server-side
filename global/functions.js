@@ -232,6 +232,31 @@ async function sendDeleteStoreEmail(email, adminId, storeId, language) {
     return result;
 }
 
+async function sendReceiveOrderEmail(email, orderDetails, language) {
+    const result = await getPasswordForBussinessEmail(process.env.BUSSINESS_EMAIL);
+    if (!result.error) {
+        const templateContent =  readFileSync(join(__dirname, "..", "assets", "email_templates", "receive_order.ejs"), "utf-8");
+        const compiledTemplate = compile(templateContent);
+        const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ orderDetails, language });
+        return new Promise((resolve, reject) => {
+            transporterObj(result.data).sendMail({
+                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                to: email,
+                subject: "Receive Order On Ubuyblues",
+                html: htmlContentAfterCompilingEjsTemplateFile,
+            }, function (error, info) {
+                if (error) reject(error);
+                resolve({
+                    msg: "Sending Receive Order Email On Ubuyblues Store Process Has Been Successfully !!",
+                    error: false,
+                    data: {},
+                });
+            });
+        });
+    }
+    return result;
+}
+
 function getResponseObject(msg, isError, data) {
     return {
         msg,
@@ -320,6 +345,7 @@ module.exports = {
     sendRejectStoreEmail,
     sendBlockStoreEmail,
     sendDeleteStoreEmail,
+    sendReceiveOrderEmail,
     sendConfirmRequestAddStoreArrivedEmail,
     getResponseObject,
     checkIsExistValueForFieldsAndDataTypes,

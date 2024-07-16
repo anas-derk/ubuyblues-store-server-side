@@ -1,4 +1,4 @@
-const { getResponseObject } = require("../global/functions");
+const { getResponseObject, sendReceiveOrderEmail } = require("../global/functions");
 
 const ordersManagmentFunctions = require("../models/orders.model");
 
@@ -54,7 +54,21 @@ async function getOrderDetails(req, res) {
 
 async function postNewOrder(req, res) {
     try{
-        res.json(await ordersManagmentFunctions.createNewOrder(req.body));
+        const result = await ordersManagmentFunctions.createNewOrder(req.body);
+        if (!result.error) {
+            if (req.body.checkoutStatus === "Checkout Successfull") {
+                await sendReceiveOrderEmail(result.data.billingAddress.email, result.data, "ar");
+            }
+            res.json({
+                ...result,
+                data: {
+                    orderId: result.data.orderId,
+                    orderNumber: result.data.orderNumber
+                }
+            });
+            return;
+        }
+        res.json(result);
     }
     catch(err) {
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
@@ -67,7 +81,7 @@ async function postNewPaymentOrderByTap(req, res) {
         const result = await ordersManagmentFunctions.createNewOrder(orderData);
         if (!result.error) {
             const response = await post(`${process.env.TAP_PAYMENT_GATEWAY_BASE_API_URL}/charges`, {
-                amount: result.data.orderAmount,
+                amount: result.data.totalPriceAfterDiscount,
                 currency: "USD",
                 receipt: {
                     email: true,

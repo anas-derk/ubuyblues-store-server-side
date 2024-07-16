@@ -417,6 +417,10 @@ const orderSchema = mongoose.Schema({
         type: Number,
         default: 0,
     },
+    shippingFee: {
+        type: Number,
+        default: 0
+    },
     checkoutStatus: {
         type: String,
         default: "Checkout Incomplete",

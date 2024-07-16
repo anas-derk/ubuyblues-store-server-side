@@ -153,7 +153,6 @@ async function createNewOrder(orderDetails) {
             totalPrices.totalDiscount += product.discount * product.quantity;
         }
         totalPrices.totalPriceAfterDiscount = totalPrices.totalPriceBeforeDiscount - totalPrices.totalDiscount;
-        console.log(totalPrices)
         const ordersCount = await orderModel.countDocuments();
         const newOrder = new orderModel({
             storeId: existOrderProducts[0].storeId,
@@ -164,7 +163,7 @@ async function createNewOrder(orderDetails) {
             shippingAddress: orderDetails.shippingAddress,
             products: orderProductsDetails,
         });
-        const { _id, orderNumber, orderAmount } = await newOrder.save();
+        const { _id, orderNumber, products } = await newOrder.save();
         const bulkOps = orderProductsDetails.map((product) => ({
             updateOne: {
                 filter: { _id: new mongoose.Types.ObjectId(product.productId) },
@@ -197,7 +196,13 @@ async function createNewOrder(orderDetails) {
             data: {
                 orderId: _id,
                 orderNumber: orderNumber,
-                orderAmount
+                billingAddress: orderDetails.billingAddress,
+                shippingAddress: orderDetails.shippingAddress,
+                products,
+                totalPriceBeforeDiscount: totalPrices.totalPriceBeforeDiscount,
+                totalDiscount: totalPrices.totalDiscount,
+                totalPriceAfterDiscount: totalPrices.totalPriceAfterDiscount,
+                shippingFee: 0
             },
         }
     } catch (err) {
