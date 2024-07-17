@@ -2,7 +2,7 @@ const ordersRouter = require("express").Router();
 
 const ordersController = require("../controllers/orders.controller");
 
-const { validateJWT, validateNumbersIsPositive, validateNumberIsNotFloat, validateCountry, validateName, validateEmail, validateIsNotExistDublicateProductId, validateCheckoutStatus } = require("../middlewares/global.middlewares");
+const { validateJWT, validateNumbersIsPositive, validateNumbersIsNotFloat, validateCountry, validateName, validateEmail, validateIsNotExistDublicateProductId, validateCheckoutStatus } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -31,14 +31,14 @@ ordersRouter.get("/orders-count",
     (req, res, next) => {
         const { pageNumber } = req.query;
         if (pageNumber) {
-            return validateNumberIsNotFloat(req.query.pageNumber, res, next, "Sorry, Please Send Valid Page Number ( Number Must Be Not Float ) !!");
+            return validateNumbersIsNotFloat([req.query.pageNumber], res, next, [], "Sorry, Please Send Valid Page Number ( Number Must Be Not Float ) !!");
         }
         next();
     },
     (req, res, next) => {
         const { pageSize } = req.query;
         if (pageSize) {
-            return validateNumberIsNotFloat(req.query.pageSize, res, next, "Sorry, Please Send Valid Page Size ( Number Must Be Not Float ) !!");
+            return validateNumbersIsNotFloat([req.query.pageSize], res, next, [], "Sorry, Please Send Valid Page Size ( Number Must Be Not Float ) !!");
         }
         next();
     },
@@ -53,10 +53,8 @@ ordersRouter.get("/all-orders-inside-the-page",
             { fieldName: "page Size", fieldValue: Number(filters.pageSize), dataType: "number", isRequiredValue: true },
         ], res, next);
     },
-    (req, res, next) => validateNumbersIsPositive([req.query.pageNumber], res, next),
-    (req, res, next) => validateNumbersIsPositive([req.query.pageSize], res, next),
-    (req, res, next) => validateNumberIsNotFloat(req.query.pageNumber, res, next),
-    (req, res, next) => validateNumberIsNotFloat(req.query.pageSize, res, next),
+    (req, res, next) => validateNumbersIsPositive([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Greater Than Zero ) !!"]),
+    (req, res, next) => validateNumbersIsNotFloat([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Not Float ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Not Float ) !!"]),
     ordersController.getAllOrdersInsideThePage
 );
 
@@ -134,7 +132,7 @@ ordersRouter.post("/create-new-order",
     (req, res, next) => {
         const { billingAddress } = req.body;
         if (billingAddress?.apartmentNumber) {
-            validateNumberIsNotFloat(req.body.billingAddress.apartmentNumber, res, next, "Sorry, Please Send Valid Apartment Number In Billing Address ( Number Must Be Not Float ) !!");
+            validateNumbersIsNotFloat(req.body.billingAddress.apartmentNumber, res, next, "Sorry, Please Send Valid Apartment Number In Billing Address ( Number Must Be Not Float ) !!");
             return;
         }
         next();
@@ -155,7 +153,7 @@ ordersRouter.post("/create-new-order",
     (req, res, next) => {
         const { billingAddress } = req.body;
         if (billingAddress?.apartmentNumber) {
-            validateNumberIsNotFloat(req.body.billingAddress.apartmentNumber, res, next, "Sorry, Please Send Valid Apartment Number In Shipping Address ( Number Must Be Not Float ) !!");
+            validateNumbersIsNotFloat(req.body.billingAddress.apartmentNumber, res, next, "Sorry, Please Send Valid Apartment Number In Shipping Address ( Number Must Be Not Float ) !!");
             return;
         }
         next();
@@ -231,7 +229,7 @@ ordersRouter.post("/create-payment-order-by-tap",
     (req, res, next) => {
         const { billingAddress } = req.body;
         if (billingAddress?.apartmentNumber) {
-            validateNumbersIsPositive([req.body.billingAddress.apartmentNumber], res, next, [], "Sorry, Please Send Valid Apartment Number In Billing Address ( Number Must Be Greater Than Zero ) !!");
+            validateNumbersIsPositive([billingAddress.apartmentNumber], res, next, [], "Sorry, Please Send Valid Apartment Number In Billing Address ( Number Must Be Greater Than Zero ) !!");
             return;
         }
         next();
@@ -239,7 +237,7 @@ ordersRouter.post("/create-payment-order-by-tap",
     (req, res, next) => {
         const { billingAddress } = req.body;
         if (billingAddress?.apartmentNumber) {
-            validateNumberIsNotFloat(req.body.billingAddress.apartmentNumber, res, next, "Sorry, Please Send Valid Apartment Number In Billing Address ( Number Must Be Not Float ) !!");
+            validateNumbersIsNotFloat([billingAddress.apartmentNumber], res, next, [], "Sorry, Please Send Valid Apartment Number In Billing Address ( Number Must Be Not Float ) !!");
             return;
         }
         next();
@@ -252,15 +250,15 @@ ordersRouter.post("/create-payment-order-by-tap",
     (req, res, next) => {
         const { billingAddress } = req.body;
         if (billingAddress?.apartmentNumber) {
-            validateNumbersIsPositive([req.body.billingAddress.apartmentNumber], res, next, [], "Sorry, Please Send Valid Apartment Number In Shipping Address ( Number Must Be Greater Than Zero ) !!");
+            validateNumbersIsPositive([billingAddress.apartmentNumber], res, next, [], "Sorry, Please Send Valid Apartment Number In Shipping Address ( Number Must Be Greater Than Zero ) !!");
             return;
         }
         next();
     },
     (req, res, next) => {
-        const { billingAddress } = req.body;
-        if (billingAddress?.apartmentNumber) {
-            validateNumberIsNotFloat(req.body.billingAddress.apartmentNumber, res, next, "Sorry, Please Send Valid Apartment Number In Shipping Address ( Number Must Be Not Float ) !!");
+        const { shippingAddress } = req.body;
+        if (shippingAddress?.apartmentNumber) {
+            validateNumbersIsNotFloat([shippingAddress.apartmentNumber], res, next, [], "Sorry, Please Send Valid Apartment Number In Shipping Address ( Number Must Be Not Float ) !!");
             return;
         }
         next();

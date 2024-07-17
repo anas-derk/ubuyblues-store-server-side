@@ -63,10 +63,12 @@ function validateNumbersIsPositive(numbers, res, nextFunc, errorMsgs, defaultMsg
     nextFunc();
 }
 
-function validateNumberIsNotFloat(number, res, nextFunc, errorMsg = "Sorry, Please Send Valid Number ( Number Must Be Not Float ) !!") {
-    if (number % 1 !== 0) {
-        res.status(400).json(getResponseObject(errorMsg, true, {}));
-        return;
+function validateNumbersIsNotFloat(numbers, res, nextFunc, errorMsgs, defaultMsg = "Sorry, Please Send Valid Number ( Number Must Be Not Float ) !!") {
+    for(let i = 0; i < numbers.length; i++) {
+        if (numbers[i] % 1 !== 0) {
+            res.status(400).json(getResponseObject(errorMsgs[i] ? errorMsgs[i] : defaultMsg, true, {}));
+            return;
+        }
     }
     nextFunc();
 }
@@ -121,7 +123,7 @@ module.exports = {
     validateCode,
     validateLanguage,
     validateNumbersIsPositive,
-    validateNumberIsNotFloat,
+    validateNumbersIsNotFloat,
     validateCountry,
     validateName,
     validateIsNotExistDublicateProductId,
