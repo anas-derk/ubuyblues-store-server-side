@@ -4,7 +4,7 @@ const productsController = require("../controllers/products.controller");
 
 const multer = require("multer");
 
-const { validateJWT } = require("../middlewares/global.middlewares");
+const { validateJWT, validateName, validateNumbersIsPositive, validateNumberIsNotFloat } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -53,11 +53,19 @@ productsRouter.post("/add-new-product",
             { fieldName: "Description", fieldValue: productInfo.description, dataType: "string", isRequiredValue: true },
             { fieldName: "Category", fieldValue: productInfo.category, dataType: "string", isRequiredValue: true },
             { fieldName: "CategoryId", fieldValue: productInfo.categoryId, dataType: "string", isRequiredValue: true },
-            { fieldName: "discount", fieldValue: Number(productInfo.discount), dataType: "number", isRequiredValue: false },
+            { fieldName: "discount", fieldValue: Number(productInfo.discount), dataType: "number", isRequiredValue: true },
+            { fieldName: "quantity", fieldValue: Number(productInfo.quantity), dataType: "number", isRequiredValue: true },
             { fieldName: "Store Id", fieldValue: productInfo.storeId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
     },
-productsController.postNewProduct);
+    (req, res, next) => validateName((Object.assign({}, req.body)).name, res, next, "Sorry, Please Send Valid Product Name !!"),
+    (req, res, next) => {
+        const productInfo = Object.assign({}, req.body);
+        validateNumbersIsPositive([productInfo.price, productInfo.discount, productInfo.quantity], res, next, ["Sorry, Please Send Valid Product Price ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Product Discount ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Product Quantity ( Number Must Be Greater Than Zero ) !!"]);
+    },
+    (req, res, next) => validateNumberIsNotFloat((Object.assign({}, req.body)).quantity, res, next, "Sorry, Please Send Valid Product Quantity !!"),
+    productsController.postNewProduct
+);
 
 productsRouter.post("/adding-new-images-to-product-gallery/:productId",
     validateJWT,

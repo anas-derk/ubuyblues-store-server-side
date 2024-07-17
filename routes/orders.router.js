@@ -17,28 +17,28 @@ ordersRouter.get("/orders-count",
     (req, res, next) => {
         const { pageNumber } = req.query;
         if (pageNumber) {
-            return validateNumbersIsPositive(req.query.pageNumber, res, next);
+            return validateNumbersIsPositive([req.query.pageNumber], res, next, [], "Sorry, Please Send Valid Page Number ( Number Must Be Greater Than Zero ) !!");
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { pageSize } = req.query;
+        if (pageSize) {
+            return validateNumbersIsPositive([req.query.pageSize], res, next, [], "Sorry, Please Send Valid Page Number ( Number Must Be Greater Than Zero ) !!");
         }
         next();
     },
     (req, res, next) => {
         const { pageNumber } = req.query;
         if (pageNumber) {
-            return validateNumbersIsPositive(req.query.pageSize, res, next);
+            return validateNumberIsNotFloat(req.query.pageNumber, res, next, "Sorry, Please Send Valid Page Number ( Number Must Be Not Float ) !!");
         }
         next();
     },
     (req, res, next) => {
-        const { pageNumber } = req.query;
-        if (pageNumber) {
-            return validateNumberIsNotFloat(req.query.pageNumber, res, next);
-        }
-        next();
-    },
-    (req, res, next) => {
-        const { pageNumber } = req.query;
-        if (pageNumber) {
-            return validateNumberIsNotFloat(req.query.pageSize, res, next);
+        const { pageSize } = req.query;
+        if (pageSize) {
+            return validateNumberIsNotFloat(req.query.pageSize, res, next, "Sorry, Please Send Valid Page Size ( Number Must Be Not Float ) !!");
         }
         next();
     },
@@ -53,8 +53,8 @@ ordersRouter.get("/all-orders-inside-the-page",
             { fieldName: "page Size", fieldValue: Number(filters.pageSize), dataType: "number", isRequiredValue: true },
         ], res, next);
     },
-    (req, res, next) => validateNumbersIsPositive(req.query.pageNumber, res, next),
-    (req, res, next) => validateNumbersIsPositive(req.query.pageSize, res, next),
+    (req, res, next) => validateNumbersIsPositive([req.query.pageNumber], res, next),
+    (req, res, next) => validateNumbersIsPositive([req.query.pageSize], res, next),
     (req, res, next) => validateNumberIsNotFloat(req.query.pageNumber, res, next),
     (req, res, next) => validateNumberIsNotFloat(req.query.pageSize, res, next),
     ordersController.getAllOrdersInsideThePage
