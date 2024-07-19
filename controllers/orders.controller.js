@@ -103,7 +103,7 @@ async function postNewPaymentOrderByTap(req, res) {
                     url: `${process.env.NODE_ENV === "test" ? "http://localhost:3000" : "https://ubuyblues.com"}/confirmation/${result.data.orderId}?country=${req.query.country}`
                 },
                 post: {
-                    url: `https://api.ubuyblues.com/orders/handle-tap-checkout-complete/${result.data.orderId}`
+                    url: `https://api.ubuyblues.com/orders/handle-checkout-complete/${result.data.orderId}`
                 }
             }, {
                 headers: {
@@ -120,7 +120,7 @@ async function postNewPaymentOrderByTap(req, res) {
     }
 }
 
-async function postTapCheckoutComplete(req, res) {
+async function postCheckoutComplete(req, res) {
     try{
         const result = await ordersManagmentFunctions.changeCheckoutStatusToSuccessfull(req.params.orderId);
         res.json(result);
@@ -204,7 +204,7 @@ module.exports = {
     getOrderDetails,
     postNewOrder,
     postNewPaymentOrderByTap,
-    postTapCheckoutComplete,
+    postCheckoutComplete,
     putOrder,
     putOrderProduct,
     deleteOrder,
