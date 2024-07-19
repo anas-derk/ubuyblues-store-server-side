@@ -99,7 +99,7 @@ async function addingNewImagesToProductGallery(authorizationId, productId, newGa
 
 async function getProductsByIds(productsIds) {
     try{
-        const products = await productModel.find({ _id: { $in: productsIds } });
+        const products = await productModel.find({ _id: { $in: productsIds }, quantity: { $gte: 1 } });
         if (products.length === 0) {
             return {
                 msg: "Get Products By Ids Process Has Been Successfully !!",
@@ -138,7 +138,7 @@ async function getProductsByIdsAndStoreId(storeId, productsIds) {
             msg: "Get Products By Store Id And Ids Process Has Been Successfully !!",
             error: false,
             data: {
-                products: await productModel.find({ _id: { $in: productsIds }, storeId }),
+                products: await productModel.find({ _id: { $in: productsIds }, storeId, quantity: { $gte: 1 } }),
                 currentDate: new Date()
             },
         }
