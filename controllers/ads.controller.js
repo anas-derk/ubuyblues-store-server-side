@@ -1,0 +1,37 @@
+const { getResponseObject } = require("../global/functions");
+
+const adsOPerationsManagmentFunctions = require("../models/ads.model");
+
+async function postNewTextAd(req, res) {
+    try{
+        const { storeId, content } = req.body;
+        res.json(await adsOPerationsManagmentFunctions.addNewAd(req.data._id, { storeId, content, type: "text" }));
+    }
+    catch(err) {
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
+}
+
+async function postNewImageAd(req, res) {
+    try{
+        const uploadError = req.uploadError;
+        if (uploadError) {
+            res.status(400).json(getResponseObject(uploadError, true, {}));
+            return;
+        }
+        const bodyData = Object.assign({}, req.body);
+        const adInfo = {
+            ...{ storeId } = bodyData,
+            imagePath: req.file.path,
+        };
+        res.json(await adsOPerationsManagmentFunctions.addNewAd(req.data._id, { ...adInfo, type: "image"}));
+    }
+    catch(err) {
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
+}
+
+module.exports = {
+    postNewTextAd,
+    postNewImageAd
+}

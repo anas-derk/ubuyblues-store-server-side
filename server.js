@@ -100,6 +100,8 @@ app.listen(PORT, async () => {
 
     app.use("/ratings", require("./routes/ratings.router"));
 
+    app.use("/ads", require("./routes/ads.router"));
+
     /* End Handle The Routes */
 });
 

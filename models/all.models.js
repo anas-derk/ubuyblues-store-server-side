@@ -746,6 +746,15 @@ const productsRatingModel = mongoose.model("products_rating", productsRatingShem
 // Create Ads Schema
 
 const adsSchema = new mongoose.Schema({
+    storeId: {
+        type: String,
+        required: true,
+    },
+    type: {
+        type: String,
+        required: true,
+        enum: ["text", "image"],
+    },
     content: String,
     imagePath: String,
     dateOfPost: {

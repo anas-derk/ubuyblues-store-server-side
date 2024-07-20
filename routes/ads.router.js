@@ -4,7 +4,7 @@ const adsController = require("../controllers/ads.controller");
 
 const multer = require("multer");
 
-const { validateJWT, validateName, validateNumbersIsPositive, validateNumbersIsNotFloat } = require("../middlewares/global.middlewares");
+const { validateJWT } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -17,7 +17,19 @@ const storage = multer.diskStorage({
     },
 });
 
-adsRouter.post("/add-new-ad",
+adsRouter.post("/add-new-text-ad",
+    validateJWT,
+    (req, res, next) => {
+        const { content, storeId } = req.body;
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Content", fieldValue: content, dataType: "string", isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: storeId, dataType: "ObjectId", isRequiredValue: true },
+        ], res, next);
+    },
+    adsController.postNewTextAd
+);
+
+adsRouter.post("/add-new-image-ad",
     validateJWT,
     multer({
         storage,
@@ -38,14 +50,16 @@ adsRouter.post("/add-new-ad",
         }
     }).single("adImage"),
     (req, res, next) => {
+        const bodyData = Object.assign({}, req.body);
         const adInfo = {
-            ...Object.assign({}, req.body),
+            ...{ storeId } = bodyData,
             imagePath: req.file.path,
         };
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Ad Content", fieldValue: adInfo.content, dataType: "string", isRequiredValue: true },
             { fieldName: "Store Id", fieldValue: adInfo.storeId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
     },
-    brandsController.postNewBrand
+    adsController.postNewImageAd,
 );
+
+module.exports = adsRouter;
