@@ -743,6 +743,21 @@ const productsRatingShema = mongoose.Schema({
 
 const productsRatingModel = mongoose.model("products_rating", productsRatingShema);
 
+// Create Ads Schema
+
+const adsSchema = new mongoose.Schema({
+    content: String,
+    imagePath: String,
+    dateOfPost: {
+        type: Date,
+        default: Date.now(),
+    },
+});
+
+// Create Ads Model From Ads Schema
+
+const adsModel = mongoose.model("ad", adsSchema);
+
 module.exports = {
     mongoose,
     adminModel,
@@ -759,5 +774,6 @@ module.exports = {
     referalModel,
     favoriteProductModel,
     productsWalletModel,
-    productsRatingModel
+    productsRatingModel,
+    adsModel
 }
