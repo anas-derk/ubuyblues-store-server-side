@@ -31,7 +31,17 @@ async function postNewImageAd(req, res) {
     }
 }
 
+async function getAllAds(req, res) {
+    try{
+        res.json(await adsOPerationsManagmentFunctions.getAllAds());
+    }
+    catch(err) {
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
+}
+
 module.exports = {
     postNewTextAd,
-    postNewImageAd
+    postNewImageAd,
+    getAllAds
 }

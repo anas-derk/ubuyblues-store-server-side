@@ -62,4 +62,6 @@ adsRouter.post("/add-new-image-ad",
     adsController.postNewImageAd,
 );
 
+adsRouter.get("/all-ads", adsController.getAllAds);
+
 module.exports = adsRouter;

@@ -39,6 +39,20 @@ async function addNewAd(authorizationId, adsInfo) {
     }
 }
 
+async function getAllAds() {
+    try{
+        return {
+            msg: "Get All Ads Process Has Been Successfully !!",
+            error: false,
+            data: await adsModel.find(),
+        }
+    }
+    catch(err) {
+        throw Error(err);
+    }
+}
+
 module.exports = {
     addNewAd,
+    getAllAds
 }
