@@ -102,8 +102,116 @@ async function deleteAd(authorizationId, adId) {
     }
 }
 
+async function updateAdImage(authorizationId, adId, newAdImagePath) {
+    try{
+        const admin = await adminModel.findById(authorizationId);
+        if (admin){
+            if (!admin.isBlocked) {
+                const adInfo = await adsModel.findById(adId);
+                if (adInfo) {
+                    if (adInfo.storeId === admin.storeId) {
+                        if (adInfo.type === "image") {
+                            await adsModel.updateOne({ _id: adId }, {
+                                imagePath: newAdImagePath,
+                            });
+                            return {
+                                msg: "Change Ad Image Process Has Been Successfully !!",
+                                error: false,
+                                data: {
+                                    deletedProductImagePath: adInfo.imagePath,
+                                },
+                            }
+                        }
+                        return {
+                            msg: "Sorry, Type Of Ad Is Not Image !!",
+                            error: true,
+                            data: {},
+                        }
+                    }
+                    return {
+                        msg: "Sorry, Permission Denied !!",
+                        error: true,
+                        data: {},
+                    }
+                }
+                return {
+                    msg: "Sorry, This Ad Is Not Exist !!",
+                    error: true,
+                    data: adInfo.imagePath,
+                }
+            }
+            return {
+                msg: "Sorry, Permission Denied !!",
+                error: true,
+                data: {},
+            }
+        }
+        return {
+            msg: "Sorry, This Admin Is Not Exist !!",
+            error: true,
+            data: {},
+        }
+    }
+    catch(err) {
+        throw Error(err);
+    }
+}
+
+async function updateTextAdContent(authorizationId, adId, newTextAdContent) {
+    try {
+        const admin = await adminModel.findById(authorizationId);
+        if (admin){
+            if (!admin.isBlocked) {
+                const adInfo = await adsModel.findOne({ _id: adId });
+                if (adInfo) {
+                    if (adInfo.storeId === admin.storeId) {
+                        if (adInfo.type === "text") {
+                            await adsModel.updateOne( { _id: adId } , { content: newTextAdContent });
+                            return {
+                                msg:  "Updating Text Ad Content Process Has Been Successfuly ...",
+                                error: false,
+                                data: {},
+                            }
+                        }
+                        return {
+                            msg: "Sorry, Type Of Ad Is Not Text !!",
+                            error: true,
+                            data: {},
+                        }
+                    }
+                    return {
+                        msg: "Sorry, Permission Denied !!",
+                        error: true,
+                        data: {},
+                    }
+                }
+                return {
+                    msg: "Sorry, This Ad Is Not Exist !!",
+                    error: true,
+                    data: {},
+                };
+            }
+            return {
+                msg: "Sorry, Permission Denied !!",
+                error: true,
+                data: {},
+            }
+        }
+        return {
+            msg: "Sorry, This Admin Is Not Exist !!",
+            error: true,
+            data: {},
+        }
+    }
+    catch (err) {
+        throw Error(err);
+    }
+}
+
 module.exports = {
     addNewAd,
     getAllAds,
-    deleteAd
+    deleteAd,
+    updateAdImage,
+    updateTextAdContent
 }

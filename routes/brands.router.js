@@ -69,7 +69,7 @@ brandsRouter.delete("/:brandId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "brand Id", fieldValue: req.params.brandId, dataType: "string", isRequiredValue: true },
+            { fieldName: "brand Id", fieldValue: req.params.brandId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
     },
     brandsController.deleteBrand
@@ -79,7 +79,7 @@ brandsRouter.put("/:brandId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "brand Id", fieldValue: req.params.brandId, dataType: "string", isRequiredValue: true },
+            { fieldName: "brand Id", fieldValue: req.params.brandId, dataType: "ObjectId", isRequiredValue: true },
             { fieldName: "New Brand Title", fieldValue: req.body.newBrandTitle, dataType: "string", isRequiredValue: true },
         ], res, next);
     },

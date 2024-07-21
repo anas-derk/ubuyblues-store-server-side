@@ -234,6 +234,11 @@ productsRouter.put("/update-product-image/:productId",
             cb(null, true);
         }
     }).single("productImage"),
+    (req, res, next) => {
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
+        ], res, next);
+    },
     productsController.putProductImage
 );
 
