@@ -64,4 +64,14 @@ adsRouter.post("/add-new-image-ad",
 
 adsRouter.get("/all-ads", adsController.getAllAds);
 
+adsRouter.delete("/:adId",
+    validateJWT,
+    (req, res, next) => {
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Ad Id", fieldValue: req.params.adId, dataType: "ObjectId", isRequiredValue: true },
+        ], res, next);
+    },
+    adsController.deleteAd
+);
+
 module.exports = adsRouter;

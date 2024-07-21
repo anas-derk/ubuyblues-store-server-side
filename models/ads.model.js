@@ -52,7 +52,58 @@ async function getAllAds() {
     }
 }
 
+async function deleteAd(authorizationId, adId) {
+    try {
+        const admin = await adminModel.findById(authorizationId);
+        if (admin){
+            if (!admin.isBlocked) {
+                const adInfo = await adsModel.findOne({
+                    _id: adId,
+                });
+                if (adInfo) {
+                    if (adInfo.storeId === admin.storeId) {
+                        await adInfo.deleteOne({
+                            _id: adId,
+                        });
+                        return {
+                            msg: "Deleting Ad Process Has Been Successfuly !!",
+                            error: false,
+                            data: adInfo.type === "image" ? {
+                                deletedAdImagePath: adInfo.imagePath,
+                            } : {},
+                        }
+                    }
+                    return {
+                        msg: "Sorry, Permission Denied !!",
+                        error: true,
+                        data: {},
+                    }
+                }
+                return {
+                    msg: "Sorry, This Ad Is Not Exist !!",
+                    error: true,
+                    data: {},
+                }
+            }
+            return {
+                msg: "Sorry, Permission Denied !!",
+                error: true,
+                data: {},
+            }
+        }
+        return {
+            msg: "Sorry, This Admin Is Not Exist !!",
+            error: true,
+            data: {},
+        }
+    }
+    catch (err) {
+        throw Error(err);
+    }
+}
+
 module.exports = {
     addNewAd,
-    getAllAds
+    getAllAds,
+    deleteAd
 }

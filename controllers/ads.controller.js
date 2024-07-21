@@ -40,8 +40,28 @@ async function getAllAds(req, res) {
     }
 }
 
+async function deleteAd(req, res) {
+    try {
+        const result = await adsOPerationsManagmentFunctions.deleteAd(req.data._id, req.params.adId);
+        if(!result.error && result.data?.deletedAdImagePath) {
+            unlinkSync(result.data.deletedAdImagePath);
+        }
+        else {
+            if (result.msg === "Sorry, Permission Denied !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
+                res.status(401).json(getResponseObject("Unauthorized Error", true, {}));
+                return;
+            }
+        }
+        res.json(result);
+    }
+    catch (err) {
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
+}
+
 module.exports = {
     postNewTextAd,
     postNewImageAd,
-    getAllAds
+    getAllAds,
+    deleteAd
 }

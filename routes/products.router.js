@@ -161,7 +161,7 @@ productsRouter.delete("/gallery-images/:productId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "string", isRequiredValue: true },
+            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
             { fieldName: "Gallery Image Path", fieldValue: req.query.galleryImagePath, dataType: "string", isRequiredValue: true },
         ], res, next);
     },

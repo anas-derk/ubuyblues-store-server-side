@@ -157,7 +157,7 @@ async function deleteProduct(req, res) {
     try {
         const result = await productsManagmentFunctions.deleteProduct(req.data._id, req.params.productId);
         if(!result.error) {
-            unlinkSync(result.data.deletedProductPath);
+            unlinkSync(result.data.deletedProductImagePath);
             for (let productImagePath of result.data.galleryImagePathsForDeletedProduct) {
                 unlinkSync(productImagePath);
             }

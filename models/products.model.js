@@ -276,7 +276,7 @@ async function deleteProduct(authorizationId, productId) {
                             msg: "Deleting Product Process Has Been Successfuly !!",
                             error: false,
                             data: {
-                                deletedProductPath: productInfo.imagePath,
+                                deletedProductImagePath: productInfo.imagePath,
                                 galleryImagePathsForDeletedProduct: productInfo.galleryImagesPaths,
                             },
                         }
