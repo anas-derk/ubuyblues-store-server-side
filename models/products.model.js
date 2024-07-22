@@ -48,7 +48,7 @@ async function addNewProduct(authorizationId, productInfo) {
     }
 }
 
-async function addingNewImagesToProductGallery(authorizationId, productId, newGalleryImagePaths) {
+async function addNewImagesToProductGallery(authorizationId, productId, newGalleryImagePaths) {
     try{
         const admin = await adminModel.findById(authorizationId);
         if (admin){
@@ -56,15 +56,16 @@ async function addingNewImagesToProductGallery(authorizationId, productId, newGa
                 const product = await productModel.findById(productId);
                 if (product) {
                     if (product.storeId === admin.storeId) {
+                        const galleryImagePathsAfterAddNewPaths = product.galleryImagesPaths.concat(newGalleryImagePaths);
                         await productModel.updateOne({ _id: productId },
                         {
-                            galleryImagesPaths: product.galleryImagesPaths.concat(newGalleryImagePaths),
+                            galleryImagesPaths: galleryImagePathsAfterAddNewPaths,
                         });
                         return {
-                            msg: "Adding New Images To Product Gallery Process Has Been Successfuly !!",
+                            msg: "Add New Images To Product Gallery Process Has Been Successfuly !!",
                             error: false,
                             data: {
-                                newGalleryImagePaths,
+                                galleryImagePathsAfterAddNewPaths,
                             },
                         }
                     }
@@ -548,7 +549,7 @@ async function updateProductImage(authorizationId, productId, newProductImagePat
 
 module.exports = {
     addNewProduct,
-    addingNewImagesToProductGallery,
+    addNewImagesToProductGallery,
     getProductsByIds,
     getProductsByIdsAndStoreId,
     getProductInfo,

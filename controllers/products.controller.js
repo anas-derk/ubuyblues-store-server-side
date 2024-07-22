@@ -42,7 +42,7 @@ async function postNewImagesToProductGallery(req, res) {
             res.status(400).json(getResponseObject(uploadError, true, {}));
             return;
         }
-        const result = await productsManagmentFunctions.addingNewImagesToProductGallery(req.data._id, req.params.productId, req.files.map(file => file.path));
+        const result = await productsManagmentFunctions.addNewImagesToProductGallery(req.data._id, req.params.productId, req.files.map(file => file.path));
         if (result.error) {
             if (result.msg === "Sorry, Permission Denied !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
                 res.status(401).json(getResponseObject("Unauthorized Error", true, {}));
