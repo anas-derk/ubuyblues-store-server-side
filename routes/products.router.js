@@ -147,6 +147,16 @@ productsRouter.get("/sample-from-related-products-in-the-product/:productId",
     productsController.getRelatedProductsInTheProduct
 );
 
+productsRouter.get("/products/:productId/all-gallery-images",
+    validateJWT,
+    (req, res, next) => {
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
+        ], res, next);
+    },
+    productsController.getAllGalleryImages
+);
+
 productsRouter.delete("/:productId",
     validateJWT,
     (req, res, next) => {

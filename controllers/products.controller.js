@@ -153,6 +153,22 @@ async function getRelatedProductsInTheProduct(req, res) {
     }
 }
 
+async function getAllGalleryImages(req, res) {
+    try{
+        const result = await productsManagmentFunctions.getAllGalleryImages(req.data._id, req.params.productId);
+        if (result.error) {
+            if (result.msg === "Sorry, Permission Denied !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
+                res.status(401).json(getResponseObject("Unauthorized Error", true, {}));
+                return;
+            }
+        }
+        res.json(result);
+    }
+    catch(err) {
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
+}
+
 async function deleteProduct(req, res) {
     try {
         const result = await productsManagmentFunctions.deleteProduct(req.data._id, req.params.productId);
@@ -273,6 +289,7 @@ module.exports = {
     getRelatedProductsInTheProduct,
     getProductsByIds,
     getProductsByIdsAndStoreId,
+    getAllGalleryImages,
     deleteProduct,
     deleteImageFromProductGallery,
     putProduct,

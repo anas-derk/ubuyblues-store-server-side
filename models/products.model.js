@@ -259,6 +259,49 @@ async function getRelatedProductsInTheProduct(productId) {
     }
 }
 
+async function getAllGalleryImages(authorizationId, productId) {
+    try {
+        const admin = await adminModel.findById(authorizationId);
+        if (admin){
+            if (!admin.isBlocked) {
+                const product = await productModel.findOne({ _id: productId });
+                if (product) {
+                    if (product.storeId === admin.storeId) {
+                        return {
+                            msg: "Get All Gallery Images Process Has Been Successfully !!",
+                            error: false,
+                            data: product.galleryImagesPaths,
+                        }
+                    }
+                    return {
+                        msg: "Sorry, Permission Denied !!",
+                        error: true,
+                        data: {},
+                    }
+                }
+                return {
+                    msg: "Sorry, This Product Is Not Exist !!",
+                    error: true,
+                    data: {},
+                }
+            }
+            return {
+                msg: "Sorry, Permission Denied !!",
+                error: true,
+                data: {},
+            }
+        }
+        return {
+            msg: "Sorry, This Admin Is Not Exist !!",
+            error: true,
+            data: {},
+        }
+    }
+    catch (err) {
+        throw Error(err);
+    }
+}
+
 async function deleteProduct(authorizationId, productId) {
     try {
         const admin = await adminModel.findById(authorizationId);
@@ -396,7 +439,6 @@ async function updateProduct(authorizationId, productId, newData) {
         }
     }
     catch (err) {
-        console.log(err);
         throw Error(err);
     }
 }
@@ -515,6 +557,7 @@ module.exports = {
     getAllFlashProductsInsideThePage,
     getAllProductsInsideThePage,
     getRelatedProductsInTheProduct,
+    getAllGalleryImages,
     deleteProduct,
     deleteImageFromProductGallery,
     updateProduct,
