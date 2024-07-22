@@ -147,7 +147,7 @@ productsRouter.get("/sample-from-related-products-in-the-product/:productId",
     productsController.getRelatedProductsInTheProduct
 );
 
-productsRouter.get("/products/:productId/all-gallery-images",
+productsRouter.get("/all-gallery-images/:productId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
