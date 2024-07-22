@@ -67,7 +67,7 @@ productsRouter.post("/add-new-product",
     productsController.postNewProduct
 );
 
-productsRouter.post("/adding-new-images-to-product-gallery/:productId",
+productsRouter.post("/add-new-images-to-product-gallery/:productId",
     validateJWT,
     multer({
     storage,
