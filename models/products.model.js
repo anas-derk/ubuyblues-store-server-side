@@ -461,7 +461,7 @@ async function updateProductGalleryImage(authorizationId, productId, oldGalleryI
                             return {
                                 msg: "Updating Product Galley Image Process Has Been Successfully !!",
                                 error: false,
-                                data: {},
+                                data: newGalleryImagePath,
                             }
                         }
                         return {
