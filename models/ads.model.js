@@ -118,7 +118,8 @@ async function updateAdImage(authorizationId, adId, newAdImagePath) {
                                 msg: "Change Ad Image Process Has Been Successfully !!",
                                 error: false,
                                 data: {
-                                    deletedProductImagePath: adInfo.imagePath,
+                                    oldAdImagePath: adInfo.imagePath,
+                                    newAdImagePath
                                 },
                             }
                         }

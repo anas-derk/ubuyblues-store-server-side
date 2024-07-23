@@ -2,6 +2,8 @@ const { getResponseObject } = require("../global/functions");
 
 const adsOPerationsManagmentFunctions = require("../models/ads.model");
 
+const { unlinkSync } = require("fs");
+
 async function postNewTextAd(req, res) {
     try{
         const { storeId, content } = req.body;
@@ -69,6 +71,7 @@ async function deleteAd(req, res) {
         res.json(result);
     }
     catch (err) {
+        console.log(err);
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
     }
 }
@@ -82,7 +85,7 @@ async function putAdImage(req, res) {
         }
         const result = await adsOPerationsManagmentFunctions.updateAdImage(req.data._id, req.params.adId, req.file.path.replace(/\\/g, '/'));
         if (!result.error) {
-            unlinkSync(result.data.deletedAdImagePath);
+            unlinkSync(result.data.oldAdImagePath);
         }
         else {
             if (result.msg === "Sorry, Permission Denied !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
