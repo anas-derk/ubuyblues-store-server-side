@@ -6,8 +6,8 @@ const { unlinkSync } = require("fs");
 
 async function postNewTextAd(req, res) {
     try{
-        const { storeId, content } = req.body;
-        const result = await adsOPerationsManagmentFunctions.addNewAd(req.data._id, { storeId, content, type: "text" });
+        const { content } = req.body;
+        const result = await adsOPerationsManagmentFunctions.addNewAd(req.data._id, { content, type: "text" });
         if (result.error) {
             if (result.msg === "Sorry, Permission Denied !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
                 res.status(401).json(getResponseObject("Unauthorized Error", true, {}));
@@ -30,10 +30,11 @@ async function postNewImageAd(req, res) {
         }
         const bodyData = Object.assign({}, req.body);
         const adInfo = {
-            ...{ storeId } = bodyData,
+            ...bodyData,
             imagePath: req.file.path,
+            type: "image"
         };
-        const result = await adsOPerationsManagmentFunctions.addNewAd(req.data._id, { ...adInfo, type: "image"});
+        const result = await adsOPerationsManagmentFunctions.addNewAd(req.data._id, adInfo);
         if (result.error) {
             if (result.msg === "Sorry, Permission Denied !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
                 res.status(401).json(getResponseObject("Unauthorized Error", true, {}));

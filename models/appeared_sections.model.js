@@ -1,6 +1,6 @@
 // Import Admin Model Object
 
-const { appearedSectionsModel } = require("../models/all.models");
+const { appearedSectionsModel, adminModel } = require("../models/all.models");
 
 async function getAllSections() {
     try {
@@ -14,14 +14,29 @@ async function getAllSections() {
     }
 }
 
-async function updateSectionsStatus(sectionsStatus) {
+async function updateSectionsStatus(authorizationId,sectionsStatus) {
     try {
-        for (let i = 0; i < 4; i++) {
-            await appearedSectionsModel.updateOne({ _id: sectionsStatus[i]._id }, { isAppeared: sectionsStatus[i].isAppeared });
+        const admin = await adminModel.findById(authorizationId);
+        if (admin) {
+            if (admin.isWebsiteOwner) {
+                for (let i = 0; i < 4; i++) {
+                    await appearedSectionsModel.updateOne({ _id: sectionsStatus[i]._id }, { isAppeared: sectionsStatus[i].isAppeared });
+                }
+                return {
+                    msg: "Updating Section Status Has Been Successfully !!",
+                    error: false,
+                    data: {},
+                }
+            }
+            return {
+                msg: "Sorry, Permission Denied !!",
+                error: true,
+                data: {},
+            }
         }
         return {
-            msg: "Updating Section Status Has Been Successfully !!",
-            error: false,
+            msg: "Sorry, This Admin Is Not Exist !!",
+            error: true,
             data: {},
         }
     } catch (err) {

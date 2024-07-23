@@ -8,10 +8,10 @@ const { validateJWT, validateEmail, validatePassword } = require("../middlewares
 
 adminsRouter.get("/login",
     (req, res, next) => {
-        const emailAndPassword = req.query;
+        const { email, password } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Email", fieldValue: emailAndPassword.email, dataType: "string", isRequiredValue: true },
-            { fieldName: "Password", fieldValue: emailAndPassword.password, dataType: "string", isRequiredValue: true },
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "Password", fieldValue: password, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.query.email, res, next),
@@ -40,12 +40,12 @@ adminsRouter.get("/all-admins-inside-the-page",
 adminsRouter.post("/add-new-admin",
     validateJWT,
     (req, res, next) => {
-        const adminInfo = req.body;
+        const { firstName, lastName, email, password } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "First Name", fieldValue: adminInfo.firstName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Last Name", fieldValue: adminInfo.lastName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Email", fieldValue: adminInfo.email, dataType: "string", isRequiredValue: true },
-            { fieldName: "Password", fieldValue: adminInfo.password, dataType: "string", isRequiredValue: true },
+            { fieldName: "First Name", fieldValue: firstName, dataType: "string", isRequiredValue: true },
+            { fieldName: "Last Name", fieldValue: lastName, dataType: "string", isRequiredValue: true },
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "Password", fieldValue: password, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.body.email, res, next),

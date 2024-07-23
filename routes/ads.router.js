@@ -20,10 +20,9 @@ const storage = multer.diskStorage({
 adsRouter.post("/add-new-text-ad",
     validateJWT,
     (req, res, next) => {
-        const { content, storeId } = req.body;
+        const { content } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Content", fieldValue: content, dataType: "string", isRequiredValue: true },
-            { fieldName: "Store Id", fieldValue: storeId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
     },
     adsController.postNewTextAd
@@ -49,16 +48,6 @@ adsRouter.post("/add-new-image-ad",
             cb(null, true);
         }
     }).single("adImage"),
-    (req, res, next) => {
-        const bodyData = Object.assign({}, req.body);
-        const adInfo = {
-            ...{ storeId } = bodyData,
-            imagePath: req.file.path,
-        };
-        validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: adInfo.storeId, dataType: "ObjectId", isRequiredValue: true },
-        ], res, next);
-    },
     adsController.postNewImageAd,
 );
 

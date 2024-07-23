@@ -6,7 +6,7 @@ async function addNewAd(authorizationId, adsInfo) {
     try {
         const admin = await adminModel.findById(authorizationId);
         if (admin){
-            if (!admin.isBlocked && admin.storeId === adsInfo.storeId) {
+            if (!admin.isBlocked) {
                 const textAdsCount = await adsModel.countDocuments({ type: adsInfo.type });
                 if (textAdsCount >= 10) {
                     return {
@@ -15,7 +15,7 @@ async function addNewAd(authorizationId, adsInfo) {
                         data: {},
                     }
                 }
-                await (new adsModel(adsInfo)).save();
+                await (new adsModel({ ...adsInfo, storeId: admin.storeId })).save();
                 return {
                     msg: "Adding New Text Ad Process Has Been Successfully",
                     error: false,
@@ -39,12 +39,12 @@ async function addNewAd(authorizationId, adsInfo) {
     }
 }
 
-async function getAllAds() {
+async function getAllAds(filters) {
     try{
         return {
             msg: "Get All Ads Process Has Been Successfully !!",
             error: false,
-            data: await adsModel.find(),
+            data: await adsModel.find(filters),
         }
     }
     catch(err) {
