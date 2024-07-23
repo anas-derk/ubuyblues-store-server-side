@@ -102,7 +102,7 @@ adsRouter.put("/update-ad-image/:adId",
     adsController.putAdImage
 );
 
-adsRouter.put("/:adId",
+adsRouter.put("/update-ad-content/:adId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
