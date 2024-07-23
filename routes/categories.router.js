@@ -30,7 +30,7 @@ categoriesRouter.get("/all-categories", categoriesController.getAllCategories);
 categoriesRouter.get("/categories-count",
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: req.query.storeId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
     },
     categoriesController.getCategoriesCount
