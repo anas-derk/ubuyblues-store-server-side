@@ -62,15 +62,15 @@ storesRouter.post("/create-new-store",
         }
     }).single("storeImg"),
     (req, res, next) => {
-        const storeDetails = req.body;
+        const { name, ownerFirstName, ownerLastName, ownerEmail, productsType, productsDescription, language } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Name", fieldValue: storeDetails.name, dataType: "string", isRequiredValue: true },
-            { fieldName: "Owner First Name", fieldValue: storeDetails.ownerFirstName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Owner Last Name", fieldValue: storeDetails.ownerLastName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Owner Email", fieldValue: storeDetails.ownerEmail, dataType: "string", isRequiredValue: true },
-            { fieldName: "Products Type", fieldValue: storeDetails.productsType, dataType: "string", isRequiredValue: true },
-            { fieldName: "Products Description", fieldValue: storeDetails.productsDescription, dataType: "string", isRequiredValue: true },
-            { fieldName: "Language", fieldValue: storeDetails.language, dataType: "string", isRequiredValue: true },
+            { fieldName: "Name", fieldValue: name, dataType: "string", isRequiredValue: true },
+            { fieldName: "Owner First Name", fieldValue: ownerFirstName, dataType: "string", isRequiredValue: true },
+            { fieldName: "Owner Last Name", fieldValue: ownerLastName, dataType: "string", isRequiredValue: true },
+            { fieldName: "Owner Email", fieldValue: ownerEmail, dataType: "string", isRequiredValue: true },
+            { fieldName: "Products Type", fieldValue: productsType, dataType: "string", isRequiredValue: true },
+            { fieldName: "Products Description", fieldValue: productsDescription, dataType: "string", isRequiredValue: true },
+            { fieldName: "Language", fieldValue: language, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.body.ownerEmail, res, next),

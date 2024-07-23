@@ -4,19 +4,21 @@ const globalPasswordController = require("../controllers/global_passwords.contro
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
-const { validateJWT, validateEmail } = require("../middlewares/global.middlewares");
+const { validateJWT, validateEmail, validatePassword } = require("../middlewares/global.middlewares");
 
 globalPasswordRouter.put("/change-bussiness-email-password",
     validateJWT,
     (req, res, next) => {
-        const emailAndPasswordAndNewPassword = req.query;
+        const { email, password, newPassword } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Bussiness Email", fieldValue: emailAndPasswordAndNewPassword.email, dataType: "string", isRequiredValue: true },
-            { fieldName: "Bussiness Password", fieldValue: emailAndPasswordAndNewPassword.password, dataType: "string", isRequiredValue: true },
-            { fieldName: "New Bussiness Password", fieldValue: emailAndPasswordAndNewPassword.newPassword, dataType: "string", isRequiredValue: true },
+            { fieldName: "Bussiness Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "Bussiness Password", fieldValue: password, dataType: "string", isRequiredValue: true },
+            { fieldName: "New Bussiness Password", fieldValue: newPassword, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.query.email, res, next),
+    (req, res, next) => validatePassword(req.query.password, res, next),
+    (req, res, next) => validatePassword(req.query.newPassword, res, next),
     globalPasswordController.putChangeBussinessEmailPassword
 );
 

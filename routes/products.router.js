@@ -113,7 +113,7 @@ productsRouter.post("/products-by-ids-and-store-id",
             ...req.body.productsIds.map((productId, index) => (
                 { fieldName: `Id In Product ${index + 1}`, fieldValue: productId, dataType: "ObjectId", isRequiredValue: true }
             ))]
-        ,res, next);
+        , res, next);
     },
     productsController.getProductsByIdsAndStoreId
 );

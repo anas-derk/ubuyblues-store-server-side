@@ -2,12 +2,12 @@
 
 const { categoryModel, adminModel, productModel } = require("../models/all.models");
 
-async function addNewCategory(authorizationId, storeIdAndCategoryName) {
+async function addNewCategory(authorizationId, categoryName) {
     try{
         const admin = await adminModel.findById(authorizationId);
         if (admin){
-            if (!admin.isBlocked && admin.storeId === storeIdAndCategoryName.storeId) {
-                const category = await categoryModel.findOne({ name: storeIdAndCategoryName.categoryName });
+            if (!admin.isBlocked) {
+                const category = await categoryModel.findOne({ name: categoryName });
                 if (category) {
                     return {
                         msg: "Sorry, This Cateogry Is Already Exist !!",
@@ -15,11 +15,10 @@ async function addNewCategory(authorizationId, storeIdAndCategoryName) {
                         data: {},
                     }
                 }
-                const newCategory = new categoryModel({
-                    name: storeIdAndCategoryName.categoryName,
-                    storeId: storeIdAndCategoryName.storeId,
-                });
-                await newCategory.save();
+                await (new categoryModel({
+                    name: categoryName,
+                    storeId: admin.storeId,
+                })).save();
                 return {
                     msg: "Adding New Category Process Has Been Successfuly ...",
                     error: false,

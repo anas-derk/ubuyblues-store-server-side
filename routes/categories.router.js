@@ -27,14 +27,21 @@ categoriesRouter.get("/category-info/:categoryId",
 
 categoriesRouter.get("/all-categories", categoriesController.getAllCategories);
 
-categoriesRouter.get("/categories-count", categoriesController.getCategoriesCount);
+categoriesRouter.get("/categories-count",
+    (req, res, next) => {
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
+        ], res, next);
+    },
+    categoriesController.getCategoriesCount
+);
 
 categoriesRouter.get("/all-categories-inside-the-page",
     (req, res, next) => {
-        const filters = req.query;
+        const { pageNumber, pageSize } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "page Number", fieldValue: Number(filters.pageNumber), dataType: "number", isRequiredValue: true },
-            { fieldName: "page Size", fieldValue: Number(filters.pageSize), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
         ], res, next);
     },
     categoriesController.getAllCategoriesInsideThePage
@@ -44,7 +51,7 @@ categoriesRouter.delete("/:categoryId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "category Id", fieldValue: req.params.categoryId, dataType: "string", isRequiredValue: true },
+            { fieldName: "category Id", fieldValue: req.params.categoryId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
     },
     categoriesController.deleteCategory

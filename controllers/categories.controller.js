@@ -13,7 +13,7 @@ function getFiltersObject(filters) {
 
 async function postNewCategory(req, res) {
     try{
-        const result = await categoriesManagmentFunctions.addNewCategory(req.data._id, req.body);
+        const result = await categoriesManagmentFunctions.addNewCategory(req.data._id, req.body.categoryName);
         if (result.error) {
             if (result.msg === "Sorry, Permission Denied !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
                 res.status(401).json(getResponseObject("Unauthorized Error", true, {}));

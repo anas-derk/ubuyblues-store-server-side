@@ -20,11 +20,10 @@ async function postNewBrand(req, res) {
             res.status(400).json(getResponseObject(uploadError, true, {}));
             return;
         }
-        const brandInfo = {
+        const result = await brandsManagmentFunctions.addNewBrand(req.data._id, {
             ...Object.assign({}, req.body),
             imagePath: req.file.path,
-        };
-        const result = await brandsManagmentFunctions.addNewBrand(req.data._id, brandInfo);
+        });
         if (result.error) {
             if (result.msg === "Sorry, Permission Denied !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
                 res.status(401).json(getResponseObject("Unauthorized Error", true, {}));
@@ -121,7 +120,6 @@ async function putBrandImage(req, res) {
         res.json(result);
 }
     catch (err) {
-        console.log(err);
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
     }
 }

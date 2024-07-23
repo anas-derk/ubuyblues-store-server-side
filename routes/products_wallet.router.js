@@ -11,10 +11,10 @@ walletRouter.get("/wallet-products-count", validateJWT, walletController.getWall
 walletRouter.get("/all-wallet-products-inside-the-page",
     validateJWT,
     (req, res, next) => {
-        const filters = req.query;
+        const { pageNumber, pageSize } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "page Number", fieldValue: Number(filters.pageNumber), dataType: "number", isRequiredValue: true },
-            { fieldName: "page Size", fieldValue: Number(filters.pageSize), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
         ], res, next);
     },
     walletController.getAllWalletProductsInsideThePage

@@ -38,28 +38,37 @@ brandsRouter.post("/add-new-brand",
         }
     }).single("brandImg"),
     (req, res, next) => {
-        const brandInfo = {
-            ...Object.assign({}, req.body),
-            imagePath: req.file.path,
-        };
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Brand Title", fieldValue: brandInfo.title, dataType: "string", isRequiredValue: true },
-            { fieldName: "Store Id", fieldValue: brandInfo.storeId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Brand Title", fieldValue: (Object.assign({}, req.body)).title, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     brandsController.postNewBrand
 );
 
-brandsRouter.get("/last-seven-brands-by-store-id", brandsController.getLastSevenBrandsByStoreId);
+brandsRouter.get("/last-seven-brands-by-store-id",
+    (req, res, next) => {
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: false },
+        ], res, next);
+    },
+    brandsController.getLastSevenBrandsByStoreId
+);
 
-brandsRouter.get("/brands-count", brandsController.getBrandsCount);
+brandsRouter.get("/brands-count",
+    (req, res, next) => {
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
+        ], res, next);
+    },
+    brandsController.getBrandsCount
+);
 
 brandsRouter.get("/all-brands-inside-the-page",
     (req, res, next) => {
-        const filters = req.query;
+        const { pageNumber, pageSize } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "page Number", fieldValue: Number(filters.pageNumber), dataType: "number", isRequiredValue: true },
-            { fieldName: "page Size", fieldValue: Number(filters.pageSize), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
         ], res, next);
     },
     brandsController.getAllBrandsInsideThePage
