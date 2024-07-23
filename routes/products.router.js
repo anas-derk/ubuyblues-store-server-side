@@ -95,9 +95,28 @@ productsRouter.post("/add-new-images-to-product-gallery/:productId",
     productsController.postNewImagesToProductGallery
 );
 
-productsRouter.post("/products-by-ids", productsController.getProductsByIds);
+productsRouter.post("/products-by-ids",
+    (req, res, next) => {
+        validateIsExistValueForFieldsAndDataTypes(
+            req.body.productsIds.map((productId, index) => (
+                { fieldName: `Id In Product ${index + 1}`, fieldValue: productId, dataType: "ObjectId", isRequiredValue: true }
+            ))
+        ,res, next);
+    },
+    productsController.getProductsByIds
+);
 
-productsRouter.post("/products-by-ids-and-store-id", productsController.getProductsByIdsAndStoreId);
+productsRouter.post("/products-by-ids-and-store-id",
+    (req, res, next) => {
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Store Id", fieldValue: req.query.storeId, dataType: "ObjectId", isRequiredValue: true },
+            ...req.body.productsIds.map((productId, index) => (
+                { fieldName: `Id In Product ${index + 1}`, fieldValue: productId, dataType: "ObjectId", isRequiredValue: true }
+            ))]
+        ,res, next);
+    },
+    productsController.getProductsByIdsAndStoreId
+);
 
 productsRouter.get("/product-info/:productId",
     (req, res, next) => {
@@ -108,40 +127,66 @@ productsRouter.get("/product-info/:productId",
     productsController.getProductInfo
 );
 
-productsRouter.get("/products-count", productsController.getProductsCount);
+productsRouter.get("/products-count",
+    (req, res, next) => {
+        const { pageNumber, pageSize } = req.query;
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
+        ], res, next);
+    },
+    (req, res, next) => validateNumbersIsPositive([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Greater Than Zero ) !!"]),
+    (req, res, next) => validateNumbersIsNotFloat([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Not Float ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Not Float ) !!"]),
+    productsController.getProductsCount
+);
 
-productsRouter.get("/flash-products-count", productsController.getFlashProductsCount);
+productsRouter.get("/flash-products-count",
+    (req, res, next) => {
+        const { pageNumber, pageSize } = req.query;
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
+        ], res, next);
+    },
+    (req, res, next) => validateNumbersIsPositive([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Greater Than Zero ) !!"]),
+    (req, res, next) => validateNumbersIsNotFloat([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Not Float ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Not Float ) !!"]),
+    productsController.getFlashProductsCount
+);
 
 productsRouter.get("/all-flash-products-inside-the-page",
     (req, res, next) => {
-        const queryObject = req.query;
+        const { pageNumber, pageSize, sortBy, sortType } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "page Number", fieldValue: queryObject.pageNumber, dataType: "string", isRequiredValue: true },
-            { fieldName: "page Size", fieldValue: queryObject.pageSize, dataType: "string", isRequiredValue: true },
-            { fieldName: "Sort By", fieldValue: queryObject.sortBy, dataType: "string", isRequiredValue: false },
-            { fieldName: "Sort Type", fieldValue: queryObject.sortType, dataType: "string", isRequiredValue: false },
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
+            { fieldName: "Sort By", fieldValue: sortBy, dataType: "string", isRequiredValue: false },
+            { fieldName: "Sort Type", fieldValue: sortType, dataType: "string", isRequiredValue: false },
         ], res, next);
     },
+    (req, res, next) => validateNumbersIsPositive([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Greater Than Zero ) !!"]),
+    (req, res, next) => validateNumbersIsNotFloat([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Not Float ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Not Float ) !!"]),
     productsController.getAllFlashProductsInsideThePage
 );
 
 productsRouter.get("/all-products-inside-the-page",
     (req, res, next) => {
-        const queryObject = req.query;
+        const { pageNumber, pageSize, sortBy, sortType } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "page Number", fieldValue: queryObject.pageNumber, dataType: "string", isRequiredValue: true },
-            { fieldName: "page Size", fieldValue: queryObject.pageSize, dataType: "string", isRequiredValue: true },
-            { fieldName: "Sort By", fieldValue: queryObject.sortBy, dataType: "string", isRequiredValue: false },
-            { fieldName: "Sort Type", fieldValue: queryObject.sortType, dataType: "string", isRequiredValue: false },
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
+            { fieldName: "Sort By", fieldValue: sortBy, dataType: "string", isRequiredValue: false },
+            { fieldName: "Sort Type", fieldValue: sortType, dataType: "string", isRequiredValue: false },
         ], res, next);
     },
+    (req, res, next) => validateNumbersIsPositive([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Greater Than Zero ) !!"]),
+    (req, res, next) => validateNumbersIsNotFloat([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Not Float ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Not Float ) !!"]),
     productsController.getAllProductsInsideThePage
 );
 
 productsRouter.get("/sample-from-related-products-in-the-product/:productId",
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "string", isRequiredValue: true },
+            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
         ], res, next);
     },
     productsController.getRelatedProductsInTheProduct
@@ -181,15 +226,14 @@ productsRouter.delete("/gallery-images/:productId",
 productsRouter.put("/:productId",
     validateJWT,
     (req, res, next) => {
-        const productId = req.params.productId;
-        const newProductData = req.body;
+        const { name, price, description, category, discount } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Product Id", fieldValue: productId, dataType: "string", isRequiredValue: false },
-            { fieldName: "Name", fieldValue: newProductData.name, dataType: "string", isRequiredValue: false },
-            { fieldName: "Price", fieldValue: Number(newProductData.price), dataType: "number", isRequiredValue: false },
-            { fieldName: "Description", fieldValue: newProductData.description, dataType: "string", isRequiredValue: false },
-            { fieldName: "Category", fieldValue: newProductData.category, dataType: "string", isRequiredValue: false },
-            { fieldName: "discount", fieldValue: Number(newProductData.discount), dataType: "number", isRequiredValue: false },
+            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Name", fieldValue: name, dataType: "string", isRequiredValue: false },
+            { fieldName: "Price", fieldValue: Number(price), dataType: "number", isRequiredValue: false },
+            { fieldName: "Description", fieldValue: description, dataType: "string", isRequiredValue: false },
+            { fieldName: "Category", fieldValue: category, dataType: "string", isRequiredValue: false },
+            { fieldName: "discount", fieldValue: Number(discount), dataType: "number", isRequiredValue: false },
         ], res, next);
     },
     productsController.putProduct
