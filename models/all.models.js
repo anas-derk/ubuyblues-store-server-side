@@ -190,6 +190,10 @@ const productSchema = mongoose.Schema({
         type: Number,
         default: 1,
     },
+    country: {
+        type: String,
+        default: "KW",
+    },
     ratings: {
         type: Object,
         default: {
