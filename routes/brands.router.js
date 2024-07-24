@@ -57,7 +57,7 @@ brandsRouter.get("/last-seven-brands-by-store-id",
 brandsRouter.get("/brands-count",
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: req.query.storeId, dataType: "ObjectId", isRequiredValue: false },
         ], res, next);
     },
     brandsController.getBrandsCount

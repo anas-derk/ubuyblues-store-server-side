@@ -4,7 +4,7 @@ const adminsController = require("../controllers/admins.controller");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
-const { validateJWT, validateEmail, validatePassword } = require("../middlewares/global.middlewares");
+const { validateJWT, validateEmail, validatePassword, validateNumbersIsPositive, validateNumbersIsNotFloat } = require("../middlewares/global.middlewares");
 
 adminsRouter.get("/login",
     (req, res, next) => {
