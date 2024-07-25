@@ -73,11 +73,12 @@ async function postNewStore(req, res) {
         if (result.error) {
             unlinkSync(imagePath);
         }
-        await sendConfirmRequestAddStoreArrivedEmail(result.data.email, result.data.language);
+        else {
+            await sendConfirmRequestAddStoreArrivedEmail(result.data.email, result.data.language);
+        }
         res.json(result);
     }
     catch(err) {
-        console.log(err);
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
     }
 }
