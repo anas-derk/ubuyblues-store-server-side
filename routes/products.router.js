@@ -4,7 +4,7 @@ const productsController = require("../controllers/products.controller");
 
 const multer = require("multer");
 
-const { validateJWT, validateName, validateNumbersIsPositive, validateNumbersIsNotFloat } = require("../middlewares/global.middlewares");
+const { validateJWT, validateName, validateNumbersIsPositive, validateNumbersIsNotFloat, validateSortMethod, validateSortType } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -130,8 +130,28 @@ productsRouter.get("/product-info/:productId",
 productsRouter.get("/products-count",
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.query.storeId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: req.query.storeId, dataType: "ObjectId", isRequiredValue: false },
+            { fieldName: "Category Id", fieldValue: req.query.categoryId, dataType: "ObjectId", isRequiredValue: false },
+            { fieldName: "Product Name", fieldValue: req.query.storeId, dataType: "string", isRequiredValue: false },
+            { fieldName: "Sort By", fieldValue: req.query.storeId, dataType: "string", isRequiredValue: false },
+            { fieldName: "Sort Type", fieldValue: req.query.sortType, dataType: "string", isRequiredValue: false },
         ], res, next);
+    },
+    (req, res, next) => {
+        const { sortBy } = req.query;
+        if (sortBy) {
+            validateSortMethod(req.query.sortBy, res, next);
+            return;
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { sortType } = req.query;
+        if (sortType) {
+            validateSortType(req.query.sortType, res, next);
+            return;
+        }
+        next();
     },
     productsController.getProductsCount
 );

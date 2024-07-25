@@ -109,6 +109,22 @@ function validateCheckoutStatus(checkoutStatus, res, nextFunc, errorMsg = "Sorry
     nextFunc();
 }
 
+function validateSortMethod(sortBy, res, nextFunc, errorMsg = "Sorry, Please Send Valid Sort Method ( 'postOfDate' Or 'price' ) !!") {
+    if (!["postOfDate", "price"].includes(sortBy)) {
+        res.status(400).json(getResponseObject(errorMsg, true, {}));
+        return;
+    }
+    nextFunc();
+}
+
+function validateSortType(sortType, res, nextFunc, errorMsg = "Sorry, Please Send Valid Sort Type ( '-1' For Descending Sort Or '1' For Ascending Sort ) !!") {
+    if (!["postOfDate", "price"].includes(sortType)) {
+        res.status(400).json(getResponseObject(errorMsg, true, {}));
+        return;
+    }
+    nextFunc();
+}
+
 function keyGeneratorForRequestsRateLimit(req) {
     const ipAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     const ipWithoutPort = ipAddress.split(',')[0];
@@ -128,5 +144,7 @@ module.exports = {
     validateName,
     validateIsNotExistDublicateProductId,
     validateCheckoutStatus,
+    validateSortMethod,
+    validateSortType,
     keyGeneratorForRequestsRateLimit,
 }
