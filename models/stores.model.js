@@ -80,8 +80,7 @@ async function createNewStore(storeDetails) {
                 data: {},
             }
         }
-        const newStore = new storeModel(storeDetails);
-        await newStore.save();
+        await (new storeModel(storeDetails)).save();
         return {
             msg: "Creating Licence Request New Store Process Has Been Successfully !!",
             error: false,

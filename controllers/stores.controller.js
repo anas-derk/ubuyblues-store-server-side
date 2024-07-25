@@ -69,7 +69,7 @@ async function postNewStore(req, res) {
             return;
         }
         const imagePath = req.file.path;
-        const result = await storesManagmentFunctions.createNewStore(Object.assign({}, { ...req.body, imagePath }));
+        const result = await storesManagmentFunctions.createNewStore({...Object.assign({}, req.body), imagePath});
         if (result.error) {
             unlinkSync(imagePath);
         }

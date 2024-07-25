@@ -2,7 +2,7 @@ const storesRouter = require("express").Router();
 
 const storesController = require("../controllers/stores.controller");
 
-const { validateJWT, validatePassword, validateEmail, validateLanguage } = require("../middlewares/global.middlewares");
+const { validateJWT, validatePassword, validateEmail, validateLanguage, validateName } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -73,6 +73,8 @@ storesRouter.post("/create-new-store",
             { fieldName: "Language", fieldValue: language, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
+    (req, res, next) => validateName(req.body.ownerFirstName, res, next),
+    (req, res, next) => validateName(req.body.ownerLastName, res, next),
     (req, res, next) => validateEmail(req.body.ownerEmail, res, next),
     (req, res, next) => validateLanguage(req.body.language, res, next),
     storesController.postNewStore
