@@ -1,3 +1,4 @@
+const { hash, compare } = require("bcryptjs");
 const { accountVerificationCodesModel } = require("../models/all.models");
 
 async function addNewAccountVerificationCode(email, code, typeOfUse) {
@@ -9,7 +10,7 @@ async function addNewAccountVerificationCode(email, code, typeOfUse) {
             const newRequestTimeCount = accountVerificationCode.requestTimeCount + 1;
             await accountVerificationCodesModel.updateOne({ email },
                 {
-                    code,
+                    code: await hash(code, 10),
                     requestTimeCount: newRequestTimeCount,
                     createdDate: creatingDate,
                     expirationDate: expirationDate,
@@ -24,14 +25,13 @@ async function addNewAccountVerificationCode(email, code, typeOfUse) {
                 data: {},
             }
         }
-        const newAccountCode = new accountVerificationCodesModel({
+        await (new accountVerificationCodesModel({
             email,
             code,
             createdDate: creatingDate,
             expirationDate: expirationDate,
             typeOfUse
-        });
-        await newAccountCode.save();
+        })).save();
         return {
             msg: "Sending Code To Your Email Process Has Been Succssfuly !!",
             error: false,
@@ -47,7 +47,7 @@ async function isAccountVerificationCodeValid(email, code, typeOfUse) {
     try{
         const accountVerificationCode = await accountVerificationCodesModel.findOne({ email, typeOfUse });
         if (accountVerificationCode) {
-            if (accountVerificationCode.code === code) {
+            if (await compare(code, accountVerificationCode.code)) {
                 return {
                     msg: "This Code For This Email Is Valid !!",
                     error: false,
