@@ -4,7 +4,7 @@ const productsController = require("../controllers/products.controller");
 
 const multer = require("multer");
 
-const { validateJWT, validateName, validateNumbersIsPositive, validateNumbersIsNotFloat, validateSortMethod, validateSortType } = require("../middlewares/global.middlewares");
+const { validateJWT, validateName, validateNumbersIsPositive, validateNumbersIsNotFloat, validateSortMethod, validateSortType, validateIsExistErrorInFiles } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -40,6 +40,7 @@ productsRouter.post("/add-new-product",
         { name: "productImage", maxCount: 1 },
         { name: "galleryImages", maxCount: 10 },
     ]),
+    validateIsExistErrorInFiles,
     (req, res, next) => {
         const productImages = Object.assign({}, req.files);
         const productInfo = {
@@ -70,23 +71,24 @@ productsRouter.post("/add-new-product",
 productsRouter.post("/add-new-images-to-product-gallery/:productId",
     validateJWT,
     multer({
-    storage,
-    fileFilter: (req, file, cb) => {
-        if (!file) {
-            req.uploadError = "Sorry, No Files Uploaded, Please Upload The Files";
-            return cb(null, false);
+        storage,
+        fileFilter: (req, file, cb) => {
+            if (!file) {
+                req.uploadError = "Sorry, No Files Uploaded, Please Upload The Files";
+                return cb(null, false);
+            }
+            if (
+                file.mimetype !== "image/jpeg" &&
+                file.mimetype !== "image/png" &&
+                file.mimetype !== "image/webp"
+            ){
+                req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG and PNG Or WEBP files are allowed !!";
+                return cb(null, false);
+            }
+            cb(null, true);
         }
-        if (
-            file.mimetype !== "image/jpeg" &&
-            file.mimetype !== "image/png" &&
-            file.mimetype !== "image/webp"
-        ){
-            req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG and PNG Or WEBP files are allowed !!";
-            return cb(null, false);
-        }
-        cb(null, true);
-    }
     }).array("productGalleryImage", 10),
+    validateIsExistErrorInFiles,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
@@ -271,6 +273,7 @@ productsRouter.put("/update-product-gallery-image/:productId",
             cb(null, true);
         }
     }).single("productGalleryImage"),
+    validateIsExistErrorInFiles,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
@@ -300,6 +303,7 @@ productsRouter.put("/update-product-image/:productId",
             cb(null, true);
         }
     }).single("productImage"),
+    validateIsExistErrorInFiles,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },

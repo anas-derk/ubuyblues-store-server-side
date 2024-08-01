@@ -15,11 +15,6 @@ function getFiltersObject(filters) {
 
 async function postNewBrand(req, res) {
     try{
-        const uploadError = req.uploadError;
-        if (uploadError) {
-            res.status(400).json(getResponseObject(uploadError, true, {}));
-            return;
-        }
         const result = await brandsManagmentFunctions.addNewBrand(req.data._id, {
             ...Object.assign({}, req.body),
             imagePath: req.file.path,
@@ -102,11 +97,6 @@ async function putBrandInfo(req, res) {
 
 async function putBrandImage(req, res) {
     try {
-        const uploadError = req.uploadError;
-        if (uploadError) {
-            res.status(400).json(getResponseObject(uploadError, true, {}));
-            return;
-        }
         const result = await brandsManagmentFunctions.changeBrandImage(req.data._id, req.params.brandId, req.file.path.replace(/\\/g, '/'));
         if (!result.error) {
             unlinkSync(result.data.deletedBrandImagePath);

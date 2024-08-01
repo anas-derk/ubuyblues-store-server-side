@@ -2,7 +2,7 @@ const storesRouter = require("express").Router();
 
 const storesController = require("../controllers/stores.controller");
 
-const { validateJWT, validatePassword, validateEmail, validateLanguage, validateName } = require("../middlewares/global.middlewares");
+const { validateJWT, validatePassword, validateEmail, validateLanguage, validateName, validateIsExistErrorInFiles } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -61,6 +61,7 @@ storesRouter.post("/create-new-store",
             cb(null, true);
         }
     }).single("storeImg"),
+    validateIsExistErrorInFiles,
     (req, res, next) => {
         const { name, ownerFirstName, ownerLastName, ownerEmail, productsType, productsDescription, language } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
@@ -147,7 +148,8 @@ storesRouter.put("/change-store-image/:storeId",
             }
             cb(null, true);
         }
-    }).single("storeImage") ,
+    }).single("storeImage"),
+    validateIsExistErrorInFiles,
     storesController.putStoreImage
 );
 

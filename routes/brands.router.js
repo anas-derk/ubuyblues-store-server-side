@@ -2,7 +2,7 @@ const brandsRouter = require("express").Router();
 
 const brandsController = require("../controllers/brands.controller");
 
-const { validateJWT } = require("../middlewares/global.middlewares");
+const { validateJWT, validateIsExistErrorInFiles } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -37,6 +37,7 @@ brandsRouter.post("/add-new-brand",
             cb(null, true);
         }
     }).single("brandImg"),
+    validateIsExistErrorInFiles,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Brand Title", fieldValue: (Object.assign({}, req.body)).title, dataType: "string", isRequiredValue: true },
@@ -119,7 +120,8 @@ brandsRouter.put("/change-brand-image/:brandId",
             }
             cb(null, true);
         }
-    }).single("brandImage") ,
+    }).single("brandImage"),
+    validateIsExistErrorInFiles,
     brandsController.putBrandImage
 );
 

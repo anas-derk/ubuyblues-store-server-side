@@ -125,6 +125,15 @@ function validateSortType(sortType, res, nextFunc, errorMsg = "Sorry, Please Sen
     nextFunc();
 }
 
+function validateIsExistErrorInFiles(req, res, next) {
+    const uploadError = req.uploadError;
+    if (uploadError) {
+        res.status(400).json(getResponseObject(uploadError, true, {}));
+        return;
+    }
+    next();
+}
+
 function keyGeneratorForRequestsRateLimit(req) {
     const ipAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     const ipWithoutPort = ipAddress.split(',')[0];
@@ -146,5 +155,6 @@ module.exports = {
     validateCheckoutStatus,
     validateSortMethod,
     validateSortType,
+    validateIsExistErrorInFiles,
     keyGeneratorForRequestsRateLimit,
 }

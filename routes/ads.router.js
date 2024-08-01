@@ -4,7 +4,7 @@ const adsController = require("../controllers/ads.controller");
 
 const multer = require("multer");
 
-const { validateJWT } = require("../middlewares/global.middlewares");
+const { validateJWT, validateIsExistErrorInFiles } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -48,6 +48,7 @@ adsRouter.post("/add-new-image-ad",
             cb(null, true);
         }
     }).single("adImage"),
+    validateIsExistErrorInFiles,
     adsController.postNewImageAd,
 );
 
@@ -83,6 +84,7 @@ adsRouter.put("/update-ad-image/:adId",
             cb(null, true);
         }
     }).single("adImage"),
+    validateIsExistErrorInFiles,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Ad Id", fieldValue: req.params.adId, dataType: "ObjectId", isRequiredValue: true },

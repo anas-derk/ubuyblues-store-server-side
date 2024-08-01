@@ -6,11 +6,6 @@ const { unlinkSync } = require("fs");
 
 async function postNewProduct(req, res) {
     try {
-        const uploadError = req.uploadError;
-        if (uploadError) {
-            res.status(400).json(getResponseObject(uploadError, true, {}));
-            return;
-        }
         const productImages = Object.assign({}, req.files);
         const productInfo = {
             ...Object.assign({}, req.body),
@@ -231,11 +226,6 @@ async function putProduct(req, res) {
 
 async function putProductGalleryImage(req, res) {
     try {
-        const uploadError = req.uploadError;
-        if (uploadError) {
-            res.status(400).json(getResponseObject(uploadError, true, {}));
-            return;
-        }
         const oldGalleryImagePath = req.query.oldGalleryImagePath;
         const result = await productsManagmentFunctions.updateProductGalleryImage(req.data._id, req.params.productId, oldGalleryImagePath, req.file.path);
         if (!result.error) {
@@ -256,11 +246,6 @@ async function putProductGalleryImage(req, res) {
 
 async function putProductImage(req, res) {
     try {
-        const uploadError = req.uploadError;
-        if (uploadError) {
-            res.status(400).json(getResponseObject(uploadError, true, {}));
-            return;
-        }
         const result = await productsManagmentFunctions.updateProductImage(req.data._id, req.params.productId, req.file.path.replace(/\\/g, '/'));
         if (!result.error) {
             unlinkSync(result.data.deletedProductImagePath);

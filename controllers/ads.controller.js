@@ -23,11 +23,6 @@ async function postNewTextAd(req, res) {
 
 async function postNewImageAd(req, res) {
     try{
-        const uploadError = req.uploadError;
-        if (uploadError) {
-            res.status(400).json(getResponseObject(uploadError, true, {}));
-            return;
-        }
         const bodyData = Object.assign({}, req.body);
         const adInfo = {
             ...bodyData,
@@ -79,11 +74,6 @@ async function deleteAd(req, res) {
 
 async function putAdImage(req, res) {
     try {
-        const uploadError = req.uploadError;
-        if (uploadError) {
-            res.status(400).json(getResponseObject(uploadError, true, {}));
-            return;
-        }
         const result = await adsOPerationsManagmentFunctions.updateAdImage(req.data._id, req.params.adId, req.file.path.replace(/\\/g, '/'));
         if (!result.error) {
             unlinkSync(result.data.oldAdImagePath);

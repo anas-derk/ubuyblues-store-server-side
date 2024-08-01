@@ -63,11 +63,6 @@ async function getMainStoreDetails(req, res) {
 
 async function postNewStore(req, res) {
     try{
-        const uploadError = req.uploadError;
-        if (uploadError) {
-            res.status(400).json(getResponseObject(uploadError, true, {}));
-            return;
-        }
         const imagePath = req.file.path;
         const result = await storesManagmentFunctions.createNewStore({...Object.assign({}, req.body), imagePath});
         if (result.error) {
@@ -153,11 +148,6 @@ async function putCancelBlockingStore(req, res) {
 
 async function putStoreImage(req, res) {
     try {
-        const uploadError = req.uploadError;
-        if (uploadError) {
-            res.status(400).json(getResponseObject(uploadError, true, {}));
-            return;
-        }
         const newStoreImagePath = req.file.path;
         const result = await storesManagmentFunctions.changeStoreImage(req.params.storeId, newStoreImagePath.replace(/\\/g, '/'));
         if (!result.error) {
