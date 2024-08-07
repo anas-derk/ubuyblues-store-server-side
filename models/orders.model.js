@@ -2,6 +2,28 @@
 
 const { orderModel, userModel, adminModel, productsWalletModel, productModel, mongoose } = require("../models/all.models");
 
+const isProductLocalOrInternational = (productCountry, shippingCountry) => {
+    return countries[productCountry].name === shippingCountry ? "local" : "international";
+}
+
+const getShippingCost = (localProductsLength, internationalProductsLength, totalPriceAfterDiscount) => {
+    let tempShippingCost = { forLocalProducts: 0, forInternationalProducts: 0 };
+    if (localProductsLength !== 0) {
+        if (shippingMethod.forLocalProducts === "ubuyblues") {
+            tempShippingCost.forLocalProducts = 1;
+        }
+    }
+    if (internationalProductsLength !== 0) {
+        if (shippingMethod.forInternationalProducts === "normal") {
+            tempShippingCost.forInternationalProducts = totalPriceAfterDiscount * 0.15;
+        }
+        else {
+            tempShippingCost.forInternationalProducts = totalPriceAfterDiscount * 0.25;
+        }
+    }
+    return tempShippingCost;
+}
+
 async function getOrdersCount(filters) {
     try {
         return {
@@ -148,11 +170,18 @@ async function createNewOrder(orderDetails) {
             totalDiscount: 0,
             totalPriceAfterDiscount: 0
         }
+        let localProducts = [], internationalProducts = [];
         for(let product of orderProductsDetails){
             totalPrices.totalPriceBeforeDiscount += product.totalAmount;
             totalPrices.totalDiscount += product.discount * product.quantity;
+            if (isProductLocalOrInternational(product.country, orderDetails.shippingAddress.country)) {
+                localProducts.push(product);
+            } else {
+                internationalProducts.push(product);
+            }
         }
         totalPrices.totalPriceAfterDiscount = totalPrices.totalPriceBeforeDiscount - totalPrices.totalDiscount;
+        getShippingCost(localProducts.length, internationalProducts.length, totalPrices.totalPriceAfterDiscount);
         const ordersCount = await orderModel.countDocuments();
         const newOrder = new orderModel({
             storeId: existOrderProducts[0].storeId,
@@ -162,6 +191,7 @@ async function createNewOrder(orderDetails) {
             billingAddress: orderDetails.billingAddress,
             shippingAddress: orderDetails.shippingAddress,
             products: orderProductsDetails,
+            shippingCost: getShippingCost(localProducts.length, internationalProducts.length, totalPrices.totalPriceAfterDiscount),
         });
         const { _id, orderNumber, products } = await newOrder.save();
         const bulkOps = orderProductsDetails.map((product) => ({

@@ -421,9 +421,15 @@ const orderSchema = mongoose.Schema({
         type: Number,
         default: 0,
     },
-    shippingFee: {
-        type: Number,
-        default: 0
+    shippingCost: {
+        forLocalProducts: {
+            type: Number,
+            required: true,
+        },
+        forInternationlProducts: {
+            type: Number,
+            required: true,
+        }
     },
     checkoutStatus: {
         type: String,
