@@ -126,7 +126,7 @@ async function postNewPaymentOrderByTabby(req, res) {
         if (!result.error) {
             const response = await post(`${process.env.TABBY_PAYMENT_GATEWAY_BASE_API_URL}/api/v2/checkout`, {
                 payment: {
-                    amount: String(result.data.orderAmount),
+                    amount: String((result.data.orderAmount * 0.31).toFixed(3)),
                     currency: "KWD",
                     buyer: {
                         phone: "+96590000001",
@@ -163,7 +163,7 @@ async function postNewPaymentOrderByTabby(req, res) {
                     order_history: [
                         {
                             purchased_at: result.data.addedDate,
-                            amount: String(result.data.orderAmount),
+                            amount: String((result.data.orderAmount * 0.31).toFixed(3)),
                             status: "new",
                             buyer: {
                                 phone: "+96590000001",
@@ -205,7 +205,12 @@ async function postNewPaymentOrderByTabby(req, res) {
                     Authorization: `Bearer ${process.env.TAPPY_PUBLIC_API_KEY}`
                 }
             });
-            res.json(getResponseObject("Creating New Payment Order By Tabby Process Has Been Successfully !!", false, response.data));
+            res.json(response.data.status === "created" ?
+                getResponseObject("Creating New Payment Order By Tabby Process Has Been Successfully !!", false, {
+                    checkoutURL: response.data.configuration.available_products.installments[0].web_url
+                }) :
+                getResponseObject("Sorry, Can't Creating New Payment Order By Tabby Because Exceeding The Payment Limit !!" , true, {})
+            );
             return;
         }
         res.json(result);

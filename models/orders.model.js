@@ -12,7 +12,7 @@ const getShippingCost = (localProductsLength, internationalProductsLength, shipp
     let tempShippingCost = { forLocalProducts: 0, forInternationalProducts: 0 };
     if (localProductsLength !== 0) {
         if (shippingMethod.forLocalProducts === "ubuyblues") {
-            tempShippingCost.forLocalProducts = 3.25;
+            tempShippingCost.forLocalProducts = 3.1;
         }
     }
     if (internationalProductsLength !== 0) {
