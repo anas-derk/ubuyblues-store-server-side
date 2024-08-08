@@ -134,6 +134,19 @@ function validateIsExistErrorInFiles(req, res, next) {
     next();
 }
 
+function validateShippingMethod(req, res, next) {
+    const shippingMethod = req.body.shippingMethod;
+    if (!["normal", "ubuyblues"].includes(shippingMethod.forLocalProducts)) {
+        res.status(400).json(getResponseObject("Sorry Shipping Method For Local Products Is Not Valid ( Please Send 'normal' or 'ubuyblues' Value )", true, {}));
+        return;
+    }
+    if (!["normal", "fast"].includes(shippingMethod.forInternationalProducts)) {
+        res.status(400).json(getResponseObject("Sorry Shipping Method For International Products Is Not Valid ( Please Send 'normal' or 'fast' Value )", true, {}));
+        return;
+    }
+    next();
+}
+
 function keyGeneratorForRequestsRateLimit(req) {
     const ipAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     const ipWithoutPort = ipAddress.split(',')[0];
@@ -156,5 +169,6 @@ module.exports = {
     validateSortMethod,
     validateSortType,
     validateIsExistErrorInFiles,
+    validateShippingMethod,
     keyGeneratorForRequestsRateLimit,
 }

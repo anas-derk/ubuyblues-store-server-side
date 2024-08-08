@@ -2,7 +2,7 @@ const ordersRouter = require("express").Router();
 
 const ordersController = require("../controllers/orders.controller");
 
-const { validateJWT, validateNumbersIsPositive, validateNumbersIsNotFloat, validateCountry, validateName, validateEmail, validateIsNotExistDublicateProductId, validateCheckoutStatus } = require("../middlewares/global.middlewares");
+const { validateJWT, validateNumbersIsPositive, validateNumbersIsNotFloat, validateCountry, validateName, validateEmail, validateIsNotExistDublicateProductId, validateCheckoutStatus, validateShippingMethod } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -96,6 +96,9 @@ ordersRouter.post("/create-new-order",
             { fieldName: "Email In Shipping Address", fieldValue: orderDetails?.shippingAddress?.email, dataType: "string", isRequiredValue: true },
             { fieldName: "Request Notes", fieldValue: orderDetails?.requestNotes, dataType: "string", isRequiredValue: false },
             { fieldName: "Order Products", fieldValue: orderDetails?.products, dataType: "array", isRequiredValue: true },
+            { fieldName: "Shipping Method", fieldValue: orderDetails?.shippingMethod, dataType: "object", isRequiredValue: true },
+            { fieldName: "Shipping Method For Local Products", fieldValue: orderDetails?.shippingMethod?.forLocalProducts, dataType: "string", isRequiredValue: true },
+            { fieldName: "Shipping Method For Internationl Products", fieldValue: orderDetails?.shippingMethod?.forInternationalProducts, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => {
@@ -169,6 +172,7 @@ ordersRouter.post("/create-new-order",
         }
         validateNumbersIsPositive(productsQuantity, res, next, errorMsgs);
     },
+    validateShippingMethod,
     ordersController.postNewOrder
 );
 
@@ -201,6 +205,9 @@ ordersRouter.post("/create-payment-order-by-tap",
             { fieldName: "Email In Shipping Address", fieldValue: orderDetails?.shippingAddress?.email, dataType: "string", isRequiredValue: true },
             { fieldName: "Request Notes", fieldValue: orderDetails?.requestNotes, dataType: "string", isRequiredValue: false },
             { fieldName: "Order Products", fieldValue: orderDetails?.products, dataType: "array", isRequiredValue: true },
+            { fieldName: "Shipping Method", fieldValue: orderDetails?.shippingMethod, dataType: "object", isRequiredValue: true },
+            { fieldName: "Shipping Method For Local Products", fieldValue: orderDetails?.shippingMethod?.forLocalProducts, dataType: "string", isRequiredValue: true },
+            { fieldName: "Shipping Method For Internationl Products", fieldValue: orderDetails?.shippingMethod?.forInternationalProducts, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => {
@@ -274,6 +281,7 @@ ordersRouter.post("/create-payment-order-by-tap",
         }
         validateNumbersIsPositive(productsQuantity, res, next, errorMsgs);
     },
+    validateShippingMethod,
     ordersController.postNewPaymentOrderByTap
 );
 
@@ -306,6 +314,9 @@ ordersRouter.post("/create-payment-order-by-tabby",
             { fieldName: "Email In Shipping Address", fieldValue: orderDetails?.shippingAddress?.email, dataType: "string", isRequiredValue: true },
             { fieldName: "Request Notes", fieldValue: orderDetails?.requestNotes, dataType: "string", isRequiredValue: false },
             { fieldName: "Order Products", fieldValue: orderDetails?.products, dataType: "array", isRequiredValue: true },
+            { fieldName: "Shipping Method", fieldValue: orderDetails?.shippingMethod, dataType: "object", isRequiredValue: true },
+            { fieldName: "Shipping Method For Local Products", fieldValue: orderDetails?.shippingMethod?.forLocalProducts, dataType: "string", isRequiredValue: true },
+            { fieldName: "Shipping Method For Internationl Products", fieldValue: orderDetails?.shippingMethod?.forInternationalProducts, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => {
@@ -379,7 +390,8 @@ ordersRouter.post("/create-payment-order-by-tabby",
         }
         validateNumbersIsPositive(productsQuantity, res, next, errorMsgs);
     },
-    ordersController.postNewPaymentOrderByTap
+    validateShippingMethod,
+    ordersController.postNewPaymentOrderByTabby
 );
 
 ordersRouter.post("/handle-checkout-complete/:orderId",

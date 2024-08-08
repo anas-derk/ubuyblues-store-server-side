@@ -122,35 +122,34 @@ async function postNewPaymentOrderByTap(req, res) {
 
 async function postNewPaymentOrderByTabby(req, res) {
     try{
-        const orderData = req.body;
-        const result = await ordersManagmentFunctions.createNewOrder(orderData);
+        const result = await ordersManagmentFunctions.createNewOrder(req.body);
         if (!result.error) {
             const response = await post(`${process.env.TABBY_PAYMENT_GATEWAY_BASE_API_URL}/api/v2/checkout`, {
                 payment: {
-                    amount: result.data.orderAmount,
+                    amount: String(result.data.orderAmount),
                     currency: "KWD",
                     buyer: {
                         phone: "+96590000001",
-                        email: "card.success@tabby.ai",
-                        name: result.data.billingAddress.firstName + result.data.billingAddress.lastName,
+                        email: result.data.billingAddress.email,
+                        name: result.data.billingAddress.firstName + " " + result.data.billingAddress.lastName,
                     },
                     shipping_address: {
                         city: result.data.shippingAddress.city,
                         address: result.data.shippingAddress.streetAddress,
-                        zip: result.data.shippingAddress.postalCode
+                        zip: String(result.data.shippingAddress.postalCode)
                     },
                     order: {
                         tax_amount: "0.00",
-                        shipping_amount: result.data.shippingCost.forLocalProducts + result.data.shippingCost.forInternationalProducts,
-                        discount_amount: result.data.totalDiscount,
-                        reference_id: result.data.orderNumber,
+                        shipping_amount: String(result.data.shippingCost.forLocalProducts + result.data.shippingCost.forInternationalProducts),
+                        discount_amount: String(result.data.totalDiscount),
+                        reference_id: String(result.data.orderNumber),
                         items: result.data.products.map(product => (
                             {
                                 title: product.name,
                                 quantity: product.quantity,
-                                unit_price: product.unitPrice,
-                                discount_amount: product.discount,
-                                reference_id: product.productId,
+                                unit_price: String(product.unitPrice),
+                                discount_amount: String(product.discount),
+                                // reference_id: product.productId,
                                 image_url: `https://api.ubuyblues.com/${product.imagePath}`,
                                 product_url: `https://ubuyblues.com/product-details/${product.productId}`,
                                 category: "TOYS"
@@ -164,25 +163,25 @@ async function postNewPaymentOrderByTabby(req, res) {
                     order_history: [
                         {
                             purchased_at: result.data.addedDate,
-                            amount: result.data.orderAmount,
+                            amount: String(result.data.orderAmount),
                             status: "new",
                             buyer: {
                                 phone: "+96590000001",
-                                email: "card.success@tabby.ai",
-                                name: result.data.billingAddress.firstName + result.data.billingAddress.lastName,
+                                email: result.data.billingAddress.email,
+                                name: result.data.billingAddress.firstName + " " + result.data.billingAddress.lastName,
                             },
                             shipping_address: {
                                 city: result.data.shippingAddress.city,
                                 address: result.data.shippingAddress.streetAddress,
-                                zip: result.data.shippingAddress.postalCode
+                                zip: String(result.data.shippingAddress.postalCode)
                             },
                             items: result.data.products.map(product => (
                                 {
                                     title: product.name,
                                     quantity: product.quantity,
-                                    unit_price: product.unitPrice,
-                                    discount_amount: product.discount,
-                                    reference_id: product.productId,
+                                    unit_price: String(product.unitPrice),
+                                    discount_amount: String(product.discount),
+                                    // reference_id: product.productId,
                                     image_url: `https://api.ubuyblues.com/${product.imagePath}`,
                                     product_url: `https://ubuyblues.com/product-details/${product.productId}`,
                                     category: "TOYS"

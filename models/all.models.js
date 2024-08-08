@@ -421,16 +421,6 @@ const orderSchema = mongoose.Schema({
         type: Number,
         default: 0,
     },
-    shippingCost: {
-        forLocalProducts: {
-            type: Number,
-            required: true,
-        },
-        forInternationlProducts: {
-            type: Number,
-            required: true,
-        }
-    },
     checkoutStatus: {
         type: String,
         default: "Checkout Incomplete",
@@ -574,6 +564,28 @@ const orderSchema = mongoose.Schema({
         default: false,
         type: Boolean,
     },
+    shippingCost: {
+        forLocalProducts: {
+            type: Number,
+            default: 0,
+        },
+        forInternationalProducts: {
+            type: Number,
+            default: 0,
+        }
+    },
+    shippingMethod: {
+        forLocalProducts: {
+            type: String,
+            enum: ["normal", "ubuyblues"],
+            required: true
+        },
+        forInternationalProducts: {
+            type: String,
+            enum: ["normal", "fast"],
+            required: true
+        }
+    }
 });
 
 // Create Order Model From Order Schema

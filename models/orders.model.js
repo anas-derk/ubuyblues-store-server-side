@@ -2,15 +2,17 @@
 
 const { orderModel, userModel, adminModel, productsWalletModel, productModel, mongoose } = require("../models/all.models");
 
+const countries = require("countries-list").countries;
+
 const isProductLocalOrInternational = (productCountry, shippingCountry) => {
     return countries[productCountry].name === shippingCountry ? "local" : "international";
 }
 
-const getShippingCost = (localProductsLength, internationalProductsLength, totalPriceAfterDiscount) => {
+const getShippingCost = (localProductsLength, internationalProductsLength, shippingMethod, totalPriceAfterDiscount) => {
     let tempShippingCost = { forLocalProducts: 0, forInternationalProducts: 0 };
     if (localProductsLength !== 0) {
         if (shippingMethod.forLocalProducts === "ubuyblues") {
-            tempShippingCost.forLocalProducts = 1;
+            tempShippingCost.forLocalProducts = 3.25;
         }
     }
     if (internationalProductsLength !== 0) {
@@ -163,6 +165,7 @@ async function createNewOrder(orderDetails) {
                 totalAmount: orderedProducts[i].price * orderDetails.products[i].quantity,
                 quantity: orderDetails.products[i].quantity,
                 imagePath: orderedProducts[i].imagePath,
+                country: orderedProducts[i].country,
             });
         }
         const totalPrices = {
@@ -174,14 +177,18 @@ async function createNewOrder(orderDetails) {
         for(let product of orderProductsDetails){
             totalPrices.totalPriceBeforeDiscount += product.totalAmount;
             totalPrices.totalDiscount += product.discount * product.quantity;
-            if (isProductLocalOrInternational(product.country, orderDetails.shippingAddress.country)) {
+            if (isProductLocalOrInternational(product.country, orderDetails.shippingAddress.country) === "local") {
                 localProducts.push(product);
             } else {
                 internationalProducts.push(product);
             }
         }
         totalPrices.totalPriceAfterDiscount = totalPrices.totalPriceBeforeDiscount - totalPrices.totalDiscount;
-        const shippingCost = getShippingCost(localProducts.length, internationalProducts.length, totalPrices.totalPriceAfterDiscount);
+        const shippingMethod = {
+            forLocalProducts: orderDetails.shippingMethod.forLocalProducts,
+            forInternationalProducts: orderDetails.shippingMethod.forInternationalProducts,
+        }
+        const shippingCost = getShippingCost(localProducts.length, internationalProducts.length, shippingMethod, totalPrices.totalPriceAfterDiscount);
         const newOrder = await (
             new orderModel({
                 storeId: existOrderProducts[0].storeId,
@@ -191,16 +198,10 @@ async function createNewOrder(orderDetails) {
                 billingAddress: orderDetails.billingAddress,
                 shippingAddress: orderDetails.shippingAddress,
                 products: orderProductsDetails,
-                shippingCost: getShippingCost(localProducts.length, internationalProducts.length, totalPrices.totalPriceAfterDiscount),
+                shippingCost,
+                shippingMethod,
             })
         ).save();
-        const bulkOps = orderProductsDetails.map((product) => ({
-            updateOne: {
-                filter: { _id: new mongoose.Types.ObjectId(product.productId) },
-                update: { $inc: { numberOfOrders: 1, quantity: -1 * product.quantity} }
-            }
-        }));
-        await productModel.bulkWrite(bulkOps);
         if (orderDetails.customerId) {
             let newProductsForUserInsideTheWallet = [];
             const orderProducts = await productsWalletModel.find({ productId: { $in: orderProductsDetails.map((product) => product.productId) }, userId: orderDetails.customerId });
@@ -227,7 +228,16 @@ async function createNewOrder(orderDetails) {
                 totalPriceBeforeDiscount: totalPrices.totalPriceBeforeDiscount,
                 totalDiscount: totalPrices.totalDiscount,
                 totalPriceAfterDiscount: totalPrices.totalPriceAfterDiscount,
-                ...newOrder,
+                orderAmount: newOrder.orderAmount,
+                billingAddress: newOrder.billingAddress,
+                shippingAddress: newOrder.shippingAddress,
+                products: newOrder.products,
+                addedDate: newOrder.addedDate,
+                orderNumber: newOrder.orderNumber,
+                shippingCost: newOrder.shippingCost,
+                shippingMethod: newOrder.shippingMethod,
+                storeId: newOrder.storeId,
+                _id: newOrder._id
             },
         }
     } catch (err) {
