@@ -81,7 +81,7 @@ async function postNewPaymentOrderByTap(req, res) {
         const result = await ordersManagmentFunctions.createNewOrder(orderData);
         if (!result.error) {
             const response = await post(`${process.env.TAP_PAYMENT_GATEWAY_BASE_API_URL}/charges`, {
-                amount: result.data.totalPriceAfterDiscount,
+                amount: result.data.order.orderAmount,
                 currency: "USD",
                 receipt: {
                     email: true,
@@ -111,6 +111,102 @@ async function postNewPaymentOrderByTap(req, res) {
                 }
             });
             res.json(getResponseObject("Creating New Payment Order By Tap Process Has Been Successfully !!", false, response.data));
+            return;
+        }
+        res.json(result);
+    }
+    catch(err) {
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
+}
+
+async function postNewPaymentOrderByTabby(req, res) {
+    try{
+        const orderData = req.body;
+        const result = await ordersManagmentFunctions.createNewOrder(orderData);
+        if (!result.error) {
+            const response = await post(`${process.env.TABBY_PAYMENT_GATEWAY_BASE_API_URL}/api/v2/checkout`, {
+                payment: {
+                    amount: result.data.orderAmount,
+                    currency: "KWD",
+                    buyer: {
+                        phone: "+96590000001",
+                        email: "card.success@tabby.ai",
+                        name: result.data.billingAddress.firstName + result.data.billingAddress.lastName,
+                    },
+                    shipping_address: {
+                        city: result.data.shippingAddress.city,
+                        address: result.data.shippingAddress.streetAddress,
+                        zip: result.data.shippingAddress.postalCode
+                    },
+                    order: {
+                        tax_amount: "0.00",
+                        shipping_amount: result.data.shippingCost.forLocalProducts + result.data.shippingCost.forInternationalProducts,
+                        discount_amount: result.data.totalDiscount,
+                        reference_id: result.data.orderNumber,
+                        items: result.data.products.map(product => (
+                            {
+                                title: product.name,
+                                quantity: product.quantity,
+                                unit_price: product.unitPrice,
+                                discount_amount: product.discount,
+                                reference_id: product.productId,
+                                image_url: `https://api.ubuyblues.com/${product.imagePath}`,
+                                product_url: `https://ubuyblues.com/product-details/${product.productId}`,
+                                category: "TOYS"
+                            }
+                        ))
+                    },
+                    buyer_history: {
+                        registered_since: "2019-08-24T14:15:22Z",
+                        loyalty_level: 1,
+                    },
+                    order_history: [
+                        {
+                            purchased_at: result.data.addedDate,
+                            amount: result.data.orderAmount,
+                            status: "new",
+                            buyer: {
+                                phone: "+96590000001",
+                                email: "card.success@tabby.ai",
+                                name: result.data.billingAddress.firstName + result.data.billingAddress.lastName,
+                            },
+                            shipping_address: {
+                                city: result.data.shippingAddress.city,
+                                address: result.data.shippingAddress.streetAddress,
+                                zip: result.data.shippingAddress.postalCode
+                            },
+                            items: result.data.products.map(product => (
+                                {
+                                    title: product.name,
+                                    quantity: product.quantity,
+                                    unit_price: product.unitPrice,
+                                    discount_amount: product.discount,
+                                    reference_id: product.productId,
+                                    image_url: `https://api.ubuyblues.com/${product.imagePath}`,
+                                    product_url: `https://ubuyblues.com/product-details/${product.productId}`,
+                                    category: "TOYS"
+                                }
+                            ))
+                        }
+                    ],
+                    meta: {
+                        order_id: result.data._id,
+                    }
+                },
+                lang: "ar",
+                merchant_code: "UBUYBLUESkwt",
+                merchant_urls: {
+                    success: `https://ubuyblues.com/confirmation/${result.data._id}`,
+                    cancel: `https://ubuyblues.com/checkout?storeId=${result.data.storeId}`,
+                    failure: `https://ubuyblues.com/checkout?storeId=${result.data.storeId}`
+                }
+            }, {
+                headers: {
+                    Authorization: `Bearer ${process.env.TAPPY_PUBLIC_API_KEY}`
+                }
+            });
+            res.json(getResponseObject("Creating New Payment Order By Tabby Process Has Been Successfully !!", false, response.data));
             return;
         }
         res.json(result);
@@ -206,6 +302,7 @@ module.exports = {
     getOrderDetails,
     postNewOrder,
     postNewPaymentOrderByTap,
+    postNewPaymentOrderByTabby,
     postCheckoutComplete,
     putOrder,
     putOrderProduct,

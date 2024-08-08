@@ -181,19 +181,19 @@ async function createNewOrder(orderDetails) {
             }
         }
         totalPrices.totalPriceAfterDiscount = totalPrices.totalPriceBeforeDiscount - totalPrices.totalDiscount;
-        getShippingCost(localProducts.length, internationalProducts.length, totalPrices.totalPriceAfterDiscount);
-        const ordersCount = await orderModel.countDocuments();
-        const newOrder = new orderModel({
-            storeId: existOrderProducts[0].storeId,
-            orderNumber: ordersCount + 1,
-            orderAmount: totalPrices.totalPriceAfterDiscount,
-            customerId: orderDetails.customerId ? orderDetails.customerId : "",
-            billingAddress: orderDetails.billingAddress,
-            shippingAddress: orderDetails.shippingAddress,
-            products: orderProductsDetails,
-            shippingCost: getShippingCost(localProducts.length, internationalProducts.length, totalPrices.totalPriceAfterDiscount),
-        });
-        const { _id, orderNumber, products } = await newOrder.save();
+        const shippingCost = getShippingCost(localProducts.length, internationalProducts.length, totalPrices.totalPriceAfterDiscount);
+        const newOrder = await (
+            new orderModel({
+                storeId: existOrderProducts[0].storeId,
+                orderNumber: await orderModel.countDocuments() + 1,
+                orderAmount: totalPrices.totalPriceAfterDiscount + shippingCost.forLocalProducts + shippingCost.forInternationalProducts,
+                customerId: orderDetails.customerId ? orderDetails.customerId : "",
+                billingAddress: orderDetails.billingAddress,
+                shippingAddress: orderDetails.shippingAddress,
+                products: orderProductsDetails,
+                shippingCost: getShippingCost(localProducts.length, internationalProducts.length, totalPrices.totalPriceAfterDiscount),
+            })
+        ).save();
         const bulkOps = orderProductsDetails.map((product) => ({
             updateOne: {
                 filter: { _id: new mongoose.Types.ObjectId(product.productId) },
@@ -224,15 +224,10 @@ async function createNewOrder(orderDetails) {
             msg: "Creating New Order Has Been Successfuly !!",
             error: false,
             data: {
-                orderId: _id,
-                orderNumber: orderNumber,
-                billingAddress: orderDetails.billingAddress,
-                shippingAddress: orderDetails.shippingAddress,
-                products,
                 totalPriceBeforeDiscount: totalPrices.totalPriceBeforeDiscount,
                 totalDiscount: totalPrices.totalDiscount,
                 totalPriceAfterDiscount: totalPrices.totalPriceAfterDiscount,
-                shippingFee: 0
+                ...newOrder,
             },
         }
     } catch (err) {
