@@ -52,7 +52,7 @@ async function getStoreDetails(storeId) {
 
 async function getMainStoreDetails() {
     try {
-        console.log(await storeModel.find({}))
+        console.log(storeModel)
         const store = await storeModel.findOne({ isMainStore: true });
         if (store) {
             return {
