@@ -52,8 +52,8 @@ async function getStoreDetails(storeId) {
 
 async function getMainStoreDetails() {
     try {
+        console.log(await storeModel.find({}))
         const store = await storeModel.findOne({ isMainStore: true });
-        console.log(store)
         if (store) {
             return {
                 msg: `Get Main Store Details Process Has Been Successfully !!`,
