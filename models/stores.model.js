@@ -1,6 +1,6 @@
 // Import  Order Model Object
 
-const { storeModel, adminModel, categoryModel, productModel, brandModel, mongoose } = require("../models/all.models");
+const { storeModel, adminModel, categoryModel, productModel, brandModel } = require("../models/all.models");
 
 // require bcryptjs module for password encrypting
 
@@ -52,7 +52,7 @@ async function getStoreDetails(storeId) {
 
 async function getMainStoreDetails() {
     try {
-        const store = await mongoose.models.store.findOne({ isMainStore: true });
+        const store = await storeModel.findOne({ isMainStore: true });
         if (store) {
             return {
                 msg: `Get Main Store Details Process Has Been Successfully !!`,
