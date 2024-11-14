@@ -68,7 +68,7 @@ async function postNewStore(req, res) {
     try{
         const outputImageFilePath = `assets/images/stores/${Math.random()}_${Date.now()}__${req.file.originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`;
         await handleResizeImagesAndConvertFormatToWebp([req.file.buffer], [outputImageFilePath]);
-        const result = await storesOPerationsManagmentFunctions.createNewStore({...Object.assign({}, req.body), outputImageFilePath}, req.query.language);
+        const result = await storesOPerationsManagmentFunctions.createNewStore({...Object.assign({}, req.body), imagePath: outputImageFilePath}, req.query.language);
         if (result.error) {
             unlinkSync(outputImageFilePath);
         }
