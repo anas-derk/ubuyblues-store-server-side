@@ -73,12 +73,17 @@ async function postNewStore(req, res) {
             unlinkSync(outputImageFilePath);
         }
         else {
-            await sendConfirmRequestAddStoreArrivedEmail(result.data.ownerEmail, result.data.language);
-            await sendReceiveAddStoreRequestEmail("info@ubuyblues.com", result.data);
+            try{
+                await sendConfirmRequestAddStoreArrivedEmail(result.data.ownerEmail, result.data.language);
+                await sendReceiveAddStoreRequestEmail("info@ubuyblues.com", result.data);
+            } catch(err) {
+                console.log(err);
+            }
         }
         res.json(result);
     }
     catch(err) {
+        console.log(err);
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
