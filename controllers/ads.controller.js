@@ -64,8 +64,10 @@ async function getAllAds(req, res) {
 async function deleteAd(req, res) {
     try {
         const result = await adsOPerationsManagmentFunctions.deleteAd(req.data._id, req.params.adId, req.query.language);
-        if(!result.error && result.data?.deletedAdImagePath) {
-            unlinkSync(result.data.deletedAdImagePath);
+        if(!result.error) {
+            if (result.data?.deletedAdImagePath) {
+                unlinkSync(result.data.deletedAdImagePath);
+            }
         }
         else {
             if (result.msg !== "Sorry, This Ad Is Not Exist !!") {
