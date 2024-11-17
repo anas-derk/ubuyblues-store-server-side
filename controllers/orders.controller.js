@@ -18,8 +18,8 @@ function getFiltersObject(filters) {
         }
         if (objectKey === "_id") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "status") filtersObject[objectKey] = filters[objectKey];
-        if (objectKey === "customerName") filtersObject[`billing_address.given_name`] = filters[objectKey];
-        if (objectKey === "email") filtersObject[`billing_address.email`] = filters[objectKey];
+        if (objectKey === "customerName") filtersObject[`billingAddress.given_name`] = filters[objectKey];
+        if (objectKey === "email") filtersObject[`billingAddress.email`] = filters[objectKey];
         if (objectKey === "customerId") {
             if (filters["destination"] === "admin") {
                 filtersObject[objectKey] = filters[objectKey];
