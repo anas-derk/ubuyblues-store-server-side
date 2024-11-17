@@ -4,7 +4,7 @@ const productsController = require("../controllers/products.controller");
 
 const multer = require("multer");
 
-const { validateJWT, validateNumbersIsGreaterThanZero, validateNumbersIsNotFloat, validateSortMethod, validateSortType, validateIsExistErrorInFiles, validateCountries } = require("../middlewares/global.middlewares");
+const { validateJWT, validateNumbersIsGreaterThanZero, validateNumbersIsNotFloat, validateSortMethod, validateSortType, validateIsExistErrorInFiles, validateCountries, validateIsPriceGreaterThanDiscount } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -21,7 +21,7 @@ productsRouter.post("/add-new-product",
                 file.mimetype !== "image/jpeg" &&
                 file.mimetype !== "image/png" &&
                 file.mimetype !== "image/webp"
-            ){
+            ) {
                 req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG and PNG Or WEBP files are allowed !!";
                 return cb(null, false);
             }
@@ -39,14 +39,14 @@ productsRouter.post("/add-new-product",
             { fieldName: "Price", fieldValue: Number(price), dataType: "number", isRequiredValue: true },
             { fieldName: "Description", fieldValue: description, dataType: "string", isRequiredValue: true },
             { fieldName: "Categories", fieldValue: categories, dataType: "array", isRequiredValue: true },
-            { fieldName: "discount", fieldValue: Number(discount), dataType: "number", isRequiredValue: discount < 0 },
-            { fieldName: "quantity", fieldValue: Number(quantity), dataType: "number", isRequiredValue: true },
+            { fieldName: "Discount", fieldValue: Number(discount), dataType: "number", isRequiredValue: discount < 0 },
+            { fieldName: "Quantity", fieldValue: Number(quantity), dataType: "number", isRequiredValue: true },
             { fieldName: "Countries", fieldValue: countries, dataType: "array", isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => {
         const { price, quantity } = Object.assign({}, req.body);
-        validateNumbersIsGreaterThanZero([price, quantity], res, next, ["Sorry, Please Send Valid Product Price ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Product Discount ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Product Quantity ( Number Must Be Greater Than Zero ) !!"]);
+        validateNumbersIsGreaterThanZero([price, quantity], res, next, ["Sorry, Please Send Valid Product Price ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Product Quantity ( Number Must Be Greater Than Zero ) !!"]);
     },
     (req, res, next) => {
         const { categories } = req.body;
@@ -54,23 +54,20 @@ productsRouter.post("/add-new-product",
             categories.map((categoryId, index) => (
                 { fieldName: `Id In Category ${index + 1}`, fieldValue: categoryId, dataType: "ObjectId", isRequiredValue: true }
             ))
-        , res, next);
+            , res, next);
     },
     (req, res, next) => validateNumbersIsNotFloat([(Object.assign({}, req.body)).quantity], res, next, [], "Sorry, Please Send Valid Product Quantity !!"),
     (req, res, next) => {
         const { countries } = Object.assign({}, req.body);
         let errorMsgs = [];
-        for(let i = 0; i < countries.length; i++) {
+        for (let i = 0; i < countries.length; i++) {
             errorMsgs.push(`Sorry, Please Send Valid Country At Index: ${i + 1} !!`);
         }
         validateCountries(countries, res, next, errorMsgs);
     },
     (req, res, next) => {
         const { price, discount } = Object.assign({}, req.body);
-        if(Number(discount) < 0 || Number(discount) > Number(price)) {
-            return res.status(400).json(getResponseObject("Sorry, Please Send Valid Discount Value !!", true, {}));
-        }
-        next();
+        validateIsPriceGreaterThanDiscount(price, discount, res, next);
     },
     productsController.postNewProduct
 );
@@ -88,7 +85,7 @@ productsRouter.post("/add-new-images-to-product-gallery/:productId",
                 file.mimetype !== "image/jpeg" &&
                 file.mimetype !== "image/png" &&
                 file.mimetype !== "image/webp"
-            ){
+            ) {
                 req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG and PNG Or WEBP files are allowed !!";
                 return cb(null, false);
             }
@@ -109,14 +106,14 @@ productsRouter.post("/products-by-ids",
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Products By Ids", fieldValue: req.body.productsIds, dataType: "array", isRequiredValue: true }
         ],
-        res, next);
+            res, next);
     },
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes(
             req.body.productsIds.map((productId, index) => (
                 { fieldName: `Id In Product ${index + 1}`, fieldValue: productId, dataType: "ObjectId", isRequiredValue: true }
             )),
-        res, next);
+            res, next);
     },
     productsController.getProductsByIds
 );
@@ -127,14 +124,14 @@ productsRouter.post("/products-by-ids-and-store-id",
             { fieldName: "Store Id", fieldValue: req.query.storeId, dataType: "ObjectId", isRequiredValue: true },
             { fieldName: "Products By Ids", fieldValue: req.body.productsIds, dataType: "array", isRequiredValue: true }
         ],
-        res, next);
+            res, next);
     },
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes(
             req.body.productsIds.map((productId, index) => (
                 { fieldName: `Id In Product ${index + 1}`, fieldValue: productId, dataType: "ObjectId", isRequiredValue: true }
             )),
-        res, next);
+            res, next);
     },
     productsController.getProductsByIdsAndStoreId
 );
@@ -274,24 +271,67 @@ productsRouter.delete("/gallery-images/:productId",
 productsRouter.put("/:productId",
     validateJWT,
     (req, res, next) => {
-        const { name, price, description, categories, discount, countries } = req.body;
+        const { name, price, description, categories, discount, quantity, countries } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
-            { fieldName: "Name", fieldValue: name, dataType: "string", isRequiredValue: true },
-            { fieldName: "Price", fieldValue: Number(price), dataType: "number", isRequiredValue: true },
-            { fieldName: "Description", fieldValue: description, dataType: "string", isRequiredValue: true },
-            { fieldName: "Categories", fieldValue: categories, dataType: "array", isRequiredValue: true },
-            { fieldName: "discount", fieldValue: Number(discount), dataType: "number", isRequiredValue: discount < 0 },
-            { fieldName: "discount", fieldValue: countries, dataType: "array", isRequiredValue: true },
+            { fieldName: "Name", fieldValue: name, dataType: "string", isRequiredValue: false },
+            { fieldName: "Price", fieldValue: Number(price), dataType: "number", isRequiredValue: false },
+            { fieldName: "Description", fieldValue: description, dataType: "string", isRequiredValue: false },
+            { fieldName: "Categories", fieldValue: categories, dataType: "array", isRequiredValue: false },
+            { fieldName: "Discount", fieldValue: Number(discount), dataType: "number", isRequiredValue: false },
+            { fieldName: "Quantity", fieldValue: Number(quantity), dataType: "number", isRequiredValue: false },
+            { fieldName: "Countries", fieldValue: countries, dataType: "array", isRequiredValue: false },
         ], res, next);
     },
     (req, res, next) => {
+        const { price } = Object.assign({}, req.body);
+        if (price) {
+            return validateNumbersIsGreaterThanZero([price], res, next, ["Sorry, Please Send Valid Product Price ( Number Must Be Greater Than Zero ) !!"]);
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { discount } = Object.assign({}, req.body);
+        if (discount) {
+            return validateNumbersIsGreaterThanZero([price, quantity], res, next, ["Sorry, Please Send Valid Product Discount ( Number Must Be Greater Than Zero ) !!"]);
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { quantity } = Object.assign({}, req.body);
+        if (quantity) {
+            return validateNumbersIsGreaterThanZero([quantity], res, next, ["Sorry, Please Send Valid Product Quantity ( Number Must Be Greater Than Zero ) !!"]);
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { price, discount } = Object.assign({}, req.body);
+        if (price && discount) {
+            return validateIsPriceGreaterThanDiscount(price, discount, res, next);
+        }
+        next();
+    },
+    (req, res, next) => {
         const { categories } = req.body;
-        validateIsExistValueForFieldsAndDataTypes(
-            categories.map((categoryId, index) => (
-                { fieldName: `Id In Category ${index + 1}`, fieldValue: categoryId, dataType: "ObjectId", isRequiredValue: true }
-            ))
-        , res, next);
+        if (categories) {
+            return validateIsExistValueForFieldsAndDataTypes(
+                categories.map((categoryId, index) => (
+                    { fieldName: `Id In Category ${index + 1}`, fieldValue: categoryId, dataType: "ObjectId", isRequiredValue: true }
+                ))
+                , res, next);
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { countries } = Object.assign({}, req.body);
+        if (countries) {
+            let errorMsgs = [];
+            for (let i = 0; i < countries.length; i++) {
+                errorMsgs.push(`Sorry, Please Send Valid Country At Index: ${i + 1} !!`);
+            }
+            return validateCountries(countries, res, next, errorMsgs);
+        }
+        next();
     },
     productsController.putProduct
 );
@@ -309,7 +349,7 @@ productsRouter.put("/update-product-gallery-image/:productId",
                 file.mimetype !== "image/jpeg" &&
                 file.mimetype !== "image/png" &&
                 file.mimetype !== "image/webp"
-            ){
+            ) {
                 req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG and PNG Or WEBP files are allowed !!";
                 return cb(null, false);
             }
@@ -339,7 +379,7 @@ productsRouter.put("/update-product-image/:productId",
                 file.mimetype !== "image/jpeg" &&
                 file.mimetype !== "image/png" &&
                 file.mimetype !== "image/webp"
-            ){
+            ) {
                 req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG and PNG Or WEBP files are allowed !!";
                 return cb(null, false);
             }
