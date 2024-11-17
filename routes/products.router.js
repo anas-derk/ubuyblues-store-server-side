@@ -45,8 +45,8 @@ productsRouter.post("/add-new-product",
         ], res, next);
     },
     (req, res, next) => {
-        const { price, discount, quantity } = Object.assign({}, req.body);
-        validateNumbersIsGreaterThanZero([price, discount, quantity], res, next, ["Sorry, Please Send Valid Product Price ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Product Discount ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Product Quantity ( Number Must Be Greater Than Zero ) !!"]);
+        const { price, quantity } = Object.assign({}, req.body);
+        validateNumbersIsGreaterThanZero([price, quantity], res, next, ["Sorry, Please Send Valid Product Price ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Product Discount ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Product Quantity ( Number Must Be Greater Than Zero ) !!"]);
     },
     (req, res, next) => {
         const { categories } = req.body;
@@ -64,6 +64,13 @@ productsRouter.post("/add-new-product",
             errorMsgs.push(`Sorry, Please Send Valid Country At Index: ${i + 1} !!`);
         }
         validateCountries(countries, res, next, errorMsgs);
+    },
+    (req, res, next) => {
+        const { price, discount } = Object.assign({}, req.body);
+        if(Number(discount) < 0 || Number(discount) > Number(price)) {
+            return res.status(400).json(getResponseObject("Sorry, Please Send Valid Discount Value !!", true, {}));
+        }
+        next();
     },
     productsController.postNewProduct
 );

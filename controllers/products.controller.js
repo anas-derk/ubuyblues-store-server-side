@@ -18,12 +18,9 @@ async function postNewProduct(req, res) {
             imagePath: outputImageFilePaths[0],
             galleryImagesPaths: outputImageFilePaths.slice(1),
         };
-        if(Number(productInfo.discount) < 0 || Number(productInfo.discount) > Number(productInfo.price)) {
-            return res.status(400).json(getResponseObject("Sorry, Please Send Valid Discount Value !!", true, {}));
-        }
         const result = await productsManagmentFunctions.addNewProduct(req.data._id, productInfo, req.query.language);
         if (result.error) {
-            if (result.msg !== "Sorry, This Category Is Not Exist !!" || result.msg !== "Sorry, This Product Is Already Exist !!") {
+            if (result.msg === "Sorry, This Admin Has Been Blocked !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
                 return res.status(401).json(result);
             }
         }
