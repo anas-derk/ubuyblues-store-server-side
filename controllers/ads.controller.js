@@ -31,9 +31,8 @@ async function postNewImageAd(req, res) {
     try{
         const outputImageFilePath = `assets/images/ads/${Math.random()}_${Date.now()}__${req.file.originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`;
         await handleResizeImagesAndConvertFormatToWebp([req.file.buffer], [outputImageFilePath]);
-        const bodyData = Object.assign({}, req.body);
         const adInfo = {
-            ...bodyData,
+            ...Object.assign({}, req.body),
             imagePath: outputImageFilePath,
             type: "image"
         };
