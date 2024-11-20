@@ -109,7 +109,7 @@ async function addNewImagesToProductGallery(authorizationId, productId, newGalle
 
 async function getProductsByIds(productsIds, language) {
     try{
-        const products = await productModel.find({ _id: { $in: productsIds }, quantity: { $gte: 1 } });
+        const products = await productModel.find({ _id: { $in: productsIds }, quantity: { $gte: 1 } }).populate("categories");
         if (products.length === 0) {
             return {
                 msg: getSuitableTranslations("Get Products By Ids Process Has Been Successfully !!", language),
@@ -148,7 +148,7 @@ async function getProductsByIdsAndStoreId(storeId, productsIds, language) {
             msg: getSuitableTranslations("Get Products By Store Id And Ids Process Has Been Successfully !!", language),
             error: false,
             data: {
-                products: await productModel.find({ _id: { $in: productsIds }, storeId, quantity: { $gte: 1 } }),
+                products: await productModel.find({ _id: { $in: productsIds }, storeId, quantity: { $gte: 1 } }).populate("categories"),
                 currentDate: new Date()
             },
         }
@@ -160,7 +160,7 @@ async function getProductsByIdsAndStoreId(storeId, productsIds, language) {
 
 async function getProductInfo(productId, language) {
     try {
-        const productInfo = await productModel.findById(productId);
+        const productInfo = await productModel.findById(productId).populate("categories");
         if (productInfo) {
             return {
                 msg: getSuitableTranslations("Get Product Info Process Has Been Successfuly !!", language),
@@ -217,7 +217,7 @@ async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDe
             msg: getSuitableTranslations("Get Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
             data: {
-                products: await productModel.find(filters).sort(sortDetailsObject).skip((pageNumber - 1) * pageSize).limit(pageSize),
+                products: await productModel.find(filters).sort(sortDetailsObject).skip((pageNumber - 1) * pageSize).limit(pageSize).populate("categories"),
                 currentDate: new Date()
             },
         }
@@ -240,7 +240,8 @@ async function getAllFlashProductsInsideThePage(pageNumber, pageSize, filters, s
                             .find(filters)
                             .sort(sortDetailsObject)
                             .skip((pageNumber - 1) * pageSize)
-                            .limit(pageSize),
+                            .limit(pageSize)
+                            .populate("categories"),
                 currentDate: new Date(),
             },
         }
