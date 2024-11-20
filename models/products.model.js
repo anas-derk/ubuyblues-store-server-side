@@ -258,10 +258,12 @@ async function getRelatedProductsInTheProduct(productId, language) {
             return {
                 msg: getSuitableTranslations("Get Sample From Related Products In This Product Process Has Been Successfuly !!", language),
                 error: false,
-                data: await productModel.aggregate([
+                data: await productModel.populate((await productModel.aggregate([
                     { $match: { categories: productInfo.categories, _id: { $ne: new mongoose.Types.ObjectId(productId) } } },
                     { $sample: { size: 10 } }
-                ]),
+                ])), {
+                    path: "categories",
+                }),
             }
         }
         return {
