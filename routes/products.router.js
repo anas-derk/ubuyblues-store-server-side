@@ -29,6 +29,7 @@ productsRouter.post("/add-new-product",
         }
     }).fields([
         { name: "productImage", maxCount: 1 },
+        { name: "threeDImage", maxCount: 1 },
         { name: "galleryImages", maxCount: 10 },
     ]),
     validateIsExistErrorInFiles,

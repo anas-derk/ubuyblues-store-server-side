@@ -16,7 +16,8 @@ async function postNewProduct(req, res) {
         const productInfo = {
             ...{ name, price, description, categories, discount, quantity, countries } = Object.assign({}, req.body),
             imagePath: outputImageFilePaths[0],
-            galleryImagesPaths: outputImageFilePaths.slice(1),
+            threeDImage: outputImageFilePaths[1],
+            galleryImagesPaths: outputImageFilePaths.slice(2),
         };
         const result = await productsManagmentFunctions.addNewProduct(req.data._id, productInfo, req.query.language);
         if (result.error) {
