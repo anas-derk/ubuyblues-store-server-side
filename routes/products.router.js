@@ -294,7 +294,7 @@ productsRouter.put("/:productId",
     (req, res, next) => {
         const { discount } = Object.assign({}, req.body);
         if (discount) {
-            return validateNumbersIsGreaterThanZero([price, quantity], res, next, ["Sorry, Please Send Valid Product Discount ( Number Must Be Greater Than Zero ) !!"]);
+            return validateNumbersIsGreaterThanZero([discount], res, next, ["Sorry, Please Send Valid Product Discount ( Number Must Be Greater Than Zero ) !!"]);
         }
         next();
     },
