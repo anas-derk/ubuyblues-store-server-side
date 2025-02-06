@@ -54,19 +54,19 @@ async function postNewImagesToProductGallery(req, res) {
 }
 
 async function getProductsByIds(req, res) {
-    try{
+    try {
         res.json(await productsManagmentFunctions.getProductsByIds(req.body.productsIds, req.query.language));
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function getProductsByIdsAndStoreId(req, res) {
-    try{
+    try {
         res.json(await productsManagmentFunctions.getProductsByIdsAndStoreId(req.query.storeId, req.body.productsIds, req.query.language));
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
@@ -80,7 +80,7 @@ function getFiltersAndSortDetailsObject(queryObject) {
         if (objectKey === "sortBy") sortDetailsObject[objectKey] = queryObject[objectKey];
         if (objectKey === "sortType") sortDetailsObject[objectKey] = queryObject[objectKey];
     }
-    return {filtersObject, sortDetailsObject};
+    return { filtersObject, sortDetailsObject };
 }
 
 async function getProductInfo(req, res) {
@@ -115,7 +115,7 @@ async function getAllProductsInsideThePage(req, res) {
         const queryObject = req.query;
         const filtersAndSortDetailsObject = getFiltersAndSortDetailsObject(queryObject);
         let sortDetailsObject = {};
-        if (Object.keys(filtersAndSortDetailsObject.sortDetailsObject).length > 0 ) {
+        if (Object.keys(filtersAndSortDetailsObject.sortDetailsObject).length > 0) {
             sortDetailsObject[filtersAndSortDetailsObject.sortDetailsObject.sortBy] = Number(filtersAndSortDetailsObject.sortDetailsObject.sortType);
         }
         res.json(await productsManagmentFunctions.getAllProductsInsideThePage(queryObject.pageNumber, queryObject.pageSize, filtersAndSortDetailsObject.filtersObject, sortDetailsObject, queryObject.language));
@@ -141,16 +141,16 @@ async function getAllFlashProductsInsideThePage(req, res) {
 }
 
 async function getRelatedProductsInTheProduct(req, res) {
-    try{
+    try {
         res.json(await productsManagmentFunctions.getRelatedProductsInTheProduct(req.params.productId, req.query.language));
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function getAllGalleryImages(req, res) {
-    try{
+    try {
         const result = await productsManagmentFunctions.getAllGalleryImages(req.data._id, req.params.productId, req.query.language);
         if (result.error) {
             if (result.msg === "Sorry, Permission Denied !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
@@ -159,7 +159,7 @@ async function getAllGalleryImages(req, res) {
         }
         res.json(result);
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
@@ -167,7 +167,7 @@ async function getAllGalleryImages(req, res) {
 async function deleteProduct(req, res) {
     try {
         const result = await productsManagmentFunctions.deleteProduct(req.data._id, req.params.productId, req.query.language);
-        if(!result.error) {
+        if (!result.error) {
             unlinkSync(result.data.deletedProductImagePath);
             for (let productImagePath of result.data.galleryImagePathsForDeletedProduct) {
                 unlinkSync(productImagePath);
@@ -214,6 +214,7 @@ async function putProduct(req, res) {
         res.json(result);
     }
     catch (err) {
+        console.log(err)
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
