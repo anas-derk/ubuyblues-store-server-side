@@ -5,9 +5,9 @@ const { categoryModel, adminModel, productModel } = require("../models/all.model
 const { getSuitableTranslations } = require("../global/functions");
 
 async function addNewCategory(authorizationId, categoryData, language) {
-    try{
+    try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
                 const category = await categoryModel.findOne({ name: categoryData.name });
                 if (categoryData.parent) {
@@ -43,7 +43,7 @@ async function addNewCategory(authorizationId, categoryData, language) {
             data: {},
         }
     }
-    catch(err){
+    catch (err) {
         throw Error(err);
     }
 }
@@ -133,7 +133,10 @@ async function getAllCategoriesInsideThePage(pageNumber, pageSize, filters, lang
         return {
             msg: getSuitableTranslations("Get All Categories Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
-            data: await categoryModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize).populate("parent"),
+            data: {
+                categories: await categoryModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize).populate("parent"),
+                categoriesCount: await categoryModel.countDocuments(filters),
+            }
         }
     }
     catch (err) {
@@ -144,7 +147,7 @@ async function getAllCategoriesInsideThePage(pageNumber, pageSize, filters, lang
 async function deleteCategory(authorizationId, categoryId, language) {
     try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
                 const category = await categoryModel.findOne({
                     _id: categoryId,
@@ -196,9 +199,9 @@ async function deleteCategory(authorizationId, categoryId, language) {
 async function updateCategory(authorizationId, categoryId, newCategoryData, language) {
     try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
-                const category = await categoryModel.findOne( { _id: categoryId });
+                const category = await categoryModel.findOne({ _id: categoryId });
                 if (category) {
                     if (category.storeId === admin.storeId) {
                         if (newCategoryData.parent) {
@@ -210,7 +213,7 @@ async function updateCategory(authorizationId, categoryId, newCategoryData, lang
                                 }
                             }
                         }
-                        await categoryModel.updateOne({ _id: categoryId } , newCategoryData);
+                        await categoryModel.updateOne({ _id: categoryId }, newCategoryData);
                         return {
                             msg: getSuitableTranslations("Updating Category Info Process Has Been Successfuly !!", language),
                             error: false,

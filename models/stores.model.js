@@ -25,7 +25,10 @@ async function getAllStoresInsideThePage(pageNumber, pageSize, filters, language
         return {
             msg: getSuitableTranslations("Get All Stores Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
-            data: await storeModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({ creatingOrderDate: -1 }),
+            data: {
+                stores: await storeModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({ creatingOrderDate: -1 }),
+                storesCount: await storeModel.countDocuments(filters),
+            }
         }
     } catch (err) {
         throw Error(err);
@@ -73,7 +76,7 @@ async function getMainStoreDetails(language) {
 }
 
 async function createNewStore(storeDetails, language) {
-    try{
+    try {
         const store = await storeModel.findOne({ ownerEmail: storeDetails.ownerEmail });
         if (store) {
             return {
@@ -89,13 +92,13 @@ async function createNewStore(storeDetails, language) {
             data: newStoreDetails,
         }
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }
 
 async function approveStore(authorizationId, storeId, password, language) {
-    try{
+    try {
         const admin = await adminModel.findById(authorizationId);
         if (admin) {
             if (admin.isWebsiteOwner) {
@@ -156,7 +159,7 @@ async function approveStore(authorizationId, storeId, password, language) {
             data: {},
         }
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }
@@ -306,7 +309,7 @@ async function cancelBlockingStore(authorizationId, storeId, language) {
 }
 
 async function changeStoreImage(authorizationId, storeId, newStoreImagePath, language) {
-    try{
+    try {
         const admin = await adminModel.findById(authorizationId);
         if (admin) {
             if (admin.isWebsiteOwner) {
@@ -318,7 +321,7 @@ async function changeStoreImage(authorizationId, storeId, newStoreImagePath, lan
                         msg: getSuitableTranslations("Updating Store Image Process Has Been Successfully !!", language),
                         error: false,
                         data: { deletedStoreImagePath: store.imagePath }
-                    };    
+                    };
                 }
                 return {
                     msg: getSuitableTranslations("Sorry, This Store Is Not Exist !!", language),
@@ -338,13 +341,13 @@ async function changeStoreImage(authorizationId, storeId, newStoreImagePath, lan
             data: {},
         }
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }
 
-async function deleteStore(authorizationId, storeId, language){
-    try{
+async function deleteStore(authorizationId, storeId, language) {
+    try {
         const admin = await adminModel.findById(authorizationId);
         if (admin) {
             if (admin.isWebsiteOwner) {
@@ -392,13 +395,13 @@ async function deleteStore(authorizationId, storeId, language){
             data: {},
         }
     }
-    catch(err){
+    catch (err) {
         throw Error(err);
     }
 }
 
-async function rejectStore(authorizationId, storeId, language){
-    try{
+async function rejectStore(authorizationId, storeId, language) {
+    try {
         const admin = await adminModel.findById(authorizationId);
         if (admin) {
             if (admin.isWebsiteOwner) {
@@ -432,7 +435,7 @@ async function rejectStore(authorizationId, storeId, language){
             data: {},
         }
     }
-    catch(err){
+    catch (err) {
         throw Error(err);
     }
 }

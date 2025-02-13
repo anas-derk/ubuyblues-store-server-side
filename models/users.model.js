@@ -69,7 +69,7 @@ async function login(email, password, language) {
 }
 
 async function loginByGoogle(userInfo, language) {
-    try{
+    try {
         const user = await userModel.findOne({ email: userInfo.email, provider: "google" });
         if (user) {
             return {
@@ -101,7 +101,7 @@ async function loginByGoogle(userInfo, language) {
             },
         }
     }
-    catch(err){
+    catch (err) {
         throw Error(err);
     }
 }
@@ -188,7 +188,10 @@ async function getAllUsersInsideThePage(authorizationId, pageNumber, pageSize, f
                 return {
                     msg: getSuitableTranslations("Get All Users Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
                     error: false,
-                    data: await userModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({ dateOfCreation: -1 }),
+                    data: {
+                        users: await userModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({ dateOfCreation: -1 }),
+                        usersCount: await userModel.countDocuments(filters),
+                    }
                 }
             }
             return {
@@ -293,13 +296,13 @@ async function updateUserInfo(userId, newUserData, language) {
 }
 
 async function updateVerificationStatus(email, language) {
-    try{
+    try {
         const userInfo = await userModel.findOneAndUpdate({ email }, { isVerified: true });
-        if(userInfo) {
+        if (userInfo) {
             await accountVerificationCodesModel.deleteOne({ email, typeOfUse: "to activate account" });
             return {
                 msg: getSuitableTranslations("Updating Verification Status Process Has Been Successfully !!", language),
-                error: false ,
+                error: false,
                 data: {
                     _id: userInfo._id,
                     isVerified: userInfo.isVerified,
@@ -312,7 +315,7 @@ async function updateVerificationStatus(email, language) {
             data: {},
         };
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }
@@ -356,8 +359,8 @@ async function resetUserPassword(email, userType, newPassword, language) {
     }
 }
 
-async function deleteUser(authorizationId, userId, language){
-    try{
+async function deleteUser(authorizationId, userId, language) {
+    try {
         const admin = await adminModel.findById(authorizationId);
         if (admin) {
             if (admin.isWebsiteOwner) {
@@ -389,7 +392,7 @@ async function deleteUser(authorizationId, userId, language){
             data: {},
         }
     }
-    catch(err){
+    catch (err) {
         throw Error(err);
     }
 }

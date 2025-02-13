@@ -7,7 +7,7 @@ const { getSuitableTranslations } = require("../global/functions");
 async function addNewBrand(authorizationId, brandInfo, language) {
     try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
                 brandInfo.storeId = admin.storeId;
                 await (new brandModel(brandInfo)).save();
@@ -72,7 +72,10 @@ async function getAllBrandsInsideThePage(pageNumber, pageSize, filters, language
         return {
             msg: getSuitableTranslations("Get All Brands Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
-            data: await brandModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize),
+            data: {
+                brands: await brandModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize),
+                brandsCount: await brandModel.countDocuments(filters)
+            },
         };
     }
     catch (err) {
@@ -83,7 +86,7 @@ async function getAllBrandsInsideThePage(pageNumber, pageSize, filters, language
 async function deleteBrand(authorizationId, brandId, language) {
     try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
                 const brandInfo = await brandModel.findOne({
                     _id: brandId,
@@ -134,12 +137,12 @@ async function deleteBrand(authorizationId, brandId, language) {
 async function updateBrandInfo(authorizationId, brandId, newBrandTitle, language) {
     try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
                 const brandInfo = await brandModel.findOne({ _id: brandId });
                 if (brandInfo) {
                     if (brandInfo.storeId === admin.storeId) {
-                        await brandModel.updateOne( { _id: brandId } , { title: newBrandTitle });
+                        await brandModel.updateOne({ _id: brandId }, { title: newBrandTitle });
                         return {
                             msg: getSuitableTranslations("Updating Brand Info Process Has Been Successfuly !!", language),
                             error: false,
@@ -179,9 +182,9 @@ async function updateBrandInfo(authorizationId, brandId, newBrandTitle, language
 }
 
 async function changeBrandImage(authorizationId, brandId, newBrandImagePath, language) {
-    try{
+    try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
                 const brand = await brandModel.findOne({ _id: brandId });
                 if (brand) {
@@ -222,7 +225,7 @@ async function changeBrandImage(authorizationId, brandId, newBrandImagePath, lan
             data: {},
         }
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }

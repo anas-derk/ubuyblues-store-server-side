@@ -115,7 +115,10 @@ async function getAllAdminsInsideThePage(merchantId, pageNumber, pageSize, filte
                     return {
                         msg: getSuitableTranslations("Get All Admins Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
                         error: false,
-                        data: await adminModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({ creatingDate: -1 }),
+                        data: {
+                            admins: await adminModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({ creatingDate: -1 }),
+                            adminsCount: await adminModel.countDocuments(filters)
+                        },
                     }
                 }
                 return {
@@ -144,10 +147,10 @@ async function getAllAdminsInsideThePage(merchantId, pageNumber, pageSize, filte
 }
 
 async function addNewAdmin(merchantId, adminInfo, language) {
-    try{
+    try {
         const admin = await adminModel.findById(merchantId);
         if (admin) {
-            if (admin.isMerchant){
+            if (admin.isMerchant) {
                 if (!admin.isBlocked) {
                     const adminDetails = await adminModel.findOne({ email: adminInfo.email });
                     if (!adminDetails) {
@@ -261,7 +264,7 @@ async function addNewAdmin(merchantId, adminInfo, language) {
             data: {},
         }
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }
@@ -270,7 +273,7 @@ async function updateAdminInfo(merchantId, adminId, newAdminDetails, language) {
     try {
         const admin = await adminModel.findById(merchantId);
         if (admin) {
-            if (admin.isMerchant){
+            if (admin.isMerchant) {
                 if (!admin.isBlocked) {
                     const adminDetails = await adminModel.findOneAndUpdate({ _id: adminId }, newAdminDetails);
                     if (adminDetails) {
@@ -311,11 +314,11 @@ async function updateAdminInfo(merchantId, adminId, newAdminDetails, language) {
     }
 }
 
-async function deleteAdmin(merchantId, adminId, language){
-    try{
+async function deleteAdmin(merchantId, adminId, language) {
+    try {
         const admin = await adminModel.findById(merchantId);
         if (admin) {
-            if (admin.isMerchant){
+            if (admin.isMerchant) {
                 if (!admin.isBlocked) {
                     if ((new mongoose.Types.ObjectId(adminId)).equals(merchantId)) {
                         return {
@@ -359,7 +362,7 @@ async function deleteAdmin(merchantId, adminId, language){
             data: {},
         }
     }
-    catch(err){
+    catch (err) {
         throw Error(err);
     }
 }

@@ -22,7 +22,10 @@ async function getAllWalletProductsInsideThePage(pageNumber, pageSize, filters, 
         return {
             msg: getSuitableTranslations("Get All Products Inside The Wallet For This User The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
-            data: await productsWalletModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize),
+            data: {
+                walletProducts: await productsWalletModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize),
+                walletProductsCount: await productsWalletModel.countDocuments(filters),
+            },
         }
     }
     catch (err) {
@@ -31,30 +34,30 @@ async function getAllWalletProductsInsideThePage(pageNumber, pageSize, filters, 
 }
 
 async function deleteWalletProduct(userId, productId, language) {
-    try{
+    try {
         const user = await userModel.findById(userId);
         if (user) {
             const walletProduct = await productsWalletModel.findOneAndDelete({ productId, userId });
             if (walletProduct) {
                 return {
-                    msg: "Deleting Product From Wallet For This User Process Has Been Successfully !!",
+                    msg: getSuitableTranslations("Deleting Product From Wallet For This User Process Has Been Successfully !!", language),
                     error: false,
                     data: {},
                 }
             }
             return {
-                msg: "Sorry, This Product Inside The Wallet For This User Is Not Exist !!",
+                msg: getSuitableTranslations("Sorry, This Product Inside The Wallet For This User Is Not Exist !!", language),
                 error: true,
                 data: {},
             }
         }
         return {
-            msg: "Sorry, This User Is Not Exist !!",
+            msg: getSuitableTranslations("Sorry, This User Is Not Exist !!", language),
             error: true,
             data: {},
         }
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }

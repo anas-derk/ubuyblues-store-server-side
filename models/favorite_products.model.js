@@ -5,24 +5,23 @@ const { favoriteProductModel, productModel, userModel } = require("../models/all
 const { getSuitableTranslations } = require("../global/functions");
 
 async function addNewFavoriteProduct(userId, productId, language) {
-    try{
+    try {
         const user = await userModel.findById(userId);
         if (user) {
             const product = await productModel.findById(productId);
             if (product) {
                 const favoriteProduct = await favoriteProductModel.findOne({ userId, productId });
                 if (!favoriteProduct) {
-                    const newFavoriteProduct = new favoriteProductModel({
-                        name: product.name,
-                        price: product.price,
-                        imagePath: product.imagePath,
-                        productId,
-                        userId
-                    });
                     return {
                         msg: getSuitableTranslations("Adding New Product To Favorite Products List For This User Process Has Been Successfully !!", language),
                         error: false,
-                        data: await newFavoriteProduct.save(),
+                        data: await (new favoriteProductModel({
+                            name: product.name,
+                            price: product.price,
+                            imagePath: product.imagePath,
+                            productId,
+                            userId
+                        })).save(),
                     }
                 }
                 return {
@@ -43,7 +42,7 @@ async function addNewFavoriteProduct(userId, productId, language) {
             data: {},
         }
     }
-    catch(err){
+    catch (err) {
         throw Error(err);
     }
 }
@@ -66,7 +65,10 @@ async function getAllFavoriteProductsInsideThePage(pageNumber, pageSize, filters
         return {
             msg: getSuitableTranslations("Get All Favorite Products For This User Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
-            data: await favoriteProductModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize),
+            data: {
+                favoriteProducts: await favoriteProductModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize),
+                favoriteProductsCount: await favoriteProductModel.countDocuments(filters),
+            }
         }
     }
     catch (err) {
@@ -75,20 +77,20 @@ async function getAllFavoriteProductsInsideThePage(pageNumber, pageSize, filters
 }
 
 async function getFavoriteProductsByProductsIdsAndUserId(userId, productsIds, language) {
-    try{
+    try {
         return {
             msg: getSuitableTranslations("Get Favorite Products By Products Ids And User Id Process Has Been Successfully !!", language),
             error: false,
             data: await favoriteProductModel.find({ productId: { $in: productsIds }, userId }),
         }
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }
 
 async function deleteFavoriteProduct(userId, productId, language) {
-    try{
+    try {
         const user = await userModel.findById(userId);
         if (user) {
             const favoriteProduct = await favoriteProductModel.findOneAndDelete({ productId, userId });
@@ -111,7 +113,7 @@ async function deleteFavoriteProduct(userId, productId, language) {
             data: {},
         }
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }
