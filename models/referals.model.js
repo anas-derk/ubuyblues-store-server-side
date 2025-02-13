@@ -44,7 +44,10 @@ async function getAllProductReferalsInsideThePage(pageNumber, pageSize, filters,
         return {
             msg: getSuitableTranslations("Get Products Count Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
-            data: await referalModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize),
+            data: {
+                referals: await referalModel.find(filters).skip((pageNumber - 1) * pageSize).limit(pageSize),
+                referalsCount: await referalModel.countDocuments(filters),
+            },
         }
     }
     catch (err) {
