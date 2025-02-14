@@ -6,6 +6,7 @@ function getFiltersObject(filters) {
     let filtersObject = {};
     for (let objectKey in filters) {
         if (objectKey === "storeId") filtersObject[objectKey] = filters[objectKey];
+        if (objectKey === "name") filtersObject[objectKey] = { $regex: new RegExp(filters[objectKey], 'i') }
         if (objectKey === "categoryId") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "parent") {
             if (filters[objectKey] === "null") {
@@ -17,7 +18,7 @@ function getFiltersObject(filters) {
 }
 
 async function postNewCategory(req, res) {
-    try{
+    try {
         const result = await categoriesManagmentFunctions.addNewCategory(req.data._id, { name, parent } = req.body, req.query.language);
         if (result.error) {
             if (result.msg !== "Sorry, This Cateogry Is Already Exist !!" || result.msg !== "Sorry, This Parent Cateogry Is Not Exist !!") {
@@ -26,7 +27,7 @@ async function postNewCategory(req, res) {
         }
         res.json(result);
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
@@ -78,7 +79,7 @@ async function getAllCategoriesInsideThePage(req, res) {
 }
 
 async function deleteCategory(req, res) {
-    try{
+    try {
         const result = await categoriesManagmentFunctions.deleteCategory(req.data._id, req.params.categoryId, req.query.language);
         if (result.error) {
             if (result.msg !== "Sorry, This Category Is Not Exist !!") {
@@ -87,13 +88,13 @@ async function deleteCategory(req, res) {
         }
         res.json(result);
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function putCategory(req, res) {
-    try{
+    try {
         const result = await categoriesManagmentFunctions.updateCategory(req.data._id, req.params.categoryId, { name, parent } = req.body, req.query.language);
         if (result.error) {
             if (result.msg !== "Sorry, This Category Is Not Exist !!" || result.msg !== "Sorry, This Parent Cateogry Is Not Exist !!") {
@@ -102,7 +103,7 @@ async function putCategory(req, res) {
         }
         res.json(result);
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
