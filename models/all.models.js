@@ -844,7 +844,7 @@ const productsRatingShema = new mongoose.Schema({
     rating: {
         type: Number,
         required: true,
-        enum: [1,2,3,4,5]
+        enum: [1, 2, 3, 4, 5]
     }
 });
 
@@ -865,6 +865,11 @@ const adsSchema = new mongoose.Schema({
         enum: ["text", "image"],
     },
     content: String,
+    product: {
+        type: mongoose.Types.ObjectId,
+        ref: "product",
+        required: () => this.type === "image",
+    },
     imagePath: String,
     dateOfPost: {
         type: Date,

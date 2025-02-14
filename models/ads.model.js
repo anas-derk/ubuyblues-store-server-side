@@ -1,13 +1,13 @@
 // Import Product Model Object
 
-const { adsModel, adminModel } = require("../models/all.models");
+const { adsModel, adminModel, productModel } = require("../models/all.models");
 
 const { getSuitableTranslations } = require("../global/functions");
 
 async function addNewAd(authorizationId, adsInfo, language) {
     try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
                 if (await adsModel.countDocuments({ type: adsInfo.type }) >= 10) {
                     return {
@@ -16,10 +16,20 @@ async function addNewAd(authorizationId, adsInfo, language) {
                         data: {},
                     }
                 }
+                if (adsInfo.type === "image") {
+                    const product = await productModel.findById(adsInfo.product);
+                    if (!product) {
+                        return {
+                            msg: getSuitableTranslations("Sorry, This Product Is Not Exist !!", language),
+                            error: false,
+                            data: {},
+                        }
+                    }
+                }
                 adsInfo.storeId = admin.storeId;
                 await (new adsModel(adsInfo)).save();
                 return {
-                    msg: getSuitableTranslations("Adding New Text Ad Process Has Been Successfully !!", language),
+                    msg: getSuitableTranslations(`Adding New ${adsInfo.type.replace(adsInfo.type[0], adsInfo.type[0].toUpperCase())} Ad Process Has Been Successfully !!`, language),
                     error: false,
                     data: {},
                 }
@@ -45,14 +55,14 @@ async function addNewAd(authorizationId, adsInfo, language) {
 }
 
 async function getAllAds(filters, language) {
-    try{
+    try {
         return {
             msg: getSuitableTranslations("Get All Ads Process Has Been Successfully !!", language),
             error: false,
             data: await adsModel.find(filters),
         }
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }
@@ -60,7 +70,7 @@ async function getAllAds(filters, language) {
 async function deleteAd(authorizationId, adId, language) {
     try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
                 const adInfo = await adsModel.findById(adId);
                 if (adInfo) {
@@ -109,9 +119,9 @@ async function deleteAd(authorizationId, adId, language) {
 }
 
 async function updateAdImage(authorizationId, adId, newAdImagePath, language) {
-    try{
+    try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
                 const adInfo = await adsModel.findById(adId);
                 if (adInfo) {
@@ -163,7 +173,7 @@ async function updateAdImage(authorizationId, adId, newAdImagePath, language) {
             data: {},
         }
     }
-    catch(err) {
+    catch (err) {
         throw Error(err);
     }
 }
@@ -171,13 +181,13 @@ async function updateAdImage(authorizationId, adId, newAdImagePath, language) {
 async function updateTextAdContent(authorizationId, adId, newTextAdContent, language) {
     try {
         const admin = await adminModel.findById(authorizationId);
-        if (admin){
+        if (admin) {
             if (!admin.isBlocked) {
                 const adInfo = await adsModel.findById(adId);
                 if (adInfo) {
                     if (adInfo.storeId === admin.storeId) {
                         if (adInfo.type === "text") {
-                            await adsModel.updateOne( { _id: adId } , { content: newTextAdContent });
+                            await adsModel.updateOne({ _id: adId }, { content: newTextAdContent });
                             return {
                                 msg: getSuitableTranslations("Updating Text Ad Content Process Has Been Successfuly !!", language),
                                 error: false,

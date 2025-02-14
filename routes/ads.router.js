@@ -11,7 +11,7 @@ const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functio
 adsRouter.post("/add-new-text-ad",
     validateJWT,
     (req, res, next) => {
-        const { content } = req.body;
+        const { content, product } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Content", fieldValue: content, dataType: "string", isRequiredValue: true },
         ], res, next);
@@ -32,7 +32,7 @@ adsRouter.post("/add-new-image-ad",
                 file.mimetype !== "image/jpeg" &&
                 file.mimetype !== "image/png" &&
                 file.mimetype !== "image/webp"
-            ){
+            ) {
                 req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG, PNG And Webp files are allowed !!";
                 return cb(null, false);
             }
@@ -40,6 +40,12 @@ adsRouter.post("/add-new-image-ad",
         }
     }).single("adImage"),
     validateIsExistErrorInFiles,
+    (req, res, next) => {
+        const { product } = Object.assign({}, req.body);
+        validateIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Product", fieldValue: product, dataType: "ObjectId", isRequiredValue: true },
+        ], res, next);
+    },
     adsController.postNewImageAd,
 );
 
@@ -68,7 +74,7 @@ adsRouter.put("/update-ad-image/:adId",
                 file.mimetype !== "image/jpeg" &&
                 file.mimetype !== "image/png" &&
                 file.mimetype !== "image/webp"
-            ){
+            ) {
                 req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG and PNG Or WEBP files are allowed !!";
                 return cb(null, false);
             }
