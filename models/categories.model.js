@@ -96,7 +96,7 @@ async function getAllCategoriesWithHierarechy(filters, language) {
 
 async function getCategoryInfo(categoryId, language) {
     try {
-        const categoryInfo = await categoryModel.findById(categoryId);
+        const categoryInfo = await categoryModel.findById(categoryId).populate("parent");
         if (categoryInfo) {
             return {
                 msg: getSuitableTranslations("Get Category Info Process Has Been Successfuly !!", language),
