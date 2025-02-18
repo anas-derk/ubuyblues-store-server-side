@@ -13,8 +13,8 @@ walletRouter.get("/all-wallet-products-inside-the-page",
     (req, res, next) => {
         const { pageNumber, pageSize } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
-            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataTypes: ["number"], isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataTypes: ["number"], isRequiredValue: true },
         ], res, next);
     },
     walletController.getAllWalletProductsInsideThePage
@@ -24,7 +24,7 @@ walletRouter.delete("/:productId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Product Id", fieldValue: req.params.productId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     walletController.deleteWalletProduct

@@ -14,9 +14,9 @@ storesRouter.get("/all-stores-inside-the-page",
     (req, res, next) => {
         const { pageNumber, pageSize, _id } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
-            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
-            { fieldName: "Store Id", fieldValue: _id, dataType: "ObjectId", isRequiredValue: false },
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataTypes: ["number"], isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataTypes: ["number"], isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: _id, dataTypes: ["ObjectId"], isRequiredValue: false },
         ], res, next);
     },
     storesController.getAllStoresInsideThePage
@@ -25,7 +25,7 @@ storesRouter.get("/all-stores-inside-the-page",
 storesRouter.get("/store-details/:storeId",
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     storesController.getStoreDetails
@@ -45,7 +45,7 @@ storesRouter.post("/create-new-store",
                 file.mimetype !== "image/jpeg" &&
                 file.mimetype !== "image/png" &&
                 file.mimetype !== "image/webp"
-            ){
+            ) {
                 req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG, PNG And Webp files are allowed !!";
                 return cb(null, false);
             }
@@ -56,13 +56,13 @@ storesRouter.post("/create-new-store",
     (req, res, next) => {
         const { name, ownerFirstName, ownerLastName, ownerEmail, productsType, productsDescription, language } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Name", fieldValue: name, dataType: "string", isRequiredValue: true },
-            { fieldName: "Owner First Name", fieldValue: ownerFirstName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Owner Last Name", fieldValue: ownerLastName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Owner Email", fieldValue: ownerEmail, dataType: "string", isRequiredValue: true },
-            { fieldName: "Products Type", fieldValue: productsType, dataType: "string", isRequiredValue: true },
-            { fieldName: "Products Description", fieldValue: productsDescription, dataType: "string", isRequiredValue: true },
-            { fieldName: "Language", fieldValue: language, dataType: "string", isRequiredValue: true },
+            { fieldName: "Name", fieldValue: name, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Owner First Name", fieldValue: ownerFirstName, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Owner Last Name", fieldValue: ownerLastName, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Owner Email", fieldValue: ownerEmail, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Products Type", fieldValue: productsType, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Products Description", fieldValue: productsDescription, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Language", fieldValue: language, dataTypes: ["string"], isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateName(req.body.ownerFirstName, res, next),
@@ -76,8 +76,8 @@ storesRouter.post("/approve-store/:storeId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
-            { fieldName: "Password", fieldValue: req.query.password, dataType: "string", isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataTypes: ["ObjectId"], isRequiredValue: true },
+            { fieldName: "Password", fieldValue: req.query.password, dataTypes: ["string"], isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validatePassword(req.query.password, res, next),
@@ -88,7 +88,7 @@ storesRouter.put("/update-store-info/:storeId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: false },
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataTypes: ["ObjectId"], isRequiredValue: false },
         ], res, next);
     },
     storesController.putStoreInfo
@@ -98,8 +98,8 @@ storesRouter.put("/blocking-store/:storeId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
-            { fieldName: "Blocking Reason", fieldValue: req.query.blockingReason, dataType: "string", isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataTypes: ["ObjectId"], isRequiredValue: true },
+            { fieldName: "Blocking Reason", fieldValue: req.query.blockingReason, dataTypes: ["string"], isRequiredValue: true },
         ], res, next);
     },
     storesController.putBlockingStore
@@ -109,7 +109,7 @@ storesRouter.put("/cancel-blocking/:storeId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     storesController.putCancelBlockingStore
@@ -119,7 +119,7 @@ storesRouter.put("/change-store-image/:storeId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     multer({
@@ -133,7 +133,7 @@ storesRouter.put("/change-store-image/:storeId",
                 file.mimetype !== "image/jpeg" &&
                 file.mimetype !== "image/png" &&
                 file.mimetype !== "image/webp"
-            ){
+            ) {
                 req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG, PNG And Webp files are allowed !!";
                 return cb(null, false);
             }
@@ -148,7 +148,7 @@ storesRouter.delete("/delete-store/:storeId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: false },
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataTypes: ["ObjectId"], isRequiredValue: false },
         ], res, next);
     },
     storesController.deleteStore
@@ -158,7 +158,7 @@ storesRouter.delete("/reject-store/:storeId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     storesController.deleteRejectStore

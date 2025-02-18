@@ -21,7 +21,7 @@ brandsRouter.post("/add-new-brand",
                 file.mimetype !== "image/jpeg" &&
                 file.mimetype !== "image/png" &&
                 file.mimetype !== "image/webp"
-            ){
+            ) {
                 req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG, PNG And Webp files are allowed !!";
                 return cb(null, false);
             }
@@ -31,7 +31,7 @@ brandsRouter.post("/add-new-brand",
     validateIsExistErrorInFiles,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Brand Title", fieldValue: (Object.assign({}, req.body)).title, dataType: "string", isRequiredValue: true },
+            { fieldName: "Brand Title", fieldValue: (Object.assign({}, req.body)).title, dataTypes: ["string"], isRequiredValue: true },
         ], res, next);
     },
     brandsController.postNewBrand
@@ -40,7 +40,7 @@ brandsRouter.post("/add-new-brand",
 brandsRouter.get("/last-seven-brands-by-store-id",
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.params.storeId, dataType: "ObjectId", isRequiredValue: false },
+            { fieldName: "Store Id", fieldValue: req.params.storeId, dataTypes: ["ObjectId"], isRequiredValue: false },
         ], res, next);
     },
     brandsController.getLastSevenBrandsByStoreId
@@ -49,7 +49,7 @@ brandsRouter.get("/last-seven-brands-by-store-id",
 brandsRouter.get("/brands-count",
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Store Id", fieldValue: req.query.storeId, dataType: "ObjectId", isRequiredValue: false },
+            { fieldName: "Store Id", fieldValue: req.query.storeId, dataTypes: ["ObjectId"], isRequiredValue: false },
         ], res, next);
     },
     brandsController.getBrandsCount
@@ -59,8 +59,8 @@ brandsRouter.get("/all-brands-inside-the-page",
     (req, res, next) => {
         const { pageNumber, pageSize } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
-            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataTypes: ["number"], isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataTypes: ["number"], isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateNumbersIsGreaterThanZero([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Greater Than Zero ) !!"]),
@@ -72,7 +72,7 @@ brandsRouter.delete("/:brandId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "brand Id", fieldValue: req.params.brandId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Brand Id", fieldValue: req.params.brandId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     brandsController.deleteBrand
@@ -82,8 +82,8 @@ brandsRouter.put("/:brandId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "brand Id", fieldValue: req.params.brandId, dataType: "ObjectId", isRequiredValue: true },
-            { fieldName: "New Brand Title", fieldValue: req.body.newBrandTitle, dataType: "string", isRequiredValue: true },
+            { fieldName: "brand Id", fieldValue: req.params.brandId, dataTypes: ["ObjectId"], isRequiredValue: true },
+            { fieldName: "New Brand Title", fieldValue: req.body.newBrandTitle, dataTypes: ["string"], isRequiredValue: true },
         ], res, next);
     },
     brandsController.putBrandInfo
@@ -93,7 +93,7 @@ brandsRouter.put("/change-brand-image/:brandId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "brand Id", fieldValue: req.params.brandId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Brand Id", fieldValue: req.params.brandId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     multer({
@@ -107,7 +107,7 @@ brandsRouter.put("/change-brand-image/:brandId",
                 file.mimetype !== "image/jpeg" &&
                 file.mimetype !== "image/png" &&
                 file.mimetype !== "image/webp"
-            ){
+            ) {
                 req.uploadError = "Sorry, Invalid File Mimetype, Only JPEG, PNG And Webp files are allowed !!";
                 return cb(null, false);
             }

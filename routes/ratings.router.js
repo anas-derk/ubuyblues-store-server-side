@@ -12,7 +12,7 @@ ratingsRouter.get("/product-rating-by-user-id/:productId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Product Id", fieldValue: req.params.productId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Product Id", fieldValue: req.params.productId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     ratingsController.getProductRatingByUserId

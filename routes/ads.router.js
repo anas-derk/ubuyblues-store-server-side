@@ -11,9 +11,9 @@ const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functio
 adsRouter.post("/add-new-text-ad",
     validateJWT,
     (req, res, next) => {
-        const { content, product } = req.body;
+        const { content } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Content", fieldValue: content, dataType: "string", isRequiredValue: true },
+            { fieldName: "Content", fieldValue: content, dataTypes: ["string"], isRequiredValue: true },
         ], res, next);
     },
     adsController.postNewTextAd
@@ -43,7 +43,7 @@ adsRouter.post("/add-new-image-ad",
     (req, res, next) => {
         const { product } = Object.assign({}, req.body);
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Product", fieldValue: product, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Product", fieldValue: product, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     adsController.postNewImageAd,
@@ -55,7 +55,7 @@ adsRouter.delete("/:adId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Ad Id", fieldValue: req.params.adId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Ad Id", fieldValue: req.params.adId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     adsController.deleteAd
@@ -84,7 +84,7 @@ adsRouter.put("/update-ad-image/:adId",
     validateIsExistErrorInFiles,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Ad Id", fieldValue: req.params.adId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Ad Id", fieldValue: req.params.adId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     adsController.putAdImage
@@ -94,8 +94,8 @@ adsRouter.put("/update-ad-content/:adId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Ad Id", fieldValue: req.params.adId, dataType: "ObjectId", isRequiredValue: true },
-            { fieldName: "New Ad Content", fieldValue: req.body.content, dataType: "string", isRequiredValue: true },
+            { fieldName: "Ad Id", fieldValue: req.params.adId, dataTypes: ["ObjectId"], isRequiredValue: true },
+            { fieldName: "New Ad Content", fieldValue: req.body.content, dataTypes: ["string"], isRequiredValue: true },
         ], res, next);
     },
     adsController.putTextAdContent

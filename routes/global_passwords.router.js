@@ -11,9 +11,9 @@ globalPasswordRouter.put("/change-bussiness-email-password",
     (req, res, next) => {
         const { email, password, newPassword } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Bussiness Email", fieldValue: email, dataType: "string", isRequiredValue: true },
-            { fieldName: "Bussiness Password", fieldValue: password, dataType: "string", isRequiredValue: true },
-            { fieldName: "New Bussiness Password", fieldValue: newPassword, dataType: "string", isRequiredValue: true },
+            { fieldName: "Bussiness Email", fieldValue: email, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Bussiness Password", fieldValue: password, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "New Bussiness Password", fieldValue: newPassword, dataTypes: ["string"], isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.query.email, res, next),

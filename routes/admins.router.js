@@ -10,8 +10,8 @@ adminsRouter.get("/login",
     (req, res, next) => {
         const { email, password } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
-            { fieldName: "Password", fieldValue: password, dataType: "string", isRequiredValue: true },
+            { fieldName: "Email", fieldValue: email, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Password", fieldValue: password, dataTypes: ["string"], isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.query.email, res, next),
@@ -28,12 +28,12 @@ adminsRouter.get("/all-admins-inside-the-page",
     (req, res, next) => {
         const { pageNumber, pageSize, _id, firstName, lastName, email } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "page Number", fieldValue: Number(pageNumber), dataType: "number", isRequiredValue: true },
-            { fieldName: "page Size", fieldValue: Number(pageSize), dataType: "number", isRequiredValue: true },
-            { fieldName: "Admin Id", fieldValue: _id, dataType: "ObjectId", isRequiredValue: false },
-            { fieldName: "First Name", fieldValue: firstName, dataType: "string", isRequiredValue: false },
-            { fieldName: "Last Name", fieldValue: lastName, dataType: "string", isRequiredValue: false },
-            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: false },
+            { fieldName: "page Number", fieldValue: Number(pageNumber), dataTypes: ["number"], isRequiredValue: true },
+            { fieldName: "page Size", fieldValue: Number(pageSize), dataTypes: ["number"], isRequiredValue: true },
+            { fieldName: "Admin Id", fieldValue: _id, dataTypes: ["ObjectId"], isRequiredValue: false },
+            { fieldName: "First Name", fieldValue: firstName, dataTypes: ["string"], isRequiredValue: false },
+            { fieldName: "Last Name", fieldValue: lastName, dataTypes: ["string"], isRequiredValue: false },
+            { fieldName: "Email", fieldValue: email, dataTypes: ["string"], isRequiredValue: false },
         ], res, next);
     },
     (req, res, next) => validateNumbersIsGreaterThanZero([req.query.pageNumber, req.query.pageSize], res, next, ["Sorry, Please Send Valid Page Number ( Number Must Be Greater Than Zero ) !!", "Sorry, Please Send Valid Page Size ( Number Must Be Greater Than Zero ) !!"]),
@@ -70,10 +70,10 @@ adminsRouter.post("/add-new-admin",
     (req, res, next) => {
         const { firstName, lastName, email, password } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "First Name", fieldValue: firstName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Last Name", fieldValue: lastName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
-            { fieldName: "Password", fieldValue: password, dataType: "string", isRequiredValue: true },
+            { fieldName: "First Name", fieldValue: firstName, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Last Name", fieldValue: lastName, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Email", fieldValue: email, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Password", fieldValue: password, dataTypes: ["string"], isRequiredValue: true },
         ], res, next);
     },
     (req, res, next) => validateEmail(req.body.email, res, next),
@@ -87,7 +87,7 @@ adminsRouter.put("/update-admin-info/:adminId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Admin Id", fieldValue: req.params.adminId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Admin Id", fieldValue: req.params.adminId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     adminsController.putAdminInfo
@@ -97,7 +97,7 @@ adminsRouter.delete("/delete-admin/:adminId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Admin Id", fieldValue: req.params.adminId, dataType: "ObjectId", isRequiredValue: true },
+            { fieldName: "Admin Id", fieldValue: req.params.adminId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
     },
     adminsController.deleteAdmin
