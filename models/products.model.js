@@ -213,6 +213,43 @@ async function getFlashProductsCount(filters, language) {
 
 async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDetailsObject, language) {
     try {
+        if (filters.category) {
+            const result = await productModel.aggregate([
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "categories",
+                        foreignField: "_id",
+                        as: "categoryDetails"
+                    }
+                },
+                {
+                    $match: {
+                        "categoryDetails.name": { $regex: new RegExp(filters.category, 'i') }
+                    }
+                },
+                {
+                    $facet: {
+                        products: [
+                            { $skip: (pageNumber - 1) * pageSize },
+                            { $limit: pageSize }
+                        ],
+                        productsCount: [
+                            { $count: "total" }
+                        ]
+                    }
+                }
+            ]);
+            return {
+                msg: getSuitableTranslations("Get Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
+                error: false,
+                data: {
+                    products: result[0].products,
+                    productsCount: result[0].productsCount.length > 0 ? result[0].productsCount[0].total : 0,
+                    currentDate: new Date()
+                },
+            }
+        }
         return {
             msg: getSuitableTranslations("Get Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,

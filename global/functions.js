@@ -371,33 +371,40 @@ function checkIsExistValueForFieldsAndDataTypes(fieldNamesAndValuesAndDataTypes)
                     {}
                 );
             }
-            if (!fieldnameAndValueAndDataType.fieldValue)
+            if (!fieldnameAndValueAndDataType.fieldValue) {
                 return getResponseObject(
                     `Invalid Request, Please Send ${fieldnameAndValueAndDataType.fieldName} Value !!`,
                     true,
                     {}
                 );
+            }
         }
         if (fieldnameAndValueAndDataType.fieldValue) {
+            let isExistTruthDataType = false;
             for (let dataType of fieldnameAndValueAndDataType.dataTypes) {
                 if (dataType === "number" && !isNaN(fieldnameAndValueAndDataType.fieldValue)) {
-                    return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
+                    isExistTruthDataType = true;
+                    break;
                 }
                 if (dataType === "ObjectId" && Types.ObjectId.isValid(fieldnameAndValueAndDataType.fieldValue)) {
-                    return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
+                    isExistTruthDataType = true;
+                    break;
                 }
                 if (dataType === "array" && Array.isArray(fieldnameAndValueAndDataType.fieldValue)) {
-                    return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
+                    isExistTruthDataType = true;
+                    break;
                 }
                 if (dataType === typeof fieldnameAndValueAndDataType.fieldValue) {
-                    return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
+                    isExistTruthDataType = true;
                 }
             }
-            return getResponseObject(
-                `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${getDataTypesAsText(dataTypes)} ) !!`,
-                true,
-                {}
-            );
+            if (!isExistTruthDataType) {
+                return getResponseObject(
+                    `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${getDataTypesAsText(fieldnameAndValueAndDataType.dataTypes)} ) !!`,
+                    true,
+                    {}
+                );
+            }
         }
     }
     return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
