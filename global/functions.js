@@ -379,33 +379,25 @@ function checkIsExistValueForFieldsAndDataTypes(fieldNamesAndValuesAndDataTypes)
                 );
         }
         if (fieldnameAndValueAndDataType.fieldValue) {
-            if (fieldnameAndValueAndDataType.dataTypes.includes("number") && isNaN(fieldnameAndValueAndDataType.fieldValue)) {
-                return getResponseObject(
-                    `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${getDataTypesAsText(fieldnameAndValueAndDataType.dataTypes)} ) !!`,
-                    true,
-                    {}
-                );
+            for (let dataType of fieldnameAndValueAndDataType.dataTypes) {
+                if (dataType === "number" && !isNaN(fieldnameAndValueAndDataType.fieldValue)) {
+                    return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
+                }
+                if (dataType === "ObjectId" && Types.ObjectId.isValid(fieldnameAndValueAndDataType.fieldValue)) {
+                    return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
+                }
+                if (dataType === "array" && Array.isArray(fieldnameAndValueAndDataType.fieldValue)) {
+                    return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
+                }
+                if (dataType === typeof fieldnameAndValueAndDataType.fieldValue) {
+                    return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
+                }
             }
-            if (fieldnameAndValueAndDataType.dataTypes.includes("ObjectId") && !Types.ObjectId.isValid(fieldnameAndValueAndDataType.fieldValue)) {
-                return getResponseObject(
-                    `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${getDataTypesAsText(fieldnameAndValueAndDataType.dataTypes)} ) !!`,
-                    true,
-                    {}
-                );
-            }
-            if (fieldnameAndValueAndDataType.dataTypes.includes("array") && !Array.isArray(fieldnameAndValueAndDataType.fieldValue)) {
-                return getResponseObject(
-                    `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${getDataTypesAsText(fieldnameAndValueAndDataType.dataTypes)} ) !!`,
-                    true,
-                    {}
-                );
-            }
-            if (!fieldnameAndValueAndDataType.dataTypes.includes(typeof fieldnameAndValueAndDataType.fieldValue) && !fieldnameAndValueAndDataType.dataTypes.includes("ObjectId") && !fieldnameAndValueAndDataType.dataTypes.includes("array"))
-                return getResponseObject(
-                    `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${getDataTypesAsText(fieldnameAndValueAndDataType.dataTypes)} ) !!`,
-                    true,
-                    {}
-                );
+            return getResponseObject(
+                `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${getDataTypesAsText(dataTypes)} ) !!`,
+                true,
+                {}
+            );
         }
     }
     return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});

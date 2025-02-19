@@ -70,7 +70,7 @@ categoriesRouter.put("/:categoryId",
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Category Id", fieldValue: req.params.categoryId, dataTypes: ["ObjectId"], isRequiredValue: true },
             { fieldName: "New Category Name", fieldValue: name, dataTypes: ["string"], isRequiredValue: false },
-            { fieldName: "Category Parent Id", fieldValue: parent, dataTypes: ["ObjectId"], isRequiredValue: false },
+            { fieldName: "Category Parent Id", fieldValue: parent, dataTypes: ["ObjectId", "null"], isRequiredValue: false },
         ], res, next);
     },
     categoriesController.putCategory
