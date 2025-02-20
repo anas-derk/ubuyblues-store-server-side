@@ -214,6 +214,8 @@ async function getFlashProductsCount(filters, language) {
 async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDetailsObject, language) {
     try {
         if (filters.category) {
+            let category = filters.category;
+            delete filters.category;
             const result = await productModel.aggregate([
                 {
                     $lookup: {
@@ -225,7 +227,8 @@ async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDe
                 },
                 {
                     $match: {
-                        "categoryDetails.name": { $regex: new RegExp(filters.category, 'i') }
+                        "categoryDetails.name": { $regex: new RegExp(category, 'i') },
+                        ...filters
                     }
                 },
                 {
@@ -244,7 +247,7 @@ async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDe
                 msg: getSuitableTranslations("Get Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
                 error: false,
                 data: {
-                    products: result[0].products,
+                    products: await productModel.populate(result[0].products, "categories"),
                     productsCount: result[0].productsCount.length > 0 ? result[0].productsCount[0].total : 0,
                     currentDate: new Date()
                 },
