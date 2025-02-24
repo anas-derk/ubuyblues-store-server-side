@@ -71,9 +71,9 @@ async function sendVerificationCodeToUserEmail(email) {
         const compiledTemplate = compile(templateContent);
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ generatedCode });
         const mailConfigurations = {
-            from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+            from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
             to: email,
-            subject: "Account Verification Code On Ubuyblue Store",
+            subject: `Account Verification Code On ${process.env.WEBSITE_NAME} Store`,
             html: htmlContentAfterCompilingEjsTemplateFile,
         };
         return new Promise((resolve, reject) => {
@@ -98,9 +98,9 @@ async function sendApproveStoreEmail(email, password, adminId, storeId, language
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ password, adminId, storeId, language });
         return new Promise((resolve, reject) => {
             transporterObj(result.data).sendMail({
-                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
-                subject: "Approve The Store Addition Request At Ubuyblues",
+                subject: `Approve The Store Addition Request At ${process.env.WEBSITE_NAME}`,
                 html: htmlContentAfterCompilingEjsTemplateFile,
             }, function (error, info) {
                 if (error) reject(error);
@@ -123,9 +123,9 @@ async function sendCongratulationsOnCreatingNewAccountEmail(email, language) {
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ email, language });
         return new Promise((resolve, reject) => {
             transporterObj(result.data).sendMail({
-                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
-                subject: "Welcome Message From Ubuyblues",
+                subject: `Welcome Message From ${process.env.WEBSITE_NAME}`,
                 html: htmlContentAfterCompilingEjsTemplateFile,
             }, function (error, info) {
                 if (error) reject(error);
@@ -148,9 +148,9 @@ async function sendRejectStoreEmail(email, language) {
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ language });
         return new Promise((resolve, reject) => {
             transporterObj(result.data).sendMail({
-                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
-                subject: "Reject The Store Addition Request At Ubuyblues",
+                subject: `Reject The Store Addition Request At ${process.env.WEBSITE_NAME}`,
                 html: htmlContentAfterCompilingEjsTemplateFile,
             }, function (error, info) {
                 if (error) reject(error);
@@ -173,14 +173,14 @@ async function sendConfirmRequestAddStoreArrivedEmail(email, language) {
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ language });
         return new Promise((resolve, reject) => {
             transporterObj(result.data).sendMail({
-                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
-                subject: "Confirmation Of Store Addition Request At Ubuyblues",
+                subject: `Confirmation Of Store Addition Request At ${process.env.WEBSITE_NAME}`,
                 html: htmlContentAfterCompilingEjsTemplateFile,
             }, function (error, info) {
                 if (error) reject(error);
                 resolve({
-                    msg: "Sending Confirmation Of Store Addition Request At Ubuyblues Email Process Has Been Successfully !!",
+                    msg: `Sending Confirmation Of Store Addition Request At ${process.env.WEBSITE_NAME} Email Process Has Been Successfully !!`,
                     error: false,
                     data: {},
                 });
@@ -198,9 +198,9 @@ async function sendBlockStoreEmail(email, adminId, storeId, language) {
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ adminId, storeId, language });
         return new Promise((resolve, reject) => {
             transporterObj(result.data).sendMail({
-                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
-                subject: "Block Store On Ubuyblues",
+                subject: `Block Store On ${process.env.WEBSITE_NAME}`,
                 html: htmlContentAfterCompilingEjsTemplateFile,
             }, function (error, info) {
                 if (error) reject(error);
@@ -223,9 +223,9 @@ async function sendDeleteStoreEmail(email, adminId, storeId, language) {
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ adminId, storeId, language });
         return new Promise((resolve, reject) => {
             transporterObj(result.data).sendMail({
-                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
-                subject: "Delete Store On Ubuyblues",
+                subject: `Delete Store On ${process.env.WEBSITE_NAME}`,
                 html: htmlContentAfterCompilingEjsTemplateFile,
             }, function (error, info) {
                 if (error) reject(error);
@@ -248,14 +248,14 @@ async function sendReceiveOrderEmail(email, orderDetails, language) {
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ orderDetails, language });
         return new Promise((resolve, reject) => {
             transporterObj(result.data).sendMail({
-                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
-                subject: "Receive Order On Ubuyblues",
+                subject: `Receive Order On ${process.env.WEBSITE_NAME}`,
                 html: htmlContentAfterCompilingEjsTemplateFile,
             }, function (error, info) {
                 if (error) reject(error);
                 resolve({
-                    msg: "Sending Receive Order Email On Ubuyblues Store Process Has Been Successfully !!",
+                    msg: `Sending Receive Order Email On ${process.env.WEBSITE_NAME} Store Process Has Been Successfully !!`,
                     error: false,
                     data: {},
                 });
@@ -273,14 +273,14 @@ async function sendUpdateOrderEmail(email, newOrderDetails, language) {
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ newOrderDetails, language });
         return new Promise((resolve, reject) => {
             transporterObj(result.data).sendMail({
-                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
-                subject: newOrderDetails.status === "shipping" ? "Order In Shipping Now From Ubuyblues" : "Order Arrived From Ubuyblues",
+                subject: newOrderDetails.status === "shipping" ? `Order In Shipping Now From ${process.env.WEBSITE_NAME}` : `Order Arrived From ${process.env.WEBSITE_NAME}`,
                 html: htmlContentAfterCompilingEjsTemplateFile,
             }, function (error, info) {
                 if (error) reject(error);
                 resolve({
-                    msg: "Sending Receive Order Email On Ubuyblues Store Process Has Been Successfully !!",
+                    msg: `Sending Receive Order Email On ${process.env.WEBSITE_NAME} Store Process Has Been Successfully !!`,
                     error: false,
                     data: {},
                 });
@@ -298,7 +298,7 @@ async function sendReceiveAddStoreRequestEmail(email, storeDetails) {
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate(storeDetails);
         return new Promise((resolve, reject) => {
             transporterObj(result.data).sendMail({
-                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
                 subject: "Receive Add Store Request",
                 html: htmlContentAfterCompilingEjsTemplateFile,
@@ -323,9 +323,9 @@ async function sendChangePasswordEmail(email, language) {
         const htmlContentAfterCompilingEjsTemplateFile = compiledTemplate({ language });
         return new Promise((resolve, reject) => {
             transporterObj(result.data).sendMail({
-                from: `Ubuyblues <${process.env.BUSSINESS_EMAIL}>`,
+                from: `${process.env.WEBSITE_NAME} <${process.env.BUSSINESS_EMAIL}>`,
                 to: email,
-                subject: "Changing The User Password In Ubuyblues",
+                subject: `Changing The User Password In ${process.env.WEBSITE_NAME}`,
                 html: htmlContentAfterCompilingEjsTemplateFile,
             }, function (error, info) {
                 if (error) reject(error);
