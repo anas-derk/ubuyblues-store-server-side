@@ -22,7 +22,7 @@ function getFiltersObject(filters) {
         if (objectKey === "status") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "ownerFirstName") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "ownerLastName") filtersObject[objectKey] = filters[objectKey];
-        if (objectKey === "ownerEmail") filtersObject[`ownerEmail`] = filters[objectKey];
+        if (objectKey === "ownerEmail") filtersObject[objectKey] = filters[objectKey];
     }
     return filtersObject;
 }

@@ -140,6 +140,7 @@
     "Updating Store Image Process Has Been Successfully !!": "Der Prozess zur Aktualisierung des Store-Bildes war erfolgreich!!",
     "Deleting Store Process Has Been Successfully !!": "Der Prozess zum Löschen des Geschäfts war erfolgreich!!",
     "Sorry, Permission Denied Because This Store Is Main Store !!": "Entschuldigung, Berechtigung verweigert, da dieses Geschäft das Hauptgeschäft ist!!",
+    "Sorry, Permission Denied Because This Store In Status: ( pending ) !!": "Entschuldigung, Zugriff Verweigert, Da Dieser Shop Den Status: (Ausstehend) Hat !!",
     "Rejecting Store Process Has Been Successfully !!": "Der Prozess zur Ablehnung des Geschäfts war erfolgreich!!",
     "Sorry, This Subscription Is Already Exist !!": "Entschuldigung, dieses Abonnement existiert bereits!!",
     "Creating New Subscription Process Has Been Successfuly !!": "Der Prozess zur Erstellung eines neuen Abonnements war erfolgreich!!",
