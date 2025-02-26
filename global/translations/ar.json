@@ -166,5 +166,6 @@
     "Creating New Payment Order By Tabby Process Has Been Successfully !!": "عملية إنشاء طلب دفع من خلال Tabby تمت بنجاح !!",
     "Sorry, Can't Creating New Payment Order By Tabby Because Exceeding The Payment Limit !!": "عذراً ، لا يمكن إنشاء طلب دفع جديد من خلال Tabby بسبب تجاوز حدود الدفع !!",
     "Creating New Payment Order By Binance Process Has Been Successfully !!": "عملية إنشاء طلب دفع جديد من خلال Binance تمت بنجاح !!",
-    "Sorry, Please Send Valid Discount Value !!": "عذراً ، الرجاء إرسال قيمة تخفيض صالحة !!"
+    "Sorry, Please Send Valid Discount Value !!": "عذراً ، الرجاء إرسال قيمة تخفيض صالحة !!",
+    "Sorry, The Product Cannot Be Removed From The Order Because It Is The Only One ( The Order Must Contain At Least One Product ) !!": "عذراً ، لا يمكن حذف المنتج من الطلب لأنه الوحيد ( يجب أن يكون الطلب يحتوي على منتج واحد على ا لأقل ) !!"
 }

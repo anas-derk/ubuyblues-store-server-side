@@ -165,5 +165,6 @@
     "Creating New Payment Order By Tabby Process Has Been Successfully !!": "Tabby üzerinden yeni bir ödeme siparişi oluşturma işlemi başarıyla tamamlandı!!",
     "Sorry, Can't Creating New Payment Order By Tabby Because Exceeding The Payment Limit !!": "Üzgöz, Tabby üzerinden yeni bir ödeme siparişi oluşturulamıyor, çünkü ödeme limiti aşıldı!!",
     "Creating New Payment Order By Binance Process Has Been Successfully !!": "Binance üzerinden yeni bir ödeme siparişi oluşturma işlemi başarıyla tamamlandı!!",
-    "Sorry, Please Send Valid Discount Value !!":"Üzgöz, lütfen geçerli bir indirim değeri gönderin!!"
+    "Sorry, Please Send Valid Discount Value !!":"Üzgöz, lütfen geçerli bir indirim değeri gönderin!!",
+    "Sorry, The Product Cannot Be Removed From The Order Because It Is The Only One ( The Order Must Contain At Least One Product ) !!": "Üzgünüz, Ürün Siparişten Kaldırılamaz Çünkü Tek Ürün Budur ( Sipariş En Az Bir Ürün İçermelidir ) !!"
 }

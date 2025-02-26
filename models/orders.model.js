@@ -300,7 +300,7 @@ async function createNewOrder(orderDetails, language) {
     }
 }
 
-function editOrderPrice(order) {
+function editOrderPrices(order) {
     const { calcOrderTotalPrices } = require("../global/functions");
     const result = calcOrderTotalPrices(order.products);
     order.totalPriceBeforeDiscount = result.totalPriceBeforeDiscount;
@@ -433,12 +433,12 @@ async function updateOrderProduct(authorizationId, orderId, productId, newOrderP
                             if (newOrderProductDetails.quantity && newOrderProductDetails.unitPrice) {
                                 order.products[productIndex].quantity = newOrderProductDetails.quantity;
                                 order.products[productIndex].unitPrice = newOrderProductDetails.unitPrice;
-                                order = editOrderPrice(order);
+                                order = editOrderPrices(order);
                             } else if (newOrderProductDetails.quantity) {
                                 order.products[productIndex].quantity = newOrderProductDetails.quantity;
                             } else if (newOrderProductDetails.unitPrice) {
                                 order.products[productIndex].unitPrice = newOrderProductDetails.unitPrice;
-                                order = editOrderPrice(order);
+                                order = editOrderPrices(order);
                             }
                             if (newOrderProductDetails.name) {
                                 order.products[productIndex].name = newOrderProductDetails.name;
@@ -539,12 +539,22 @@ async function deleteProductFromOrder(authorizationId, orderId, productId, langu
         const admin = await adminModel.findById(authorizationId);
         if (admin) {
             if (!admin.isBlocked) {
-                const order = await orderModel.findOne({ _id: orderId });
+                let order = await orderModel.findOne({ _id: orderId });
                 if (order) {
                     if (order.storeId === admin.storeId) {
                         const newOrderProducts = order.products.filter((order_product) => order_product.productId !== productId);
-                        if (newOrderProducts.length < order.products.length) {
-                            await orderModel.updateOne({ _id: orderId }, { products: newOrderProducts });
+                        const newOrderProductsLength = newOrderProducts.length;
+                        if (newOrderProductsLength === 0) {
+                            return {
+                                msg: getSuitableTranslations("Sorry, This Product For This Order Is Not Found !!", language),
+                                error: true,
+                                data: {},
+                            }
+                        }
+                        if (newOrderProductsLength < order.products.length) {
+                            order.products = newOrderProducts;
+                            order = editOrderPrices(order);
+                            await order.save();
                             return {
                                 msg: getSuitableTranslations("Deleting Product From Order Has Been Successfuly !!", language),
                                 error: false,
