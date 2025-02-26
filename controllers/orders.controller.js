@@ -311,8 +311,8 @@ async function postChangeBinancePaymentStatus(req, res) {
 
 async function putOrder(req, res) {
     try {
-        const { status, orderAmount } = req.body;
-        const result = await ordersManagmentFunctions.updateOrder(req.data._id, req.params.orderId, getFiltersObjectForUpdateOrder({ status, orderAmount }), req.query.language);
+        const { status } = req.body;
+        const result = await ordersManagmentFunctions.updateOrder(req.data._id, req.params.orderId, getFiltersObjectForUpdateOrder({ status }), req.query.language);
         if (result.error) {
             if (result.msg !== "Sorry, This Order Is Not Found !!") {
                 return res.status(401).json(result);
@@ -333,7 +333,7 @@ async function putOrder(req, res) {
 
 async function putOrderProduct(req, res) {
     try {
-        const result = await ordersManagmentFunctions.updateOrderProduct(req.data._id, req.params.orderId, req.params.productId, req.body, req.query.language);
+        const result = await ordersManagmentFunctions.updateOrderProduct(req.data._id, req.params.orderId, req.params.productId, { quantity, name, unitPrice } = req.body, req.query.language);
         if (result.error) {
             if (result.msg !== "Sorry, This Order Is Not Found !!" || result.msg !== "Sorry, This Product For This Order Is Not Found !!") {
                 return res.status(401).json(result);
