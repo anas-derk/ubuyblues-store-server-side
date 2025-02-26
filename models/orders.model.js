@@ -206,8 +206,7 @@ async function createNewOrder(orderDetails, language) {
                 productId: orderedProducts[i]._id,
                 name: orderedProducts[i].name,
                 unitPrice: orderedProducts[i].price,
-                discount: isExistOfferOnProduct(orderedProducts[i].startDiscountPeriod, orderedProducts[i].endDiscountPeriod) ? orderedProducts[i].discountInOfferPeriod : orderedProducts[i].discount,
-                totalAmount: orderedProducts[i].price * orderDetails.products[i].quantity,
+                unitDiscount: isExistOfferOnProduct(orderedProducts[i].startDiscountPeriod, orderedProducts[i].endDiscountPeriod) ? orderedProducts[i].discountInOfferPeriod : orderedProducts[i].discount,
                 quantity: orderDetails.products[i].quantity,
                 imagePath: orderedProducts[i].imagePath,
                 countries: orderedProducts[i].countries,
@@ -220,8 +219,8 @@ async function createNewOrder(orderDetails, language) {
         }
         let localProducts = [], internationalProducts = [];
         for (let product of orderProductsDetails) {
-            totalPrices.totalPriceBeforeDiscount += product.totalAmount;
-            totalPrices.totalDiscount += product.discount * product.quantity;
+            totalPrices.totalPriceBeforeDiscount += product.unitPrice * product.quantity;
+            totalPrices.totalDiscount += product.unitDiscount * product.quantity;
             if (isProductLocalOrInternational(product.countries, orderDetails.shippingAddress.country) === "local") {
                 localProducts.push(product);
             } else {

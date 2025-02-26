@@ -615,14 +615,6 @@ const orderSchema = new mongoose.Schema({
             type: Number,
             default: 0,
         },
-        totalAmountBeforeDiscount: {
-            type: Number,
-            default: 0,
-        },
-        totalAmount: {
-            type: Number,
-            default: 0,
-        },
         imagePath: {
             type: String,
             default: "none",
