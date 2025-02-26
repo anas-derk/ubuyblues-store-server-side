@@ -300,6 +300,17 @@ async function createNewOrder(orderDetails, language) {
     }
 }
 
+function editOrderPrice(order) {
+    const { calcOrderTotalPrices } = require("../global/functions");
+    const result = calcOrderTotalPrices(order.products);
+    order.totalPriceBeforeDiscount = result.totalPriceBeforeDiscount;
+    order.totalDiscount = result.totalDiscount;
+    order.totalPriceAfterDiscount = result.totalPriceAfterDiscount;
+    order.totalAmountBeforeApplyCoupon = order.totalPriceAfterDiscount + order.shippingCost.forLocalProducts + order.shippingCost.forInternationalProducts;
+    order.orderAmount = order?.couponDetails && Object.keys(order?.couponDetails) > 0 ? order.totalAmountBeforeApplyCoupon - (order.totalAmountBeforeApplyCoupon * order.couponDetails.discountPercentage) / 100 : order.totalAmountBeforeApplyCoupon;
+    return order;
+}
+
 async function updateOrder(authorizationId, orderId, newOrderDetails, language) {
     try {
         const admin = await adminModel.findById(authorizationId);
@@ -414,7 +425,7 @@ async function updateOrderProduct(authorizationId, orderId, productId, newOrderP
         const admin = await adminModel.findById(authorizationId);
         if (admin) {
             if (!admin.isBlocked) {
-                const order = await orderModel.findOne({ _id: orderId });
+                let order = await orderModel.findOne({ _id: orderId });
                 if (order) {
                     if (order.storeId === admin.storeId) {
                         const productIndex = order.products.findIndex((order_product) => order_product.productId == productId);
@@ -422,13 +433,17 @@ async function updateOrderProduct(authorizationId, orderId, productId, newOrderP
                             if (newOrderProductDetails.quantity && newOrderProductDetails.unitPrice) {
                                 order.products[productIndex].quantity = newOrderProductDetails.quantity;
                                 order.products[productIndex].unitPrice = newOrderProductDetails.unitPrice;
-                                order.products[productIndex].totalAmount = newOrderProductDetails.quantity * newOrderProductDetails.unitPrice;
+                                order = editOrderPrice(order);
+                            } else if (newOrderProductDetails.quantity) {
+                                order.products[productIndex].quantity = newOrderProductDetails.quantity;
+                            } else if (newOrderProductDetails.unitPrice) {
+                                order.products[productIndex].unitPrice = newOrderProductDetails.unitPrice;
+                                order = editOrderPrice(order);
                             }
                             if (newOrderProductDetails.name) {
                                 order.products[productIndex].name = newOrderProductDetails.name;
                             }
-                            const { calcOrderAmount } = require("../global/functions");
-                            await orderModel.updateOne({ _id: orderId }, { products: order.products, orderAmount: calcOrderAmount(order.products) });
+                            await order.save();
                             return {
                                 msg: getSuitableTranslations("Updating Order Details Process Has Been Successfuly !!", language),
                                 error: false,
