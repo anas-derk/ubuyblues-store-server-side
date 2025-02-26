@@ -366,10 +366,35 @@ ordersRouter.post("/update-order/:orderId",
 ordersRouter.put("/products/update-product/:orderId/:productId",
     validateJWT,
     (req, res, next) => {
+        const { quantity, name, unitPrice } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Order Id", fieldValue: req.params.orderId, dataTypes: ["ObjectId"], isRequiredValue: true },
             { fieldName: "Product Id", fieldValue: req.params.productId, dataTypes: ["ObjectId"], isRequiredValue: true },
+            { fieldName: "Quantity", fieldValue: quantity, dataTypes: ["number"], isRequiredValue: false },
+            { fieldName: "Name", fieldValue: name, dataTypes: ["string"], isRequiredValue: false },
+            { fieldName: "Unit Price", fieldValue: unitPrice, dataTypes: ["number"], isRequiredValue: false },
         ], res, next);
+    },
+    (req, res, next) => {
+        const { quantity } = req.body;
+        if (quantity) {
+            return validateNumbersIsGreaterThanZero([quantity], res, next, [], "Sorry, Please Send Valid Quantity ( Number Must Be Greater Than Zero ) !!");
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { quantity } = req.body;
+        if (quantity) {
+            return validateNumbersIsNotFloat([quantity], res, next, [], "Sorry, Please Send Valid Quantity ( Number Must Be Greater Than Float ) !!");
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { unitPrice } = req.body;
+        if (unitPrice) {
+            return validateNumbersIsGreaterThanZero([unitPrice], res, next, [], "Sorry, Please Send Valid Unit Price ( Number Must Be Greater Than Zero ) !!");
+        }
+        next();
     },
     ordersController.putOrderProduct
 );

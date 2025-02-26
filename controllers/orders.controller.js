@@ -12,7 +12,7 @@ function getFiltersObject(filters) {
         if (objectKey === "destination") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "orderNumber") filtersObject[objectKey] = Number(filters[objectKey]);
         if (objectKey === "checkoutStatus") {
-            if (filters["destination"] === "admin"){
+            if (filters["destination"] === "admin") {
                 filtersObject[objectKey] = Number(filters[objectKey])
             }
         }
@@ -44,35 +44,35 @@ function getFiltersObjectForUpdateOrder(acceptableData) {
 }
 
 async function getOrdersCount(req, res) {
-    try{
+    try {
         res.json(await ordersManagmentFunctions.getOrdersCount(req.data._id, getFiltersObject(req.query), req.query.language));
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function getAllOrdersInsideThePage(req, res) {
-    try{
+    try {
         const filters = req.query;
         res.json(await ordersManagmentFunctions.getAllOrdersInsideThePage(req.data._id, filters.pageNumber, filters.pageSize, getFiltersObject(filters), filters.language));
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function getOrderDetails(req, res) {
-    try{
+    try {
         res.json(await ordersManagmentFunctions.getOrderDetails(req.params.orderId, req.query.language));
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function postNewOrder(req, res) {
-    try{
+    try {
         const result = await ordersManagmentFunctions.createNewOrder(req.body, req.query.language);
         if (!result.error) {
             if (req.body.checkoutStatus === "Checkout Successfull") {
@@ -88,15 +88,15 @@ async function postNewOrder(req, res) {
         }
         res.json(result);
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function postNewPaymentOrder(req, res) {
-    try{
+    try {
         const orderData = req.body;
-        if (req?.data._id){
+        if (req?.data._id) {
             orderData.userId = req.data._id;
         }
         const { language } = req.query;
@@ -226,7 +226,7 @@ async function postNewPaymentOrder(req, res) {
                     getResponseObject(getSuitableTranslations("Creating New Payment Order By Tabby Process Has Been Successfully !!", language), false, {
                         checkoutURL: result.configuration.available_products.installments[0].web_url
                     }) :
-                    getResponseObject(getSuitableTranslations("Sorry, Can't Creating New Payment Order By Tabby Because Exceeding The Payment Limit !!", language) , true, {})
+                    getResponseObject(getSuitableTranslations("Sorry, Can't Creating New Payment Order By Tabby Because Exceeding The Payment Limit !!", language), true, {})
                 );
             } else {
                 const timestamp = Date.now();
@@ -268,29 +268,29 @@ async function postNewPaymentOrder(req, res) {
             }
         }
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function postCheckoutComplete(req, res) {
-    try{
+    try {
         const result = await ordersManagmentFunctions.changeCheckoutStatusToSuccessfull(req.params.orderId, req.query.language);
         res.json(result);
         if (!result.error) {
             await sendReceiveOrderEmail(result.data.billingAddress.email, result.data, "ar");
         }
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function postChangeBinancePaymentStatus(req, res) {
-    try{
+    try {
         if (req.body.bizStatus === "PAY_SUCCESS") {
             res.json({
-                returnCode:"SUCCESS",
+                returnCode: "SUCCESS",
                 returnMessage: null
             });
             const result = await ordersManagmentFunctions.changeCheckoutStatusToSuccessfull(req.params.orderId, req.query.language);
@@ -300,17 +300,17 @@ async function postChangeBinancePaymentStatus(req, res) {
             return;
         }
         res.json({
-            returnCode:"SUCCESS",
+            returnCode: "SUCCESS",
             returnMessage: null
         });
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function putOrder(req, res) {
-    try{
+    try {
         const { status, orderAmount } = req.body;
         const result = await ordersManagmentFunctions.updateOrder(req.data._id, req.params.orderId, getFiltersObjectForUpdateOrder({ status, orderAmount }), req.query.language);
         if (result.error) {
@@ -326,13 +326,13 @@ async function putOrder(req, res) {
         }
         res.json(result);
     }
-    catch(err){
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function putOrderProduct(req, res) {
-    try{
+    try {
         const result = await ordersManagmentFunctions.updateOrderProduct(req.data._id, req.params.orderId, req.params.productId, req.body, req.query.language);
         if (result.error) {
             if (result.msg !== "Sorry, This Order Is Not Found !!" || result.msg !== "Sorry, This Product For This Order Is Not Found !!") {
@@ -341,13 +341,13 @@ async function putOrderProduct(req, res) {
         }
         res.json(result);
     }
-    catch(err){
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function deleteOrder(req, res) {
-    try{
+    try {
         const result = await ordersManagmentFunctions.deleteOrder(req.data._id, req.params.orderId, req.query.language);
         if (result.error) {
             if (result.msg !== "Sorry, This Order Is Not Found !!") {
@@ -356,13 +356,13 @@ async function deleteOrder(req, res) {
         }
         res.json(result);
     }
-    catch(err){
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function deleteProductFromOrder(req, res) {
-    try{
+    try {
         const { orderId, productId } = req.params;
         const result = await ordersManagmentFunctions.deleteProductFromOrder(req.data._id, orderId, productId, req.query.language);
         if (result.error) {
@@ -372,7 +372,7 @@ async function deleteProductFromOrder(req, res) {
         }
         res.json(result);
     }
-    catch(err){
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }

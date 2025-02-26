@@ -5,6 +5,7 @@ const { orderModel, userModel, adminModel, productsWalletModel, productModel, mo
 const { getCouponDetails } = require("./coupons.model");
 
 const { getSuitableTranslations } = require("../global/functions");
+
 const { countries } = require("countries-list");
 
 const isProductLocalOrInternational = (productCountries, shippingCountry) => {
@@ -419,10 +420,14 @@ async function updateOrderProduct(authorizationId, orderId, productId, newOrderP
                     if (order.storeId === admin.storeId) {
                         const productIndex = order.products.findIndex((order_product) => order_product.productId == productId);
                         if (productIndex >= 0) {
-                            order.products[productIndex].quantity = newOrderProductDetails.quantity;
-                            order.products[productIndex].name = newOrderProductDetails.name;
-                            order.products[productIndex].unitPrice = newOrderProductDetails.unitPrice;
-                            order.products[productIndex].totalAmount = newOrderProductDetails.totalAmount;
+                            if (newOrderProductDetails.quantity && newOrderProductDetails.unitPrice) {
+                                order.products[productIndex].quantity = newOrderProductDetails.quantity;
+                                order.products[productIndex].unitPrice = newOrderProductDetails.unitPrice;
+                                order.products[productIndex].totalAmount = 
+                            }
+                            if (newOrderProductDetails.name) {
+                                order.products[productIndex].name = newOrderProductDetails.name;
+                            }
                             const { calcOrderAmount } = require("../global/functions");
                             await orderModel.updateOne({ _id: orderId }, { products: order.products, orderAmount: calcOrderAmount(order.products) });
                             return {
