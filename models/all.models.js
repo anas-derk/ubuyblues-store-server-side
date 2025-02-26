@@ -611,7 +611,7 @@ const orderSchema = new mongoose.Schema({
             type: Number,
             default: 0,
         },
-        discount: {
+        unitDiscount: {
             type: Number,
             default: 0,
         },

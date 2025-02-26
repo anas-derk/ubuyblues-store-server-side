@@ -423,7 +423,7 @@ async function updateOrderProduct(authorizationId, orderId, productId, newOrderP
                             if (newOrderProductDetails.quantity && newOrderProductDetails.unitPrice) {
                                 order.products[productIndex].quantity = newOrderProductDetails.quantity;
                                 order.products[productIndex].unitPrice = newOrderProductDetails.unitPrice;
-                                order.products[productIndex].totalAmount = 
+                                order.products[productIndex].totalAmount = newOrderProductDetails.quantity * newOrderProductDetails.unitPrice;
                             }
                             if (newOrderProductDetails.name) {
                                 order.products[productIndex].name = newOrderProductDetails.name;
