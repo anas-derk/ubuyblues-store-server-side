@@ -14,7 +14,16 @@ function getFiltersObject(filters) {
 
 async function postNewTextAd(req, res) {
     try {
-        const result = await adsOPerationsManagmentFunctions.addNewAd(req.data._id, { content: req.body.content, type: "text" }, req.query.language);
+        const adInfo = {
+            content: {
+                ar: req.body.content,
+                en: req.body.content,
+                de: req.body.content,
+                tr: req.body.content
+            },
+            type: "text"
+        };
+        const result = await adsOPerationsManagmentFunctions.addNewAd(req.data._id, adInfo, req.query.language);
         if (result.error) {
             if (result.msg !== "Sorry, Can't Add New Text Ad Because Arrive To Max Limits For Text Ads Count ( Limits: 10 ) !!") {
                 return res.status(401).json(result);

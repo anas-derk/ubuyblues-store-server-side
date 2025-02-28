@@ -95,8 +95,14 @@ adsRouter.put("/update-ad-content/:adId",
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Ad Id", fieldValue: req.params.adId, dataTypes: ["ObjectId"], isRequiredValue: true },
-            { fieldName: "New Ad Content", fieldValue: req.body.content, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "New Ad Content", fieldValue: req.body.content, dataTypes: ["object"], isRequiredValue: true },
         ], res, next);
+    },
+    (req, res, next) => {
+        const { content } = req.body;
+        validateIsExistValueForFieldsAndDataTypes(["ar", "en", "de", "tr"].map((language) => (
+            { fieldName: `New Ad Content In ${language.toUpperCase()}`, fieldValue: content[language], dataTypes: ["string"], isRequiredValue: true }
+        )), res, next);
     },
     adsController.putTextAdContent
 );

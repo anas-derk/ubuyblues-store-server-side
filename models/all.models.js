@@ -157,16 +157,44 @@ const storeModel = mongoose.model("store", storeSchema);
 
 const productSchema = new mongoose.Schema({
     name: {
-        type: String,
-        required: true,
+        ar: {
+            type: String,
+            required: true,
+        },
+        en: {
+            type: String,
+            required: true,
+        },
+        de: {
+            type: String,
+            required: true,
+        },
+        tr: {
+            type: String,
+            required: true,
+        },
     },
     price: {
         type: Number,
         required: true,
     },
     description: {
-        type: String,
-        required: true,
+        ar: {
+            type: String,
+            required: true,
+        },
+        en: {
+            type: String,
+            required: true,
+        },
+        de: {
+            type: String,
+            required: true,
+        },
+        tr: {
+            type: String,
+            required: true,
+        },
     },
     categories: {
         type: [{
@@ -403,8 +431,22 @@ const accountVerificationCodesModel = mongoose.model("account_verification_codes
 
 const categorySchema = new mongoose.Schema({
     name: {
-        type: String,
-        required: true,
+        ar: {
+            type: String,
+            required: true,
+        },
+        en: {
+            type: String,
+            required: true,
+        },
+        de: {
+            type: String,
+            required: true,
+        },
+        tr: {
+            type: String,
+            required: true,
+        },
     },
     storeId: {
         type: String,
@@ -604,8 +646,22 @@ const orderSchema = new mongoose.Schema({
             default: 0,
         },
         name: {
-            type: String,
-            default: "none",
+            ar: {
+                type: String,
+                required: true,
+            },
+            en: {
+                type: String,
+                required: true,
+            },
+            de: {
+                type: String,
+                required: true,
+            },
+            tr: {
+                type: String,
+                required: true,
+            },
         },
         unitPrice: {
             type: Number,
@@ -683,8 +739,22 @@ const brandSchema = new mongoose.Schema({
         required: true,
     },
     title: {
-        type: String,
-        required: true,
+        ar: {
+            type: String,
+            required: true,
+        },
+        en: {
+            type: String,
+            required: true,
+        },
+        de: {
+            type: String,
+            required: true,
+        },
+        tr: {
+            type: String,
+            required: true,
+        },
     },
     storeId: {
         type: String,
@@ -860,7 +930,24 @@ const adsSchema = new mongoose.Schema({
         required: true,
         enum: ["text", "image"],
     },
-    content: String,
+    content: {
+        ar: {
+            type: String,
+            required: true,
+        },
+        en: {
+            type: String,
+            required: true,
+        },
+        de: {
+            type: String,
+            required: true,
+        },
+        tr: {
+            type: String,
+            required: true,
+        },
+    },
     product: {
         type: mongoose.Types.ObjectId,
         ref: "product",
