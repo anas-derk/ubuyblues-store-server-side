@@ -69,9 +69,18 @@ categoriesRouter.put("/:categoryId",
         const { name, parent } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Category Id", fieldValue: req.params.categoryId, dataTypes: ["ObjectId"], isRequiredValue: true },
-            { fieldName: "New Category Name", fieldValue: name, dataTypes: ["string"], isRequiredValue: false },
+            { fieldName: "New Category Name", fieldValue: name, dataTypes: ["object"], isRequiredValue: false },
             { fieldName: "Category Parent Id", fieldValue: parent, dataTypes: ["ObjectId", "null"], isRequiredValue: false },
         ], res, next);
+    },
+    (req, res, next) => {
+        const { name } = req.body;
+        if (name) {
+            return validateIsExistValueForFieldsAndDataTypes(["ar", "en", "de", "tr"].map((language) => (
+                { fieldName: `New Category Name In ${language.toUpperCase()}`, fieldValue: name[language], dataTypes: ["string"], isRequiredValue: true }
+            )), res, next);
+        }
+        next();
     },
     categoriesController.putCategory
 );
