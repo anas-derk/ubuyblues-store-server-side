@@ -9,7 +9,14 @@ async function addNewCategory(authorizationId, categoryData, language) {
         const admin = await adminModel.findById(authorizationId);
         if (admin) {
             if (!admin.isBlocked) {
-                const category = await categoryModel.findOne({ name: categoryData.name });
+                const category = await categoryModel.findOne({ name: categoryData.name, storeId: admin.storeId });
+                if (category) {
+                    return {
+                        msg: getSuitableTranslations("Sorry, This Cateogry Is Already Exist !!", language),
+                        error: true,
+                        data: {},
+                    }
+                }
                 if (categoryData.parent) {
                     if (!(await categoryModel.findById(categoryData.parent))) {
                         return {

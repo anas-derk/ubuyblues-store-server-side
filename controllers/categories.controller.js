@@ -19,7 +19,17 @@ function getFiltersObject(filters) {
 
 async function postNewCategory(req, res) {
     try {
-        const result = await categoriesManagmentFunctions.addNewCategory(req.data._id, { name, parent } = req.body, req.query.language);
+        const { name, parent } = req.body;
+        const categoryInfo = {
+            name: {
+                ar: name,
+                en: name,
+                de: name,
+                tr: name
+            },
+            parent,
+        };
+        const result = await categoriesManagmentFunctions.addNewCategory(req.data._id, categoryInfo, req.query.language);
         if (result.error) {
             if (result.msg !== "Sorry, This Cateogry Is Already Exist !!" || result.msg !== "Sorry, This Parent Cateogry Is Not Exist !!") {
                 return res.status(401).json(result);
