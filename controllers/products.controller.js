@@ -13,13 +13,31 @@ async function postNewProduct(req, res) {
             outputImageFilePaths.push(`assets/images/products/${Math.random()}_${Date.now()}__${file.originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`)
         });
         await handleResizeImagesAndConvertFormatToWebp(files, outputImageFilePaths);
-        const productInfo = {
-            ...{ name, price, description, categories, discount, quantity, countries } = Object.assign({}, req.body),
+        const productInfo = Object.assign({}, req.body);
+        const result = await productsManagmentFunctions.addNewProduct(req.data._id, {
+            ...{
+                name: {
+                    ar: productInfo.name,
+                    en: productInfo.name,
+                    de: productInfo.name,
+                    tr: productInfo.name,
+                },
+                price,
+                description: {
+                    ar: productInfo.description,
+                    en: productInfo.description,
+                    de: productInfo.description,
+                    tr: productInfo.description,
+                },
+                categories,
+                discount,
+                quantity,
+                countries
+            } = productInfo,
             imagePath: outputImageFilePaths[0],
             threeDImagePath: outputImageFilePaths[1],
             galleryImagesPaths: outputImageFilePaths.slice(2),
-        };
-        const result = await productsManagmentFunctions.addNewProduct(req.data._id, productInfo, req.query.language);
+        }, req.query.language);
         if (result.error) {
             if (result.msg === "Sorry, This Admin Has Been Blocked !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
                 return res.status(401).json(result);
