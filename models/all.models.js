@@ -91,8 +91,22 @@ const adminModel = mongoose.model("admin", adminSchema);
 
 const storeSchema = new mongoose.Schema({
     name: {
-        type: String,
-        required: true,
+        ar: {
+            type: String,
+            required: true,
+        },
+        en: {
+            type: String,
+            required: true,
+        },
+        de: {
+            type: String,
+            required: true,
+        },
+        tr: {
+            type: String,
+            required: true,
+        },
     },
     imagePath: {
         type: String,
@@ -111,12 +125,40 @@ const storeSchema = new mongoose.Schema({
         required: true,
     },
     productsType: {
-        type: String,
-        required: true,
+        ar: {
+            type: String,
+            required: true,
+        },
+        en: {
+            type: String,
+            required: true,
+        },
+        de: {
+            type: String,
+            required: true,
+        },
+        tr: {
+            type: String,
+            required: true,
+        },
     },
     productsDescription: {
-        type: String,
-        required: true,
+        ar: {
+            type: String,
+            required: true,
+        },
+        en: {
+            type: String,
+            required: true,
+        },
+        de: {
+            type: String,
+            required: true,
+        },
+        tr: {
+            type: String,
+            required: true,
+        },
     },
     status: {
         type: String,

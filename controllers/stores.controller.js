@@ -18,7 +18,12 @@ function getFiltersObject(filters) {
     let filtersObject = {};
     for (let objectKey in filters) {
         if (objectKey === "_id") filtersObject[objectKey] = filters[objectKey];
-        if (objectKey === "name") filtersObject[objectKey] = { $regex: new RegExp(filters[objectKey], 'i') };
+        if (objectKey === "name") filtersObject["$or"] = [{
+            "name.ar": { $regex: new RegExp(filters[objectKey], 'i') },
+            "name.en": { $regex: new RegExp(filters[objectKey], 'i') },
+            "name.de": { $regex: new RegExp(filters[objectKey], 'i') },
+            "name.tr": { $regex: new RegExp(filters[objectKey], 'i') },
+        }];
         if (objectKey === "status") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "ownerFirstName") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "ownerLastName") filtersObject[objectKey] = filters[objectKey];
@@ -68,14 +73,41 @@ async function postNewStore(req, res) {
     try {
         const outputImageFilePath = `assets/images/stores/${Math.random()}_${Date.now()}__${req.file.originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`;
         await handleResizeImagesAndConvertFormatToWebp([req.file.buffer], [outputImageFilePath]);
-        const result = await storesOPerationsManagmentFunctions.createNewStore({ ...Object.assign({}, req.body), imagePath: outputImageFilePath }, req.query.language);
+        const storeInfo = Object.assign({}, req.body);
+        const result = await storesOPerationsManagmentFunctions.createNewStore({
+            ...{
+                name: {
+                    ar: storeInfo.name,
+                    en: storeInfo.name,
+                    de: storeInfo.name,
+                    tr: storeInfo.name,
+                },
+                ownerFirstName,
+                ownerLastName,
+                ownerEmail,
+                productsType: {
+                    ar: storeInfo.productsType,
+                    en: storeInfo.productsType,
+                    de: storeInfo.productsType,
+                    tr: storeInfo.productsType,
+                },
+                productsDescription: {
+                    ar: storeInfo.productsDescription,
+                    en: storeInfo.productsDescription,
+                    de: storeInfo.productsDescription,
+                    tr: storeInfo.productsDescription,
+                },
+                language,
+            } = storeInfo,
+            imagePath: outputImageFilePath
+        }, req.query.language);
         if (result.error) {
             unlinkSync(outputImageFilePath);
         }
         else {
             try {
                 await sendConfirmRequestAddStoreArrivedEmail(result.data.ownerEmail, result.data.language);
-                await sendReceiveAddStoreRequestEmail("info@ubuyblues.com", result.data);
+                await sendReceiveAddStoreRequestEmail(process.env.BUSSINESS_EMAIL, result.data);
             } catch (err) {
                 console.log(err);
             }
