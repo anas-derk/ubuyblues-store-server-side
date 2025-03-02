@@ -275,9 +275,9 @@ productsRouter.put("/:productId",
         const { name, price, description, categories, discount, quantity, countries } = req.body;
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataTypes: ["ObjectId"], isRequiredValue: true },
-            { fieldName: "Name", fieldValue: name, dataTypes: ["string"], isRequiredValue: false },
+            { fieldName: "Name", fieldValue: name, dataTypes: ["object"], isRequiredValue: false },
             { fieldName: "Price", fieldValue: Number(price), dataTypes: ["number"], isRequiredValue: false },
-            { fieldName: "Description", fieldValue: description, dataTypes: ["string"], isRequiredValue: false },
+            { fieldName: "Description", fieldValue: description, dataTypes: ["object"], isRequiredValue: false },
             { fieldName: "Categories", fieldValue: categories, dataTypes: ["array"], isRequiredValue: false },
             { fieldName: "Discount", fieldValue: Number(discount), dataTypes: ["number"], isRequiredValue: false },
             { fieldName: "Quantity", fieldValue: Number(quantity), dataTypes: ["number"], isRequiredValue: false },
@@ -285,9 +285,27 @@ productsRouter.put("/:productId",
         ], res, next);
     },
     (req, res, next) => {
+        const { name } = Object.assign({}, req.body);
+        if (name) {
+            return validateIsExistValueForFieldsAndDataTypes(["ar", "en", "de", "tr"].map((language) => (
+                { fieldName: `New Product Name In ${language.toUpperCase()}`, fieldValue: name[language], dataTypes: ["string"], isRequiredValue: true }
+            )), res, next);
+        }
+        next();
+    },
+    (req, res, next) => {
         const { price } = Object.assign({}, req.body);
         if (price) {
             return validateNumbersIsGreaterThanZero([price], res, next, ["Sorry, Please Send Valid Product Price ( Number Must Be Greater Than Zero ) !!"]);
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { description } = Object.assign({}, req.body);
+        if (description) {
+            return validateIsExistValueForFieldsAndDataTypes(["ar", "en", "de", "tr"].map((language) => (
+                { fieldName: `New Product Description In ${language.toUpperCase()}`, fieldValue: description[language], dataTypes: ["string"], isRequiredValue: true }
+            )), res, next);
         }
         next();
     },
