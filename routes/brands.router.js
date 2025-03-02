@@ -82,9 +82,15 @@ brandsRouter.put("/:brandId",
     validateJWT,
     (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "brand Id", fieldValue: req.params.brandId, dataTypes: ["ObjectId"], isRequiredValue: true },
-            { fieldName: "New Brand Title", fieldValue: req.body.newBrandTitle, dataTypes: ["string"], isRequiredValue: true },
+            { fieldName: "Brand Id", fieldValue: req.params.brandId, dataTypes: ["ObjectId"], isRequiredValue: true },
+            { fieldName: "New Brand Title", fieldValue: req.body.title, dataTypes: ["object"], isRequiredValue: true },
         ], res, next);
+    },
+    (req, res, next) => {
+        const { title } = req.body;
+        validateIsExistValueForFieldsAndDataTypes(["ar", "en", "de", "tr"].map((language) => (
+            { fieldName: `New Brand Title In ${language.toUpperCase()}`, fieldValue: title[language], dataTypes: ["string"], isRequiredValue: true }
+        )), res, next);
     },
     brandsController.putBrandInfo
 );

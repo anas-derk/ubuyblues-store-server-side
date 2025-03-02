@@ -14,11 +14,17 @@ function getFiltersObject(filters) {
 }
 
 async function postNewBrand(req, res) {
-    try{
+    try {
         const outputImageFilePath = `assets/images/brands/${Math.random()}_${Date.now()}__${req.file.originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`;
         await handleResizeImagesAndConvertFormatToWebp([req.file.buffer], [outputImageFilePath]);
+        const brandInfo = Object.assign({}, req.body);
         const result = await brandsManagmentFunctions.addNewBrand(req.data._id, {
-            ...Object.assign({}, req.body),
+            title: {
+                ar: brandInfo.title,
+                en: brandInfo.title,
+                de: brandInfo.title,
+                tr: brandInfo.title
+            },
             imagePath: outputImageFilePath,
         }, req.query.language);
         if (result.error) {
@@ -26,16 +32,16 @@ async function postNewBrand(req, res) {
         }
         res.json(result);
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function getLastSevenBrandsByStoreId(req, res) {
-    try{
+    try {
         res.json(await brandsManagmentFunctions.getLastSevenBrandsByStoreId(getFiltersObject(req.query), req.query.language));
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
@@ -60,7 +66,7 @@ async function getAllBrandsInsideThePage(req, res) {
 }
 
 async function deleteBrand(req, res) {
-    try{
+    try {
         const result = await brandsManagmentFunctions.deleteBrand(req.data._id, req.params.brandId, req.query.language);
         if (!result.error) {
             unlinkSync(result.data.deletedBrandPath);
@@ -72,14 +78,14 @@ async function deleteBrand(req, res) {
         }
         res.json(result);
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function putBrandInfo(req, res) {
-    try{
-        const result = await brandsManagmentFunctions.updateBrandInfo(req.data._id, req.params.brandId, req.body.newBrandTitle, req.query.language);
+    try {
+        const result = await brandsManagmentFunctions.updateBrandInfo(req.data._id, req.params.brandId, req.body.title, req.query.language);
         if (result.error) {
             if (result.msg !== "Sorry, This Brand Is Not Exist !!") {
                 return res.status(401).json(getResponseObject(result, true, {}));
@@ -87,7 +93,7 @@ async function putBrandInfo(req, res) {
         }
         res.json(result);
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
@@ -107,7 +113,7 @@ async function putBrandImage(req, res) {
             }
         }
         res.json(result);
-}
+    }
     catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
