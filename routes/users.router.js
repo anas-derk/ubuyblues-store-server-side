@@ -4,9 +4,7 @@ const usersController = require("../controllers/users.controller");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
-const { validateJWT, validateEmail, validatePassword, validateUserType, validateLanguage, validateTypeOfUseForCode } = require("../middlewares/global.middlewares");
-
-const usersMiddlewares = require("../middlewares/users.midddlewares");
+const { validateJWT, validateEmail, validatePassword, validateUserType, validateLanguage, validateTypeOfUseForCode, validateName } = require("../middlewares/global.middlewares");
 
 usersRouter.get("/login",
     (req, res, next) => {
@@ -82,7 +80,6 @@ usersRouter.post("/create-new-user",
 );
 
 usersRouter.post("/send-account-verification-code",
-    // usersMiddlewares.sendingVerificationCodeLimiterMiddleware,
     (req, res, next) => {
         const { email, typeOfUse, userType } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
@@ -111,9 +108,25 @@ usersRouter.put("/update-user-info",
         ], res, next);
     },
     (req, res, next) => {
-        const { email } = req.body;
-        if (email) {
-            validateEmail(email, res, next);
+        const { firstName } = req.body;
+        if (firstName) {
+            validateName(firstName, res, next, "Sorry, Please Send Valid First Name !!");
+            return;
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { lastName } = req.body;
+        if (lastName) {
+            validateName(lastName, res, next, "Sorry, Please Send Valid Last Name !!");
+            return;
+        }
+        next();
+    },
+    (req, res, next) => {
+        const { previewName } = req.body;
+        if (previewName) {
+            validateName(previewName, res, next, "Sorry, Please Send Valid Preview Name !!");
             return;
         }
         next();
