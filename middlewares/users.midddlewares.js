@@ -17,6 +17,15 @@ function sendingVerificationCodeLimiterMiddleware(req, res, next) {
     sendingVerificationCodeLimiter(req, res, next);
 }
 
+function validateRating(rating, res, nextFunc, errorMsg = "Sorry, Please Send Valid Rating ( Any Value Inside Array: [1, 2, 3, 4, 5] ) !!") {
+    if (![1, 2, 3, 4, 5].includes(rating)) {
+        res.status(400).json(getResponseObject(errorMsg, true, {}));
+        return;
+    }
+    nextFunc();
+}
+
 module.exports = {
     sendingVerificationCodeLimiterMiddleware,
+    validateRating,
 }
