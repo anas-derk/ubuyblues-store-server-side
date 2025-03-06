@@ -166,5 +166,9 @@
     "Sorry, Can't Creating New Payment Order By Tabby Because Exceeding The Payment Limit !!": "Entschuldigung, kann keine neue Zahlungsbestellung über Tabby erstellen, da das Zahlungslimit überschritten wurde!!",
     "Creating New Payment Order By Binance Process Has Been Successfully !!": "Der Prozess zur Erstellung einer neuen Zahlungsbestellung über Binance war erfolgreich!!",
     "Sorry, Please Send Valid Discount Value !!": "Entschuldigung, bitte senden Sie einen gültigen Rabattwert!!",
-    "Sorry, The Product Cannot Be Removed From The Order Because It Is The Only One ( The Order Must Contain At Least One Product ) !!": "Entschuldigung, Das Produkt Kann Nicht Aus Der Bestellung Entfernt Werden, Da Es Das Einzige Ist ( Die Bestellung Muss Mindestens Ein Produkt Enthalten ) !!"
+    "Sorry, The Product Cannot Be Removed From The Order Because It Is The Only One ( The Order Must Contain At Least One Product ) !!": "Entschuldigung, Das Produkt Kann Nicht Aus Der Bestellung Entfernt Werden, Da Es Das Einzige Ist ( Die Bestellung Muss Mindestens Ein Produkt Enthalten ) !!",
+    "Deleting All Favorite Products For This User Process Has Been Successfully !!": "Das Löschen aller Lieblingsprodukte für diesen Benutzerprozess war erfolgreich !!",
+    "Sorry, Can't Find Any Product Inside Favorite Products List For This User !!": "Entschuldigung, es wurde kein Produkt in der Favoritenliste dieses Benutzers gefunden !!",
+    "Deleting All Products From Wallet For This User Process Has Been Successfully !!": "Das Löschen aller Produkte aus der Wallet für diesen Benutzerprozess war erfolgreich !!",
+    "Sorry, Can't Find Any Product Inside Wallet Products List For This User !!": "Entschuldigung, es wurde kein Produkt in der Wallet-Produktliste dieses Benutzers gefunden !!"
 }

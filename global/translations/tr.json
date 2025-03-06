@@ -166,5 +166,9 @@
     "Sorry, Can't Creating New Payment Order By Tabby Because Exceeding The Payment Limit !!": "Üzgöz, Tabby üzerinden yeni bir ödeme siparişi oluşturulamıyor, çünkü ödeme limiti aşıldı!!",
     "Creating New Payment Order By Binance Process Has Been Successfully !!": "Binance üzerinden yeni bir ödeme siparişi oluşturma işlemi başarıyla tamamlandı!!",
     "Sorry, Please Send Valid Discount Value !!":"Üzgöz, lütfen geçerli bir indirim değeri gönderin!!",
-    "Sorry, The Product Cannot Be Removed From The Order Because It Is The Only One ( The Order Must Contain At Least One Product ) !!": "Üzgünüz, Ürün Siparişten Kaldırılamaz Çünkü Tek Ürün Budur ( Sipariş En Az Bir Ürün İçermelidir ) !!"
+    "Sorry, The Product Cannot Be Removed From The Order Because It Is The Only One ( The Order Must Contain At Least One Product ) !!": "Üzgünüz, Ürün Siparişten Kaldırılamaz Çünkü Tek Ürün Budur ( Sipariş En Az Bir Ürün İçermelidir ) !!",
+    "Deleting All Favorite Products For This User Process Has Been Successfully !!": "Bu kullanıcının tüm favori ürünlerini silme işlemi başarıyla tamamlandı !!",
+    "Sorry, Can't Find Any Product Inside Favorite Products List For This User !!": "Üzgünüm, bu kullanıcının favori ürünler listesinde herhangi bir ürün bulunamadı !!",
+    "Deleting All Products From Wallet For This User Process Has Been Successfully !!": "Bu kullanıcının cüzdanındaki tüm ürünleri silme işlemi başarıyla tamamlandı !!",
+    "Sorry, Can't Find Any Product Inside Wallet Products List For This User !!": "Üzgünüm, bu kullanıcının cüzdan ürünleri listesinde herhangi bir ürün bulunamadı !!"
 }
