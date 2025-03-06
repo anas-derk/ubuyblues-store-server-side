@@ -48,6 +48,8 @@ favoriteProductsRouter.get("/all-favorite-products-inside-the-page",
     favoriteProductsController.getAllFavoriteProductsInsideThePage
 );
 
+favoriteProductsRouter.delete("/all-favorite-products", validateJWT, favoriteProductsController.deleteAllFavoriteProducts);
+
 favoriteProductsRouter.delete("/:productId",
     validateJWT,
     (req, res, next) => {

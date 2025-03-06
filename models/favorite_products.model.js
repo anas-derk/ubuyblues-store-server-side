@@ -89,6 +89,35 @@ async function getFavoriteProductsByProductsIdsAndUserId(userId, productsIds, la
     }
 }
 
+async function deleteAllFavoriteProducts(userId, language) {
+    try {
+        const user = await userModel.findById(userId);
+        if (user) {
+            const result = await favoriteProductModel.deleteMany({ userId }, { returnOriginal: true });
+            if (result.deletedCount > 0) {
+                return {
+                    msg: getSuitableTranslations("Deleting All Favorite Products For This User Process Has Been Successfully !!", language),
+                    error: false,
+                    data: {},
+                }
+            }
+            return {
+                msg: getSuitableTranslations("Sorry, Can't Find Any Product Inside Favorite Products List For This User !!", language),
+                error: false,
+                data: {},
+            }
+        }
+        return {
+            msg: getSuitableTranslations("Sorry, This User Is Not Exist !!", language),
+            error: true,
+            data: {},
+        }
+    }
+    catch (err) {
+        throw Error(err);
+    }
+}
+
 async function deleteFavoriteProduct(userId, productId, language) {
     try {
         const user = await userModel.findById(userId);
@@ -123,5 +152,6 @@ module.exports = {
     getFavoriteProductsCount,
     getAllFavoriteProductsInsideThePage,
     getFavoriteProductsByProductsIdsAndUserId,
+    deleteAllFavoriteProducts,
     deleteFavoriteProduct
 }

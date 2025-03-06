@@ -22,6 +22,8 @@ walletRouter.get("/all-wallet-products-inside-the-page",
     walletController.getAllWalletProductsInsideThePage
 );
 
+walletRouter.delete("/all-wallet-products", validateJWT, walletController.deleteAllProductsFromWallet);
+
 walletRouter.delete("/:productId",
     validateJWT,
     (req, res, next) => {

@@ -8,8 +8,7 @@ function validateJWT(req, res, next) {
     const token = req.headers.authorization;
     verify(token, process.env.secretKey, async (err, decode) => {
         if (err) {
-            res.status(401).json(getResponseObject("Unauthorized Error", true, {}));
-            return;
+            return res.status(401).json(getResponseObject("Unauthorized Error", true, {}));
         }
         req.data = decode;
         next();
@@ -57,7 +56,7 @@ function validateLanguage(language, res, nextFunc, errorMsg = "Sorry, Please Sen
 }
 
 function validateNumbersIsGreaterThanZero(numbers, res, nextFunc, errorMsgs, defaultMsg = "Sorry, Please Send Valid Number ( Number Must Be Greater Than Zero ) !!") {
-    for(let i = 0; i < numbers.length; i++) {
+    for (let i = 0; i < numbers.length; i++) {
         if (numbers[i] <= 0) {
             res.status(400).json(getResponseObject(errorMsgs[i] ? errorMsgs[i] : defaultMsg, true, {}));
             return;
@@ -67,7 +66,7 @@ function validateNumbersIsGreaterThanZero(numbers, res, nextFunc, errorMsgs, def
 }
 
 function validateNumbersIsNotFloat(numbers, res, nextFunc, errorMsgs, defaultMsg = "Sorry, Please Send Valid Number ( Number Must Be Not Float ) !!") {
-    for(let i = 0; i < numbers.length; i++) {
+    for (let i = 0; i < numbers.length; i++) {
         if (numbers[i] % 1 !== 0) {
             res.status(400).json(getResponseObject(errorMsgs[i] ? errorMsgs[i] : defaultMsg, true, {}));
             return;
@@ -77,7 +76,7 @@ function validateNumbersIsNotFloat(numbers, res, nextFunc, errorMsgs, defaultMsg
 }
 
 function validateCountry(country, res, nextFunc, errorMsg = "Sorry, Please Send Valid Country ( kuwait Or Germany Or Turkey ) !!") {
-    if (!["kuwait", "germany" , "turkey"].includes(country)) {
+    if (!["kuwait", "germany", "turkey"].includes(country)) {
         res.status(400).json(getResponseObject(errorMsg, true, {}));
         return;
     }
@@ -85,7 +84,7 @@ function validateCountry(country, res, nextFunc, errorMsg = "Sorry, Please Send 
 }
 
 function validateCountries(countries, res, nextFunc, errorMsgs, defaultMsg = "Sorry, Please Send Valid Country !!") {
-    for(let i = 0; i < countries.length; i++) {
+    for (let i = 0; i < countries.length; i++) {
         if (!countryList.includes(countries[i])) {
             res.status(400).json(getResponseObject(errorMsgs[i] ? errorMsgs[i] : defaultMsg, true, {}));
             return;
@@ -104,7 +103,7 @@ function validateName(name, res, nextFunc, errorMsg = "Sorry, Please Send Valid 
 
 function validateIsNotExistDublicateProductId(products, res, nextFunc) {
     let seenProductIds = {};
-    for(let product of products) {
+    for (let product of products) {
         if (seenProductIds[product.productId]) {
             res.status(400).json(getResponseObject(`Sorry, Dublicate Product Id: ${product.productId} !!`, true, {}));
             return;
@@ -168,7 +167,7 @@ function validateTypeOfUseForCode(typeOfUse, res, nextFunc) {
     nextFunc();
 }
 
-function validateOrderDestination(orderDestination, res, nextFunc){
+function validateOrderDestination(orderDestination, res, nextFunc) {
     if (!["admin", "user"].includes(orderDestination)) {
         res.status(400).json(getResponseObject("Please Send Valid Order Destination !!", true, {}));
         return;
@@ -176,7 +175,7 @@ function validateOrderDestination(orderDestination, res, nextFunc){
     nextFunc();
 }
 
-function validateOrderCreator(orderCreator, res, nextFunc){
+function validateOrderCreator(orderCreator, res, nextFunc) {
     if (!["user", "guest"].includes(orderCreator)) {
         res.status(400).json(getResponseObject("Please Send Valid Order Creator !!", true, {}));
         return;
@@ -184,7 +183,7 @@ function validateOrderCreator(orderCreator, res, nextFunc){
     nextFunc();
 }
 
-function validatePaymentGateway(paymentGate, res, nextFunc){
+function validatePaymentGateway(paymentGate, res, nextFunc) {
     if (!["tap", "tabby", "binance"].includes(paymentGate)) {
         res.status(400).json(getResponseObject("Please Send Valid Payment Gateway !!", true, {}));
         return;
@@ -192,7 +191,7 @@ function validatePaymentGateway(paymentGate, res, nextFunc){
     nextFunc();
 }
 
-function validateOrderStatus(status, res, nextFunc){
+function validateOrderStatus(status, res, nextFunc) {
     if (!["pending", "shipping", "completed"].includes(status)) {
         res.status(400).json(getResponseObject("Please Send Valid Order Status !!", true, {}));
         return;

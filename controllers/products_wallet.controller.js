@@ -29,11 +29,20 @@ async function getAllWalletProductsInsideThePage(req, res) {
     }
 }
 
+async function deleteAllProductsFromWallet(req, res) {
+    try {
+        res.json(await walletOPerationsManagmentFunctions.deleteAllProductsFromWallet(req.data._id, req.query.language));
+    }
+    catch (err) {
+        res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
+    }
+}
+
 async function deleteWalletProduct(req, res) {
-    try{
+    try {
         res.json(await walletOPerationsManagmentFunctions.deleteWalletProduct(req.data._id, req.params.productId, req.query.language));
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
@@ -41,5 +50,6 @@ async function deleteWalletProduct(req, res) {
 module.exports = {
     getWalletProductsCount,
     getAllWalletProductsInsideThePage,
+    deleteAllProductsFromWallet,
     deleteWalletProduct
 }

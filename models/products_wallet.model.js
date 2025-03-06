@@ -33,6 +33,35 @@ async function getAllWalletProductsInsideThePage(pageNumber, pageSize, filters, 
     }
 }
 
+async function deleteAllProductsFromWallet(userId, language) {
+    try {
+        const user = await userModel.findById(userId);
+        if (user) {
+            const result = await productsWalletModel.deleteMany({ userId }, { returnOriginal: true });
+            if (result.deletedCount > 0) {
+                return {
+                    msg: getSuitableTranslations("Deleting All Products From Wallet For This User Process Has Been Successfully !!", language),
+                    error: false,
+                    data: {},
+                }
+            }
+            return {
+                msg: getSuitableTranslations("Sorry, Can't Find Any Product Inside Wallet Products List For This User !!", language),
+                error: false,
+                data: {},
+            }
+        }
+        return {
+            msg: getSuitableTranslations("Sorry, This User Is Not Exist !!", language),
+            error: true,
+            data: {},
+        }
+    }
+    catch (err) {
+        throw Error(err);
+    }
+}
+
 async function deleteWalletProduct(userId, productId, language) {
     try {
         const user = await userModel.findById(userId);
@@ -65,5 +94,6 @@ async function deleteWalletProduct(userId, productId, language) {
 module.exports = {
     getWalletProductsCount,
     getAllWalletProductsInsideThePage,
+    deleteAllProductsFromWallet,
     deleteWalletProduct
 }
