@@ -7,28 +7,30 @@ const { unlinkSync } = require("fs");
 async function postNewProduct(req, res) {
     try {
         const productImages = Object.assign({}, req.files);
-        let files = [productImages.productImage[0].buffer], outputImageFilePaths = [`assets/images/products/${Math.random()}_${Date.now()}__${productImages.productImage[0].originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`];
+        let files = [productImages.productImage[0].buffer, productImages.threeDImage[0].buffer], outputImageFilePaths = [`assets/images/products/${Math.random()}_${Date.now()}__${productImages.productImage[0].originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`, `assets/images/products/${Math.random()}_${Date.now()}__${productImages.threeDImage[0].originalname.replaceAll(" ", "_")}`];
         productImages.galleryImages.forEach((file) => {
             files.push(file.buffer);
             outputImageFilePaths.push(`assets/images/products/${Math.random()}_${Date.now()}__${file.originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`)
         });
         await handleResizeImagesAndConvertFormatToWebp(files, outputImageFilePaths);
         const productInfo = Object.assign({}, req.body);
+        productInfo.name = {
+            ar: productInfo.name,
+            en: productInfo.name,
+            de: productInfo.name,
+            tr: productInfo.name,
+        };
+        productInfo.description = {
+            ar: productInfo.description,
+            en: productInfo.description,
+            de: productInfo.description,
+            tr: productInfo.description,
+        };
         const result = await productsManagmentFunctions.addNewProduct(req.data._id, {
             ...{
-                name: {
-                    ar: productInfo.name,
-                    en: productInfo.name,
-                    de: productInfo.name,
-                    tr: productInfo.name,
-                },
+                name,
                 price,
-                description: {
-                    ar: productInfo.description,
-                    en: productInfo.description,
-                    de: productInfo.description,
-                    tr: productInfo.description,
-                },
+                description,
                 categories,
                 discount,
                 quantity,
