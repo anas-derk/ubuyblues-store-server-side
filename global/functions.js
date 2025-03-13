@@ -425,18 +425,32 @@ function validateIsExistValueForFieldsAndDataTypes(fieldsDetails, res, nextFunc)
     nextFunc();
 }
 
-async function handleResizeImagesAndConvertFormatToWebp(files, outputImageFilePaths) {
+async function handleResizeImagesAndConvertFormatToWebp(files, outputImageFilePaths, newFormat = "webp", newWidth = 550, quality = 100) {
     try {
         for (let i = 0; i < files.length; i++) {
             await sharp(files[i])
                 .withMetadata()
                 .rotate()
                 .resize({
-                    width: 550,
+                    width: newWidth,
                 })
-                .toFormat("webp", {
-                    quality: 100
+                .toFormat(newFormat, {
+                    quality
                 })
+                .toFile(outputImageFilePaths[i]);
+        }
+    }
+    catch (err) {
+        throw err;
+    }
+}
+
+async function handleSaveImages(files, outputImageFilePaths) {
+    try {
+        for (let i = 0; i < files.length; i++) {
+            await sharp(files[i])
+                .withMetadata()
+                .rotate()
                 .toFile(outputImageFilePaths[i]);
         }
     }
@@ -494,5 +508,6 @@ module.exports = {
     checkIsExistValueForFieldsAndDataTypes,
     validateIsExistValueForFieldsAndDataTypes,
     handleResizeImagesAndConvertFormatToWebp,
+    handleSaveImages,
     getSuitableTranslations
 }

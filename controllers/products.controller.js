@@ -1,4 +1,4 @@
-const { getResponseObject, handleResizeImagesAndConvertFormatToWebp, getSuitableTranslations } = require("../global/functions");
+const { getResponseObject, handleResizeImagesAndConvertFormatToWebp, getSuitableTranslations, handleSaveImages } = require("../global/functions");
 
 const productsManagmentFunctions = require("../models/products.model");
 
@@ -7,12 +7,17 @@ const { unlinkSync } = require("fs");
 async function postNewProduct(req, res) {
     try {
         const productImages = Object.assign({}, req.files);
-        let files = [productImages.productImage[0].buffer, productImages.threeDImage[0].buffer], outputImageFilePaths = [`assets/images/products/${Math.random()}_${Date.now()}__${productImages.productImage[0].originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`, `assets/images/products/${Math.random()}_${Date.now()}__${productImages.threeDImage[0].originalname.replaceAll(" ", "_")}`];
+        let files = [productImages.productImage[0].buffer], outputImageFilePaths = [`assets/images/products/${Math.random()}_${Date.now()}__${productImages.productImage[0].originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`];
         productImages.galleryImages.forEach((file) => {
             files.push(file.buffer);
             outputImageFilePaths.push(`assets/images/products/${Math.random()}_${Date.now()}__${file.originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`)
         });
         await handleResizeImagesAndConvertFormatToWebp(files, outputImageFilePaths);
+        let threeDImagePath = "";
+        if (productImages?.threeDImage) {
+            threeDImagePath = `assets/images/products/${Math.random()}_${Date.now()}__${productImages.threeDImage[0].originalname.replaceAll(" ", "_")}`;
+            await handleSaveImages([productImages.threeDImage[0].buffer], [threeDImagePath]);
+        }
         const productInfo = Object.assign({}, req.body);
         productInfo.name = {
             ar: productInfo.name,
@@ -37,8 +42,8 @@ async function postNewProduct(req, res) {
                 countries
             } = productInfo,
             imagePath: outputImageFilePaths[0],
-            threeDImagePath: outputImageFilePaths[1],
-            galleryImagesPaths: outputImageFilePaths.slice(2),
+            threeDImagePath,
+            galleryImagesPaths: outputImageFilePaths.slice(1),
         }, req.query.language);
         if (result.error) {
             if (result.msg === "Sorry, This Admin Has Been Blocked !!" || result.msg === "Sorry, This Admin Is Not Exist !!") {
@@ -48,6 +53,7 @@ async function postNewProduct(req, res) {
         res.json(result);
     }
     catch (err) {
+        console.log(err);
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }

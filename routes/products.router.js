@@ -13,6 +13,9 @@ productsRouter.post("/add-new-product",
     multer({
         storage: multer.memoryStorage(),
         fileFilter: (req, file, cb) => {
+            if (file.fieldname === "threeDImage" && !file) {
+                return cb(null, true);
+            }
             if (!file) {
                 req.uploadError = "Sorry, No Files Uploaded, Please Upload The Files";
                 return cb(null, false);
