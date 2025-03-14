@@ -8,7 +8,7 @@ const CodeGenerator = require("node-code-generator");
 
 const { join } = require("path");
 
-const { readFileSync } = require("fs");
+const { readFileSync, writeFileSync } = require("fs");
 
 const { compile } = require("ejs");
 
@@ -445,12 +445,16 @@ async function handleResizeImagesAndConvertFormatToWebp(files, outputImageFilePa
     }
 }
 
-async function handleSaveImages(files, outputImageFilePaths) {
+async function handleSaveImages(files, outputImageFilePaths, newWidth = 3000) {
     try {
         for (let i = 0; i < files.length; i++) {
-            await sharp(files[i])
+            await sharp(files[i], {
+                failOn: "none"
+            })
                 .withMetadata()
-                .rotate()
+                .resize({
+                    width: newWidth,
+                })
                 .toFile(outputImageFilePaths[i]);
         }
     }
