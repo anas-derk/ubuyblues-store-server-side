@@ -577,7 +577,7 @@ async function updateProductGalleryImage(authorizationId, productId, oldGalleryI
     }
 }
 
-async function updateProductImage(authorizationId, productId, newProductImagePath, language) {
+async function updateProductImage(authorizationId, productId, type, newProductImagePath, language) {
     try {
         const admin = await adminModel.findById(authorizationId);
         if (admin) {
@@ -585,14 +585,16 @@ async function updateProductImage(authorizationId, productId, newProductImagePat
                 const product = await productModel.findById(productId);
                 if (product) {
                     if (product.storeId === admin.storeId) {
-                        await productModel.updateOne({ _id: productId }, {
+                        await productModel.updateOne({ _id: productId }, type === "primary" ? {
                             imagePath: newProductImagePath,
+                        } : {
+                            threeDImagePath: newProductImagePath
                         });
                         return {
                             msg: getSuitableTranslations("Changing Product Image Process Has Been Successfully !!", language),
                             error: false,
                             data: {
-                                deletedProductImagePath: product.imagePath,
+                                deletedProductImagePath: type === "primary" ? product.imagePath : product.threeDImagePath,
                             },
                         }
                     }

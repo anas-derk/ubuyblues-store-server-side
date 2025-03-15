@@ -53,7 +53,6 @@ async function postNewProduct(req, res) {
         res.json(result);
     }
     catch (err) {
-        console.log(err);
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
@@ -275,11 +274,25 @@ async function putProductGalleryImage(req, res) {
 
 async function putProductImage(req, res) {
     try {
-        const outputImageFilePath = `assets/images/products/${Math.random()}_${Date.now()}__${req.file.originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`;
-        await handleResizeImagesAndConvertFormatToWebp([req.file.buffer], [outputImageFilePath]);
-        const result = await productsManagmentFunctions.updateProductImage(req.data._id, req.params.productId, outputImageFilePath, req.query.language);
+        const { type, language } = req.query;
+        let outputImageFilePath = "";
+        if (type === "primary") {
+            outputImageFilePath = `assets/images/products/${Math.random()}_${Date.now()}__${req.file.originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`;
+        } else {
+        }
+        if (type === "primary") {
+            await handleResizeImagesAndConvertFormatToWebp([req.file.buffer], [outputImageFilePath]);
+        } else {
+            outputImageFilePath = `assets/images/products/${Math.random()}_${Date.now()}__${req.file.originalname.replaceAll(" ", "_")}`;
+            await handleSaveImages([req.file.buffer], [outputImageFilePath]);
+        }
+        const result = await productsManagmentFunctions.updateProductImage(req.data._id, req.params.productId, type, outputImageFilePath, language);
+        console.log(result);
+
         if (!result.error) {
-            unlinkSync(result.data.deletedProductImagePath);
+            if (result.data.deletedProductImagePath) {
+                unlinkSync(result.data.deletedProductImagePath);
+            }
         }
         else {
             unlinkSync(outputImageFilePath);

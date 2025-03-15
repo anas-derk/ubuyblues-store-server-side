@@ -428,7 +428,9 @@ function validateIsExistValueForFieldsAndDataTypes(fieldsDetails, res, nextFunc)
 async function handleResizeImagesAndConvertFormatToWebp(files, outputImageFilePaths, newFormat = "webp", newWidth = 550, quality = 100) {
     try {
         for (let i = 0; i < files.length; i++) {
-            await sharp(files[i])
+            await sharp(files[i], {
+                failOn: "none"
+            })
                 .withMetadata()
                 .rotate()
                 .resize({

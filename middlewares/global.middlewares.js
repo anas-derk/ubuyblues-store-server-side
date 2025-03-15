@@ -206,6 +206,14 @@ function validateIsPriceGreaterThanDiscount(price, discount, res, next) {
     next();
 }
 
+function validateProductImageType(type, res, nextFunc) {
+    if (!["primary", "three-degree"].includes(type)) {
+        res.status(400).json(getResponseObject("Please Send Valid Product Image Type ('primary' or 'three-degree') !!", true, {}));
+        return;
+    }
+    nextFunc();
+}
+
 function keyGeneratorForRequestsRateLimit(req) {
     const ipAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     const ipWithoutPort = ipAddress.split(',')[0];
@@ -236,5 +244,6 @@ module.exports = {
     validatePaymentGateway,
     validateOrderStatus,
     validateIsPriceGreaterThanDiscount,
+    validateProductImageType,
     keyGeneratorForRequestsRateLimit,
 }

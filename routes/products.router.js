@@ -4,7 +4,7 @@ const productsController = require("../controllers/products.controller");
 
 const multer = require("multer");
 
-const { validateJWT, validateNumbersIsGreaterThanZero, validateNumbersIsNotFloat, validateSortMethod, validateSortType, validateIsExistErrorInFiles, validateCountries, validateIsPriceGreaterThanDiscount } = require("../middlewares/global.middlewares");
+const { validateJWT, validateNumbersIsGreaterThanZero, validateNumbersIsNotFloat, validateSortMethod, validateSortType, validateIsExistErrorInFiles, validateCountries, validateIsPriceGreaterThanDiscount, validateProductImageType } = require("../middlewares/global.middlewares");
 
 const { validateIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
@@ -390,6 +390,7 @@ productsRouter.put("/update-product-gallery-image/:productId",
 
 productsRouter.put("/update-product-image/:productId",
     validateJWT,
+    (req, res, next) => validateProductImageType(req.query.type, res, next),
     multer({
         storage: multer.memoryStorage(),
         fileFilter: (req, file, cb) => {
