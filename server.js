@@ -71,7 +71,7 @@ app.listen(PORT, async () => {
     /* End direct the browser to statics files path */
 
     const { validateLanguage } = require("./middlewares/global.middlewares");
-        
+
     app.use((req, res, next) => {
         const { language } = req.query;
         if (language) {
@@ -80,7 +80,7 @@ app.listen(PORT, async () => {
         }
         next();
     });
-    
+
     /* Start Handle The Routes */
 
     app.use("/admins", require("./routes/admins.router"));
@@ -114,6 +114,8 @@ app.listen(PORT, async () => {
     app.use("/ads", require("./routes/ads.router"));
 
     app.use("/coupons", require("./routes/coupons.router"));
+
+    app.use("/currency-exchange-rates", require("./routes/currency_exchange_rates.router"));
 
     /* End Handle The Routes */
 });
