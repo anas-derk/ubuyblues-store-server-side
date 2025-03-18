@@ -1,4 +1,4 @@
-const { getResponseObject, getSuitableTranslations } = require("../global/functions");
+const { getResponseObject, getSuitableTranslations, translateSentensesByAPI } = require("../global/functions");
 
 const categoriesManagmentFunctions = require("../models/categories.model");
 
@@ -28,9 +28,9 @@ async function postNewCategory(req, res) {
         const categoryInfo = {
             name: {
                 ar: name,
-                en: name,
-                de: name,
-                tr: name
+                en: (await translateSentensesByAPI([name], "EN"))[0].text,
+                de: (await translateSentensesByAPI([name], "DE"))[0].text,
+                tr: (await translateSentensesByAPI([name], "TR"))[0].text
             },
             parent,
         };

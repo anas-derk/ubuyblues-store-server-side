@@ -1,4 +1,4 @@
-const { getResponseObject, handleResizeImagesAndConvertFormatToWebp, getSuitableTranslations } = require("../global/functions");
+const { getResponseObject, handleResizeImagesAndConvertFormatToWebp, getSuitableTranslations, translateSentensesByAPI } = require("../global/functions");
 
 const adsOPerationsManagmentFunctions = require("../models/ads.model");
 
@@ -14,12 +14,13 @@ function getFiltersObject(filters) {
 
 async function postNewTextAd(req, res) {
     try {
+        const { content } = req.body;
         const adInfo = {
             content: {
-                ar: req.body.content,
-                en: req.body.content,
-                de: req.body.content,
-                tr: req.body.content
+                ar: content,
+                en: (await translateSentensesByAPI([content], "EN"))[0].text,
+                de: (await translateSentensesByAPI([content], "DE"))[0].text,
+                tr: (await translateSentensesByAPI([content], "TR"))[0].text
             },
             type: "text"
         };

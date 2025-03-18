@@ -21,9 +21,9 @@ async function postNewBrand(req, res) {
         const result = await brandsManagmentFunctions.addNewBrand(req.data._id, {
             title: {
                 ar: brandInfo.title,
-                en: brandInfo.title,
-                de: brandInfo.title,
-                tr: brandInfo.title
+                en: (await translateSentensesByAPI([brandInfo.title], "EN"))[0].text,
+                de: (await translateSentensesByAPI([brandInfo.title], "DE"))[0].text,
+                tr: (await translateSentensesByAPI([brandInfo.title], "TR"))[0].text
             },
             imagePath: outputImageFilePath,
         }, req.query.language);

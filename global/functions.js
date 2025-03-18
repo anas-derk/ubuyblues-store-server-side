@@ -8,7 +8,7 @@ const CodeGenerator = require("node-code-generator");
 
 const { join } = require("path");
 
-const { readFileSync, writeFileSync } = require("fs");
+const { readFileSync } = require("fs");
 
 const { compile } = require("ejs");
 
@@ -19,6 +19,8 @@ const arTranslations = require("./translations/ar.json");
 const trTranslations = require("./translations/tr.json");
 
 const deTranslations = require("./translations/de.json");
+
+const { post } = require("axios");
 
 function isEmail(email) {
     return email.match(/[^\s@]+@[^\s@]+\.[^\s@]+/);
@@ -493,6 +495,24 @@ function getSuitableTranslations(msg, language, variables = {}) {
     }
 }
 
+async function translateSentensesByAPI(sentenses, targetLanguage) {
+    try {
+        return (await post(`${process.env.TRANSLATE_BASE_API_URL}/v2/translate`, {
+            text: sentenses,
+            source_lang: "AR",
+            target_lang: targetLanguage
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `DeepL-Auth-Key ${process.env.TRANSLATE_API_KEY}`
+            }
+        })).data.translations;
+    }
+    catch (err) {
+        throw err;
+    }
+}
+
 module.exports = {
     isEmail,
     isValidPassword,
@@ -515,5 +535,6 @@ module.exports = {
     validateIsExistValueForFieldsAndDataTypes,
     handleResizeImagesAndConvertFormatToWebp,
     handleSaveImages,
-    getSuitableTranslations
+    getSuitableTranslations,
+    translateSentensesByAPI
 }

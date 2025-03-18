@@ -74,28 +74,33 @@ async function postNewStore(req, res) {
         const outputImageFilePath = `assets/images/stores/${Math.random()}_${Date.now()}__${req.file.originalname.replaceAll(" ", "_").replace(/\.[^/.]+$/, ".webp")}`;
         await handleResizeImagesAndConvertFormatToWebp([req.file.buffer], [outputImageFilePath]);
         const storeInfo = Object.assign({}, req.body);
+        const translations = {
+            en: await translateSentensesByAPI([storeInfo.name, storeInfo.productsType, storeInfo.productsDescription], "EN"),
+            de: await translateSentensesByAPI([storeInfo.name, storeInfo.productsType, storeInfo.productsDescription], "DE"),
+            tr: await translateSentensesByAPI([storeInfo.name, storeInfo.productsType, storeInfo.productsDescription], "TR"),
+        };
         const result = await storesOPerationsManagmentFunctions.createNewStore({
             ...{
                 name: {
-                    ar: storeInfo.name,
-                    en: storeInfo.name,
-                    de: storeInfo.name,
-                    tr: storeInfo.name,
+                    ar: translations.en[0].text,
+                    en: translations.en[0].text,
+                    de: translations.en[0].text,
+                    tr: translations.en[0].text,
                 },
                 ownerFirstName,
                 ownerLastName,
                 ownerEmail,
                 productsType: {
                     ar: storeInfo.productsType,
-                    en: storeInfo.productsType,
-                    de: storeInfo.productsType,
-                    tr: storeInfo.productsType,
+                    en: translations.en[1].text,
+                    de: translations.en[1].text,
+                    tr: translations.en[1].text,
                 },
                 productsDescription: {
                     ar: storeInfo.productsDescription,
-                    en: storeInfo.productsDescription,
-                    de: storeInfo.productsDescription,
-                    tr: storeInfo.productsDescription,
+                    en: translations.en[2].text,
+                    de: translations.en[2].text,
+                    tr: translations.en[2].text,
                 },
                 language,
             } = storeInfo,

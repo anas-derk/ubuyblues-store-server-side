@@ -1,4 +1,4 @@
-const { getResponseObject, handleResizeImagesAndConvertFormatToWebp, getSuitableTranslations, handleSaveImages } = require("../global/functions");
+const { getResponseObject, handleResizeImagesAndConvertFormatToWebp, getSuitableTranslations, handleSaveImages, translateSentensesByAPI } = require("../global/functions");
 
 const productsManagmentFunctions = require("../models/products.model");
 
@@ -19,17 +19,22 @@ async function postNewProduct(req, res) {
             await handleSaveImages([productImages.threeDImage[0].buffer], [threeDImagePath]);
         }
         const productInfo = Object.assign({}, req.body);
+        const translations = {
+            en: await translateSentensesByAPI([productInfo.name, productInfo.description], "EN"),
+            de: await translateSentensesByAPI([productInfo.name, productInfo.description], "DE"),
+            tr: await translateSentensesByAPI([productInfo.name, productInfo.description], "TR"),
+        };
         productInfo.name = {
             ar: productInfo.name,
-            en: productInfo.name,
-            de: productInfo.name,
-            tr: productInfo.name,
+            en: translations.en[0].text,
+            de: translations.de[0].text,
+            tr: translations.tr[0].text,
         };
         productInfo.description = {
             ar: productInfo.description,
-            en: productInfo.description,
-            de: productInfo.description,
-            tr: productInfo.description,
+            en: translations.en[1].text,
+            de: translations.de[1].text,
+            tr: translations.tr[1].text,
         };
         const result = await productsManagmentFunctions.addNewProduct(req.data._id, {
             ...{
@@ -53,6 +58,7 @@ async function postNewProduct(req, res) {
         res.json(result);
     }
     catch (err) {
+        console.log(err);
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
