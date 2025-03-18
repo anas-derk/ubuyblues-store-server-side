@@ -20,18 +20,19 @@ async function postNewProduct(req, res) {
         }
         const productInfo = Object.assign({}, req.body);
         const translations = {
+            ar: await translateSentensesByAPI([productInfo.name, productInfo.description], "AR"),
             en: await translateSentensesByAPI([productInfo.name, productInfo.description], "EN"),
             de: await translateSentensesByAPI([productInfo.name, productInfo.description], "DE"),
             tr: await translateSentensesByAPI([productInfo.name, productInfo.description], "TR"),
         };
         productInfo.name = {
-            ar: productInfo.name,
+            ar: translations.ar[0].text,
             en: translations.en[0].text,
             de: translations.de[0].text,
             tr: translations.tr[0].text,
         };
         productInfo.description = {
-            ar: productInfo.description,
+            ar: translations.ar[1].text,
             en: translations.en[1].text,
             de: translations.de[1].text,
             tr: translations.tr[1].text,

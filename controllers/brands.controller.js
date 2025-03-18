@@ -20,7 +20,7 @@ async function postNewBrand(req, res) {
         const brandInfo = Object.assign({}, req.body);
         const result = await brandsManagmentFunctions.addNewBrand(req.data._id, {
             title: {
-                ar: brandInfo.title,
+                ar: (await translateSentensesByAPI([brandInfo.title], "AR"))[0].text,
                 en: (await translateSentensesByAPI([brandInfo.title], "EN"))[0].text,
                 de: (await translateSentensesByAPI([brandInfo.title], "DE"))[0].text,
                 tr: (await translateSentensesByAPI([brandInfo.title], "TR"))[0].text

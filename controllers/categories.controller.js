@@ -27,7 +27,7 @@ async function postNewCategory(req, res) {
         const { name, parent } = req.body;
         const categoryInfo = {
             name: {
-                ar: name,
+                ar: (await translateSentensesByAPI([name], "AR"))[0].text,
                 en: (await translateSentensesByAPI([name], "EN"))[0].text,
                 de: (await translateSentensesByAPI([name], "DE"))[0].text,
                 tr: (await translateSentensesByAPI([name], "TR"))[0].text

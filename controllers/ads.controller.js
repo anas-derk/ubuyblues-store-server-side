@@ -17,7 +17,7 @@ async function postNewTextAd(req, res) {
         const { content } = req.body;
         const adInfo = {
             content: {
-                ar: content,
+                ar: (await translateSentensesByAPI([content], "AR"))[0].text,
                 en: (await translateSentensesByAPI([content], "EN"))[0].text,
                 de: (await translateSentensesByAPI([content], "DE"))[0].text,
                 tr: (await translateSentensesByAPI([content], "TR"))[0].text

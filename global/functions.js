@@ -499,7 +499,6 @@ async function translateSentensesByAPI(sentenses, targetLanguage) {
     try {
         return (await post(`${process.env.TRANSLATE_BASE_API_URL}/v2/translate`, {
             text: sentenses,
-            source_lang: "AR",
             target_lang: targetLanguage
         }, {
             headers: {

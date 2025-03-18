@@ -75,6 +75,7 @@ async function postNewStore(req, res) {
         await handleResizeImagesAndConvertFormatToWebp([req.file.buffer], [outputImageFilePath]);
         const storeInfo = Object.assign({}, req.body);
         const translations = {
+            ar: await translateSentensesByAPI([storeInfo.name, storeInfo.productsType, storeInfo.productsDescription], "AR"),
             en: await translateSentensesByAPI([storeInfo.name, storeInfo.productsType, storeInfo.productsDescription], "EN"),
             de: await translateSentensesByAPI([storeInfo.name, storeInfo.productsType, storeInfo.productsDescription], "DE"),
             tr: await translateSentensesByAPI([storeInfo.name, storeInfo.productsType, storeInfo.productsDescription], "TR"),
@@ -82,25 +83,25 @@ async function postNewStore(req, res) {
         const result = await storesOPerationsManagmentFunctions.createNewStore({
             ...{
                 name: {
-                    ar: translations.en[0].text,
+                    ar: translations.ar[0].text,
                     en: translations.en[0].text,
-                    de: translations.en[0].text,
-                    tr: translations.en[0].text,
+                    de: translations.de[0].text,
+                    tr: translations.tr[0].text,
                 },
                 ownerFirstName,
                 ownerLastName,
                 ownerEmail,
                 productsType: {
-                    ar: storeInfo.productsType,
+                    ar: translations.ar[1].text,
                     en: translations.en[1].text,
-                    de: translations.en[1].text,
-                    tr: translations.en[1].text,
+                    de: translations.de[1].text,
+                    tr: translations.tr[1].text,
                 },
                 productsDescription: {
-                    ar: storeInfo.productsDescription,
+                    ar: translations.ar[2].text,
                     en: translations.en[2].text,
-                    de: translations.en[2].text,
-                    tr: translations.en[2].text,
+                    de: translations.de[2].text,
+                    tr: translations.tr[2].text,
                 },
                 language,
             } = storeInfo,
