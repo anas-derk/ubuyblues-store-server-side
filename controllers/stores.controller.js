@@ -144,9 +144,16 @@ async function postApproveStore(req, res) {
             }
             return res.json(result);
         }
-        res.json(await sendApproveStoreEmail(result.data.email, req.query.password, result.data.adminId, req.params.storeId, result.data.language));
+        res.json(result);
+        try {
+            await sendApproveStoreEmail(result.data.email, req.query.password, result.data.adminId, req.params.storeId, result.data.language);
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
     catch (err) {
+        console.log(err);
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
