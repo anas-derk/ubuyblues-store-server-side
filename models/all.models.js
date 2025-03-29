@@ -972,19 +972,19 @@ const adsSchema = new mongoose.Schema({
     content: {
         ar: {
             type: String,
-            required: true,
+            required: this.type === "text",
         },
         en: {
             type: String,
-            required: true,
+            required: this.type === "text",
         },
         de: {
             type: String,
-            required: true,
+            required: this.type === "text",
         },
         tr: {
             type: String,
-            required: true,
+            required: this.type === "text",
         },
     },
     product: {
