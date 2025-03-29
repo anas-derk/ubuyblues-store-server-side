@@ -81,23 +81,31 @@ async function postNewStore(req, res) {
             de: await translateSentensesByAPI([storeInfo.name, storeInfo.productsType, storeInfo.productsDescription], "DE"),
             tr: await translateSentensesByAPI([storeInfo.name, storeInfo.productsType, storeInfo.productsDescription], "TR"),
         };
+        storeInfo.name = {
+            ar: translations.ar[0].text,
+            en: translations.en[0].text,
+            de: translations.de[0].text,
+            tr: translations.tr[0].text,
+        };
+        storeInfo.productsType = {
+            ar: translations.ar[1].text,
+            en: translations.en[1].text,
+            de: translations.de[1].text,
+            tr: translations.tr[1].text,
+        };
+        storeInfo.productsDescription = {
+            ar: translations.ar[2].text,
+            en: translations.en[2].text,
+            de: translations.de[2].text,
+            tr: translations.tr[2].text,
+        };
         const result = await storesOPerationsManagmentFunctions.createNewStore({
             ...{
-                name: {
-                    ar: translations.ar[0].text,
-                    en: translations.en[0].text,
-                    de: translations.de[0].text,
-                    tr: translations.tr[0].text,
-                },
+                name,
                 ownerFirstName,
                 ownerLastName,
                 ownerEmail,
-                productsType: {
-                    ar: translations.ar[1].text,
-                    en: translations.en[1].text,
-                    de: translations.de[1].text,
-                    tr: translations.tr[1].text,
-                },
+                productsType,
                 productsDescription: {
                     ar: translations.ar[2].text,
                     en: translations.en[2].text,
