@@ -109,12 +109,12 @@ function getFiltersAndSortDetailsObject(queryObject) {
         if (objectKey === "categoryId") filtersObject["categories"] = queryObject[objectKey];
         if (objectKey === "category") filtersObject[objectKey] = queryObject[objectKey];
         if (objectKey === "storeId") filtersObject[objectKey] = queryObject[objectKey];
-        if (objectKey === "name") filtersObject["$or"] = [{
-            "name.ar": { $regex: new RegExp(queryObject[objectKey], 'i') },
-            "name.en": { $regex: new RegExp(queryObject[objectKey], 'i') },
-            "name.de": { $regex: new RegExp(queryObject[objectKey], 'i') },
-            "name.tr": { $regex: new RegExp(queryObject[objectKey], 'i') },
-        }];
+        if (objectKey === "name") filtersObject["$or"] = [
+            { "name.ar": { $regex: new RegExp(queryObject[objectKey], 'i') } },
+            { "name.en": { $regex: new RegExp(queryObject[objectKey], 'i') } },
+            { "name.de": { $regex: new RegExp(queryObject[objectKey], 'i') } },
+            { "name.tr": { $regex: new RegExp(queryObject[objectKey], 'i') } },
+        ];
         if (objectKey === "sortBy") sortDetailsObject[objectKey] = queryObject[objectKey];
         if (objectKey === "sortType") sortDetailsObject[objectKey] = queryObject[objectKey];
     }
@@ -159,7 +159,6 @@ async function getAllProductsInsideThePage(req, res) {
         res.json(await productsManagmentFunctions.getAllProductsInsideThePage(Number(queryObject.pageNumber), Number(queryObject.pageSize), filtersAndSortDetailsObject.filtersObject, sortDetailsObject, queryObject.language));
     }
     catch (err) {
-        console.log(err)
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
