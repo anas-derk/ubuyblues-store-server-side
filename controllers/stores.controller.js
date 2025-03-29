@@ -7,7 +7,8 @@ const {
     sendConfirmRequestAddStoreArrivedEmail,
     sendReceiveAddStoreRequestEmail,
     handleResizeImagesAndConvertFormatToWebp,
-    getSuitableTranslations
+    getSuitableTranslations,
+    translateSentensesByAPI
 } = require("../global/functions");
 
 const storesOPerationsManagmentFunctions = require("../models/stores.model");
