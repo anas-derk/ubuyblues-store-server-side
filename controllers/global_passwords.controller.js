@@ -3,17 +3,11 @@ const { getResponseObject, getSuitableTranslations } = require("../global/functi
 const globalPasswordsManagmentFunctions = require("../models/global_passwords.model");
 
 async function putChangeBussinessEmailPassword(req, res) {
-    try{
+    try {
         const { email, password, newPassword, language } = req.query;
-        const result = await globalPasswordsManagmentFunctions.changeBussinessEmailPassword(req.data._id, email.toLowerCase(), password, newPassword, language);
-        if (result.error) {
-            if (result.msg !== "Sorry, Email Or Password Incorrect !!") {
-                return res.status(401).json(result);
-            }
-        }
-        res.json(result);
+        res.json(await globalPasswordsManagmentFunctions.changeBussinessEmailPassword(req.data._id, email.toLowerCase(), password, newPassword, language));
     }
-    catch(err) {
+    catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
