@@ -253,6 +253,7 @@ async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDe
                 },
             }
         }
+        console.log(filters)
         return {
             msg: getSuitableTranslations("Get Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
