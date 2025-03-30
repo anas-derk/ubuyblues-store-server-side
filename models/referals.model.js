@@ -1,11 +1,19 @@
 // Import Referal Model Object
 
-const { referalModel } = require("../models/all.models");
+const { referalModel, productModel } = require("../models/all.models");
 
 const { getSuitableTranslations } = require("../global/functions");
 
 async function addNewReferal(referalDetails, language) {
     try {
+        const product = await productModel.findById(referalDetails.productId);
+        if (!product) {
+            return {
+                msg: getSuitableTranslations("Sorry, This Product Is Not Exist !!", language),
+                error: true,
+                data: {},
+            }
+        }
         const referal = await referalModel.findOne({ email: referalDetails.email });
         if (referal) {
             return {
