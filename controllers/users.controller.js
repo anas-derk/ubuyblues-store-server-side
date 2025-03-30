@@ -212,7 +212,7 @@ async function putVerificationStatus(req, res) {
 async function putResetPassword(req, res) {
     try {
         const { email, userType, code, newPassword, language } = req.query;
-        const result = await isAccountVerificationCodeValid(email, code, "to reset password", language);
+        let result = await isAccountVerificationCodeValid(email, code, "to reset password", language);
         if (!result.error) {
             result = await usersOPerationsManagmentFunctions.resetUserPassword(email, userType, newPassword, language);
             if (!result.error) {
