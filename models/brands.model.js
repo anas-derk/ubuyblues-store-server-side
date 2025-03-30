@@ -69,7 +69,10 @@ async function getBrandsCount(filters, language) {
 
 async function getAllBrandsInsideThePage(pageNumber, pageSize, filters, language) {
     try {
-        console.log(filters)
+        if (filters["isMainStore"]) {
+            const mainStoreDetails = await storeModel.findOne({ isMainStore: true });
+            filters = { storeId: mainStoreDetails._id };
+        }
         return {
             msg: getSuitableTranslations("Get All Brands Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
