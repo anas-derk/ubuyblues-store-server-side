@@ -127,6 +127,7 @@ const isExistOfferOnProduct = (startDateAsString, endDateAsString) => {
 
 async function createNewOrder(orderDetails, language) {
     try {
+        console.log(orderDetails.userId);
         if (orderDetails.userId) {
             const user = await userModel.findById(orderDetails.userId);
             if (!user) {
