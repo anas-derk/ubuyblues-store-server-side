@@ -253,9 +253,8 @@ async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDe
                 },
             }
         }
-        console.log(filters)
         return {
-            msg: getSuitableTranslations("Get Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
+            msg: getSuitableTranslations("Get All Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
             data: {
                 products: await productModel.find(filters).sort(sortDetailsObject).skip((pageNumber - 1) * pageSize).limit(pageSize).populate("categories"),
