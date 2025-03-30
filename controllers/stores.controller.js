@@ -19,12 +19,12 @@ function getFiltersObject(filters) {
     let filtersObject = {};
     for (let objectKey in filters) {
         if (objectKey === "_id") filtersObject[objectKey] = filters[objectKey];
-        if (objectKey === "name") filtersObject["$or"] = [{
-            "name.ar": { $regex: new RegExp(filters[objectKey], 'i') },
-            "name.en": { $regex: new RegExp(filters[objectKey], 'i') },
-            "name.de": { $regex: new RegExp(filters[objectKey], 'i') },
-            "name.tr": { $regex: new RegExp(filters[objectKey], 'i') },
-        }];
+        if (objectKey === "name") filtersObject["$or"] = [
+            { "name.ar": { $regex: new RegExp(filters[objectKey], 'i') } },
+            { "name.en": { $regex: new RegExp(filters[objectKey], 'i') } },
+            { "name.de": { $regex: new RegExp(filters[objectKey], 'i') } },
+            { "name.tr": { $regex: new RegExp(filters[objectKey], 'i') } },
+        ];
         if (objectKey === "status") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "ownerFirstName") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "ownerLastName") filtersObject[objectKey] = filters[objectKey];
