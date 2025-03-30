@@ -234,6 +234,7 @@ async function createNewOrder(orderDetails, language) {
         }
         const shippingCost = getShippingCost(localProducts.length, internationalProducts.length, shippingMethod, totalPrices.totalPriceAfterDiscount);
         const totalAmountBeforeApplyCoupon = totalPrices.totalPriceAfterDiscount + shippingCost.forLocalProducts + shippingCost.forInternationalProducts;
+        console.log(orderDetails)
         const newOrder = await (
             new orderModel({
                 storeId: existOrderProducts[0].storeId,
