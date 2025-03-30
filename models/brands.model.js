@@ -69,6 +69,7 @@ async function getBrandsCount(filters, language) {
 
 async function getAllBrandsInsideThePage(pageNumber, pageSize, filters, language) {
     try {
+        console.log(filters)
         return {
             msg: getSuitableTranslations("Get All Brands Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
