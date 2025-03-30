@@ -212,17 +212,23 @@ async function putVerificationStatus(req, res) {
 async function putResetPassword(req, res) {
     try {
         const { email, userType, code, newPassword, language } = req.query;
-        const result = await isAccountVerificationCodeValid(email, code, "to reset password");
+        const result = await isAccountVerificationCodeValid(email, code, "to reset password", language);
         if (!result.error) {
             result = await usersOPerationsManagmentFunctions.resetUserPassword(email, userType, newPassword, language);
             if (!result.error) {
-                await sendChangePasswordEmail(email, result.data.language)
+                try {
+                    await sendChangePasswordEmail(email, result.data.language);
+                }
+                catch (err) {
+                    console.log(err);
+                }
             }
             return res.json(result);
         }
         res.json(result);
     }
     catch (err) {
+        console.log(err);
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
