@@ -6,8 +6,6 @@ const { getCouponDetails } = require("./coupons.model");
 
 const { getSuitableTranslations } = require("../global/functions");
 
-const { countries } = require("countries-list");
-
 const isProductLocalOrInternational = (productCountries, shippingCountry) => {
     return productCountries.includes(shippingCountry) ? "local" : "international";
 }
