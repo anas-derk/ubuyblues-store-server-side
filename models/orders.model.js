@@ -66,7 +66,6 @@ async function getAllOrdersInsideThePage(authorizationId, pageNumber, pageSize, 
                 filters.storeId = user.storeId;
             }
             delete filters.destination;
-            console.log(filters);
             return {
                 msg: getSuitableTranslations("Get All Orders Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
                 error: false,
