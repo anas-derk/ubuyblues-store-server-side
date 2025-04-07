@@ -74,7 +74,7 @@ async function getOrderDetails(req, res) {
 async function postNewOrder(req, res) {
     try {
         const orderData = req.body;
-        if (req?.data._id) {
+        if (req?.data?._id) {
             orderData.userId = req.data._id;
         }
         const result = await ordersManagmentFunctions.createNewOrder(req.body, req.query.language);
