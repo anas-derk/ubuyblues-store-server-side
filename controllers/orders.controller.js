@@ -106,7 +106,7 @@ async function postNewOrder(req, res) {
 async function postNewPaymentOrder(req, res) {
     try {
         const orderData = req.body;
-        if (req?.data._id) {
+        if (req?.data?._id) {
             orderData.userId = req.data._id;
         }
         const { language } = req.query;
