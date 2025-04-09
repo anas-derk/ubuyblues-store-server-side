@@ -82,7 +82,7 @@ async function loginByGoogle(userInfo, language) {
                 },
             };
         }
-        const { _id, isVerified } = (new userModel({
+        const { _id, isVerified } = await (new userModel({
             email: userInfo.email,
             firstName: userInfo.first_name,
             lastName: userInfo.last_name,
