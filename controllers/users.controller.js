@@ -9,7 +9,6 @@ const {
     addNewAccountVerificationCode,
     isAccountVerificationCodeValid
 } = require("../models/account_codes.model");
-const { createNewStore } = require("../models/stores.model");
 
 function getFiltersObject(filters) {
     let filtersObject = {};
@@ -18,6 +17,7 @@ function getFiltersObject(filters) {
         if (objectKey === "email") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "firstName") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "lastName") filtersObject[objectKey] = filters[objectKey];
+        if (objectKey === "provider") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "isVerified") filtersObject[objectKey] = Boolean(filters[objectKey]);
     }
     return filtersObject;
