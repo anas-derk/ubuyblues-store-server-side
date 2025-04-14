@@ -210,7 +210,10 @@ async function putStoreImage(req, res) {
         await handleResizeImagesAndConvertFormatToWebp([req.file.buffer], [outputImageFilePath]);
         const result = await storesOPerationsManagmentFunctions.changeStoreImage(req.data._id, req.params.storeId, outputImageFilePath, req.query.language);
         if (!result.error) {
-            unlinkSync(result.data.deletedStoreImagePath);
+            const deletedStoreImagePath = result.data.deletedStoreImagePath;
+            if (deletedStoreImagePath) {
+                unlinkSync(deletedStoreImagePath);
+            }
             res.json({
                 ...result,
                 data: {

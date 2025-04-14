@@ -320,8 +320,8 @@ async function changeStoreImage(authorizationId, storeId, newStoreImagePath, lan
                     return {
                         msg: getSuitableTranslations("Updating Store Image Process Has Been Successfully !!", language),
                         error: false,
-                        data: { deletedStoreImagePath: store.imagePath }
-                    };
+                        data: store.isMainStore ? {} : { deletedStoreImagePath: store.imagePath }
+                    }
                 }
                 return {
                     msg: getSuitableTranslations("Sorry, This Store Is Not Exist !!", language),
