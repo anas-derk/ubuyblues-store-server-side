@@ -13,7 +13,7 @@ function getFiltersObject(filters) {
         if (objectKey === "orderNumber") filtersObject[objectKey] = Number(filters[objectKey]);
         if (objectKey === "checkoutStatus") {
             if (filters["destination"] === "admin") {
-                filtersObject[objectKey] = Number(filters[objectKey])
+                filtersObject[objectKey] = filters[objectKey];
             }
         }
         if (objectKey === "_id") filtersObject[objectKey] = filters[objectKey];
