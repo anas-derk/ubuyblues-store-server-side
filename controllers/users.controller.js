@@ -18,7 +18,13 @@ function getFiltersObject(filters) {
         if (objectKey === "firstName") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "lastName") filtersObject[objectKey] = filters[objectKey];
         if (objectKey === "provider") filtersObject[objectKey] = filters[objectKey];
-        if (objectKey === "isVerified") filtersObject[objectKey] = Boolean(filters[objectKey]);
+        if (objectKey === "isVerified") {
+            if (filters[objectKey] === "true") {
+                filtersObject[objectKey] = true;
+            } else {
+                filtersObject[objectKey] = false;
+            }
+        }
     }
     return filtersObject;
 }
