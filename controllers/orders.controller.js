@@ -71,35 +71,19 @@ async function getOrderDetails(req, res) {
     }
 }
 
-async function postNewOrder(req, res) {
+async function createPaypalToken() {
     try {
-        const orderData = req.body;
-        if (req?.data?._id) {
-            orderData.userId = req.data._id;
-        }
-        const result = await ordersManagmentFunctions.createNewOrder(req.body, req.query.language);
-        if (!result.error) {
-            if (req.body.checkoutStatus === "Checkout Successfull") {
-                try {
-                    await sendReceiveOrderEmail(result.data.billingAddress.email, result.data, result.data.language);
-                }
-                catch (err) {
-                    console.log(err);
-                }
+        return (await post(`${process.env.PAYPAL_BASE_API_URL}/v1/oauth2/token`, {
+            "grant_type": "client_credentials"
+        }, {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": `Basic ${Buffer.from(`${process.env.PAYPAL_API_USER_NAME}:${process.env.PAYPAL_API_PASSWORD}`).toString("base64")}`
             }
-            return res.json({
-                ...result,
-                data: {
-                    orderId: result.data.orderId,
-                    orderNumber: result.data.orderNumber
-                }
-            });
-        }
-        res.json(result);
+        })).data;
     }
     catch (err) {
-        console.log(err);
-        res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
+        throw err;
     }
 }
 
@@ -118,6 +102,8 @@ async function postNewPaymentOrder(req, res) {
             return res.json(result);
         }
         else {
+            const success_url = `${process.env.NODE_ENV === "test" ? `http://localhost:3000/confirmation/${result.data._id}?country=${req.query.country}` : process.env.WEBSITE_URL}/confirmation/${result.data._id}?country=${req.query.country}`,
+                cancel_url = `${process.env.NODE_ENV === "test" ? `http://localhost:3000/checkout/${result.data._id}?country=${req.query.country}` : process.env.WEBSITE_URL}/checkout/${result.data._id}?country=${req.query.country}`;
             if (orderData.paymentGateway === "tap") {
                 result = (await post(`${process.env.TAP_PAYMENT_GATEWAY_BASE_API_URL}/charges`, {
                     amount: result.data.orderAmount,
@@ -139,17 +125,19 @@ async function postNewPaymentOrder(req, res) {
                         order: result.data.orderNumber,
                     },
                     redirect: {
-                        url: `${process.env.NODE_ENV === "test" ? "http://localhost:3000" : "https://ubuyblues.com"}/confirmation/${result.data._id}?country=${req.query.country}`
+                        url: success_url
                     },
                     post: {
-                        url: `https://api.ubuyblues.com/orders/handle-checkout-complete/${result.data._id}`
+                        url: `${process.env.BASE_API_URL}/orders/handle-checkout-complete/${result.data._id}`
                     }
                 }, {
                     headers: {
                         Authorization: `Bearer ${process.env.TAP_PAYMENT_GATEWAY_SECRET_KEY}`
                     }
                 })).data;
-                return res.json(getResponseObject(getSuitableTranslations("Creating New Payment Order By Tap Process Has Been Successfully !!", language), false, result));
+                return res.json(getResponseObject(getSuitableTranslations("Creating New Payment Order By Tap Process Has Been Successfully !!", language), false, {
+                    paymentURL: result.data.transaction.url
+                }));
             } else if (orderData.paymentGateway === "tabby") {
                 result = (await post(`${process.env.TABBY_PAYMENT_GATEWAY_BASE_API_URL}/api/v2/checkout`, {
                     payment: {
@@ -177,8 +165,8 @@ async function postNewPaymentOrder(req, res) {
                                     unit_price: String(product.unitPrice),
                                     discount_amount: String(product.discount),
                                     // reference_id: product.productId,
-                                    image_url: `https://api.ubuyblues.com/${product.imagePath}`,
-                                    product_url: `https://ubuyblues.com/product-details/${product.productId}`,
+                                    image_url: `${process.env.BASE_API_URL}/${product.imagePath}`,
+                                    product_url: `${process.env.WEBSITE_URL}/product-details/${product.productId}`,
                                     category: "TOYS"
                                 }
                             ))
@@ -209,8 +197,8 @@ async function postNewPaymentOrder(req, res) {
                                         unit_price: String(product.unitPrice),
                                         discount_amount: String(product.discount),
                                         // reference_id: product.productId,
-                                        image_url: `https://api.ubuyblues.com/${product.imagePath}`,
-                                        product_url: `https://ubuyblues.com/product-details/${product.productId}`,
+                                        image_url: `${process.env.BASE_API_URL}/${product.imagePath}`,
+                                        product_url: `${process.env.WEBSITE_URL}/product-details/${product.productId}`,
                                         category: "TOYS"
                                     }
                                 ))
@@ -223,9 +211,9 @@ async function postNewPaymentOrder(req, res) {
                     lang: "ar",
                     merchant_code: "UBUYBLUESkwt",
                     merchant_urls: {
-                        success: `https://ubuyblues.com/confirmation/${result.data._id}`,
-                        cancel: `https://ubuyblues.com/checkout?storeId=${result.data.storeId}`,
-                        failure: `https://ubuyblues.com/checkout?storeId=${result.data.storeId}`
+                        success: `${process.env.WEBSITE_URL}/confirmation/${result.data._id}`,
+                        cancel: `${process.env.WEBSITE_URL}/checkout?storeId=${result.data.storeId}`,
+                        failure: `${process.env.WEBSITE_URL}/checkout?storeId=${result.data.storeId}`
                     }
                 }, {
                     headers: {
@@ -234,10 +222,35 @@ async function postNewPaymentOrder(req, res) {
                 })).data;
                 return res.json(result.status === "created" ?
                     getResponseObject(getSuitableTranslations("Creating New Payment Order By Tabby Process Has Been Successfully !!", language), false, {
-                        checkoutURL: result.configuration.available_products.installments[0].web_url
+                        paymentURL: result.configuration.available_products.installments[0].web_url
                     }) :
                     getResponseObject(getSuitableTranslations("Sorry, Can't Creating New Payment Order By Tabby Because Exceeding The Payment Limit !!", language), true, {})
                 );
+            } else if (orderData.paymentGateway === "paypal") {
+                let result1 = await createPaypalToken();
+                result1 = (await post(`${process.env.PAYPAL_BASE_API_URL}/v2/checkout/orders`, {
+                    "intent": "CAPTURE",
+                    "purchase_units": [
+                        {
+                            "amount": {
+                                "currency_code": "EUR",
+                                "value": result.data.orderAmount
+                            },
+                            "custom_id": result.data._id
+                        }
+                    ],
+                    "application_context": {
+                        "return_url": success_url,
+                        "cancel_url": cancel_url
+                    }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${result1.access_token}`
+                    }
+                })).data;
+                return res.json(getResponseObject(getSuitableTranslations("Creating New Payment Order By Paypal Process Has Been Successfully !!", language), false, {
+                    paymentURL: result1.links[1].href
+                }));
             } else {
                 const timestamp = Date.now();
                 const nonce = "VeTfR5mdAKjbeErxBXTl20JayTiCz4sb";
@@ -255,9 +268,9 @@ async function postNewPaymentOrder(req, res) {
                         referenceGoodsId: product.productId,
                         goodsName: product.name,
                     }))),
-                    returnUrl: `https://ubuyblues.com/confirmation/${result.data._id}`,
-                    cancelUrl: `https://ubuyblues.com/checkout?storeId=${result.data.storeId}`,
-                    webhookUrl: `https://api.ubuyblues.com/orders/handle-change-binance-payment-status/${result.data._id}`
+                    returnUrl: `${process.env.WEBSITE_URL}/confirmation/${result.data._id}`,
+                    cancelUrl: `${process.env.WEBSITE_URL}/checkout?storeId=${result.data.storeId}`,
+                    webhookUrl: `${process.env.BASE_API_URL}/orders/handle-change-binance-payment-status/${result.data._id}`
                 }
                 const signaturePayload = `${timestamp}\n${nonce}\n${JSON.stringify(data)}\n`;
                 const signature = createHmac("sha512", process.env.BINANCE_API_SECRET_KEY, {
@@ -273,7 +286,7 @@ async function postNewPaymentOrder(req, res) {
                     }
                 })).data;
                 res.json(getResponseObject(getSuitableTranslations("Creating New Payment Order By Binance Process Has Been Successfully !!", language), false, {
-                    checkoutURL: result.data.checkoutUrl
+                    paymentURL: result.data.checkoutUrl
                 }));
             }
         }
@@ -290,6 +303,42 @@ async function postCheckoutComplete(req, res) {
         if (!result.error) {
             await sendReceiveOrderEmail(result.data.billingAddress.email, result.data, "ar");
         }
+    }
+    catch (err) {
+        res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
+    }
+}
+
+async function postPaypalCheckoutComplete(req, res) {
+    try {
+        const result = req.body;
+        if (result?.event_type === "CHECKOUT.ORDER.APPROVED") {
+            let result1 = await createPaypalToken();
+            result1 = (await post(`${process.env.PAYPAL_BASE_API_URL}/v2/checkout/orders/${result.resource.id}/capture`, {}, {
+                headers: {
+                    Authorization: `Bearer ${result1.access_token}`
+                }
+            })).data;
+            if (result1.status === "COMPLETED") {
+                result1 = await ordersManagmentFunctions.changeCheckoutStatusToSuccessfull(result.resource.purchase_units[0].custom_id, "en");
+                res.json(result1);
+                if (!result1.error) {
+                    try {
+                        await sendReceiveOrderEmail(result1.data.billingAddress.email, result1.data, "ar");
+                        return;
+                    }
+                    catch (err) {
+                        console.log(err);
+                        return;
+                    }
+                }
+            }
+        }
+        res.json({
+            msg: "Sorry, This Event Type Is Not Valid !!",
+            error: true,
+            data: {}
+        });
     }
     catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
@@ -393,9 +442,9 @@ module.exports = {
     getFiltersObject,
     getOrdersCount,
     getOrderDetails,
-    postNewOrder,
     postNewPaymentOrder,
     postCheckoutComplete,
+    postPaypalCheckoutComplete,
     postChangeBinancePaymentStatus,
     putOrder,
     putOrderProduct,
