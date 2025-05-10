@@ -135,9 +135,8 @@ async function postNewPaymentOrder(req, res) {
                         Authorization: `Bearer ${process.env.TAP_PAYMENT_GATEWAY_SECRET_KEY}`
                     }
                 })).data;
-                console.log(result)
                 return res.json(getResponseObject(getSuitableTranslations("Creating New Payment Order By Tap Process Has Been Successfully !!", language), false, {
-                    paymentURL: result.data.transaction.url
+                    paymentURL: result.transaction.url
                 }));
             } else if (orderData.paymentGateway === "tabby") {
                 result = (await post(`${process.env.TABBY_PAYMENT_GATEWAY_BASE_API_URL}/api/v2/checkout`, {
