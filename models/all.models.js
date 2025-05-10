@@ -561,10 +561,7 @@ const orderSchema = new mongoose.Schema({
     paymentGateway: {
         type: String,
         required: true,
-        enum: [
-            "paypal",
-            "stripe"
-        ],
+        enum: ["paypal", "tap", "tabby", "binance"],
     },
     orderPaymentGatewayId: {
         type: String,
