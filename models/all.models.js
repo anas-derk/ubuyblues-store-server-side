@@ -757,12 +757,12 @@ const orderSchema = new mongoose.Schema({
     shippingMethod: {
         forLocalProducts: {
             type: String,
-            enum: ["ciratco"],
+            enum: ["normal", "ubuyblues"],
             required: true
         },
         forInternationalProducts: {
             type: String,
-            enum: ["ciratco"],
+            enum: ["normal", "fast"],
             required: true
         }
     },
