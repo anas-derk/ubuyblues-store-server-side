@@ -135,6 +135,7 @@ async function postNewPaymentOrder(req, res) {
                         Authorization: `Bearer ${process.env.TAP_PAYMENT_GATEWAY_SECRET_KEY}`
                     }
                 })).data;
+                console.log(result)
                 return res.json(getResponseObject(getSuitableTranslations("Creating New Payment Order By Tap Process Has Been Successfully !!", language), false, {
                     paymentURL: result.data.transaction.url
                 }));
