@@ -95,7 +95,7 @@ const { hash } = require("bcryptjs");
 
 const userInfo = {
     firstName: process.env.MAIN_ADMIN_FIRST_NAME,
-    lastName: rocess.env.MAIN_ADMIN_LAST_NAME,
+    lastName: process.env.MAIN_ADMIN_LAST_NAME,
     email: process.env.MAIN_ADMIN_EMAIL,
     password: process.env.MAIN_ADMIN_PASSWORD,
     isWebsiteOwner: true,
