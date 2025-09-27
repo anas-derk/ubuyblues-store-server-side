@@ -142,6 +142,12 @@ productsRouter.post("/products-by-ids-and-store-id",
 
 productsRouter.get("/product-info/:productId",
     (req, res, next) => {
+        if (req.headers.authorization) {
+            return validateJWT(req, res, next);
+        }
+        next();
+    },
+    (req, res, next) => {
         validateIsExistValueForFieldsAndDataTypes([
             { fieldName: "Product Id", fieldValue: req.params.productId, dataTypes: ["ObjectId"], isRequiredValue: true },
         ], res, next);
@@ -171,6 +177,12 @@ productsRouter.get("/flash-products-count",
 );
 
 productsRouter.get("/all-products-inside-the-page",
+    (req, res, next) => {
+        if (req.headers.authorization) {
+            return validateJWT(req, res, next);
+        }
+        next();
+    },
     (req, res, next) => {
         const { pageNumber, pageSize, sortBy, sortType } = req.query;
         validateIsExistValueForFieldsAndDataTypes([
@@ -202,6 +214,12 @@ productsRouter.get("/all-products-inside-the-page",
 );
 
 productsRouter.get("/all-flash-products-inside-the-page",
+    (req, res, next) => {
+        if (req.headers.authorization) {
+            return validateJWT(req, res, next);
+        }
+        next();
+    },
     (req, res, next) => {
         const { pageNumber, pageSize, sortBy, sortType } = req.query;
         validateIsExistValueForFieldsAndDataTypes([

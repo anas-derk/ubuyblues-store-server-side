@@ -158,10 +158,12 @@ async function getProductsByIdsAndStoreId(storeId, productsIds, language) {
     }
 }
 
-async function getProductInfo(productId, language) {
+async function getProductInfo(authorizationId, productId, language) {
     try {
         const productInfo = await productModel.findById(productId).populate("categories");
         if (productInfo) {
+            productInfo._doc.isExistOffer = productInfo.startDiscountPeriod <= currentDate && productInfo.endDiscountPeriod >= currentDate ? true : false;
+            productInfo._doc.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId, userId: authorizationId }) ? true : false; s
             return {
                 msg: getSuitableTranslations("Get Product Info Process Has Been Successfuly !!", language),
                 error: false,
@@ -211,7 +213,7 @@ async function getFlashProductsCount(filters, language) {
     }
 }
 
-async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDetailsObject, language) {
+async function getAllProductsInsideThePage(authorizationId, pageNumber, pageSize, filters, sortDetailsObject, language) {
     try {
         if (filters.category) {
             let category = filters.category;
@@ -263,7 +265,7 @@ async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDe
         let products = await productModel.find(filters).sort(sortDetailsObject).skip((pageNumber - 1) * pageSize).limit(pageSize).populate("categories");
         for (let product of products) {
             product._doc.isExistOffer = product.startDiscountPeriod <= currentDate && product.endDiscountPeriod >= currentDate ? true : false;
-            product._doc.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false;
+            product._doc.isFavoriteProductForUser = authorizationId ? (await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false) : false;
         }
         return {
             msg: getSuitableTranslations("Get All Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
@@ -280,7 +282,7 @@ async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDe
     }
 }
 
-async function getAllFlashProductsInsideThePage(pageNumber, pageSize, filters, sortDetailsObject, language) {
+async function getAllFlashProductsInsideThePage(authorizationId, pageNumber, pageSize, filters, sortDetailsObject, language) {
     try {
         const currentDate = new Date();
         filters.startDiscountPeriod = { $lte: currentDate };
@@ -292,7 +294,7 @@ async function getAllFlashProductsInsideThePage(pageNumber, pageSize, filters, s
             .limit(pageSize)
             .populate("categories");
         for (let product of products) {
-            product._doc.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false;
+            product._doc.isFavoriteProductForUser = authorizationId ? (await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false) : false;
         }
         return {
             msg: getSuitableTranslations("Get All Flash Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
@@ -308,7 +310,7 @@ async function getAllFlashProductsInsideThePage(pageNumber, pageSize, filters, s
     }
 }
 
-async function getRelatedProductsInTheProduct(productId, language) {
+async function getRelatedProductsInTheProduct(authorizationId, productId, language) {
     try {
         const productInfo = await productModel.findById(productId);
         if (productInfo) {
@@ -318,7 +320,7 @@ async function getRelatedProductsInTheProduct(productId, language) {
             ]);
             for (let product of products) {
                 product.isExistOffer = product.startDiscountPeriod <= currentDate && product.endDiscountPeriod >= currentDate ? true : false;
-                product.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false;
+                product.isFavoriteProductForUser = authorizationId ? (await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false) : false;
             }
             return {
                 msg: getSuitableTranslations("Get Sample From Related Products In This Product Process Has Been Successfuly !!", language),

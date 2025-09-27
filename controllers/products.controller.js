@@ -123,7 +123,7 @@ function getFiltersAndSortDetailsObject(queryObject) {
 
 async function getProductInfo(req, res) {
     try {
-        res.json(await productsManagmentFunctions.getProductInfo(req.params.productId, req.query.language));
+        res.json(await productsManagmentFunctions.getProductInfo(req?.data?._id, req.params.productId, req.query.language));
     }
     catch (err) {
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
@@ -156,10 +156,9 @@ async function getAllProductsInsideThePage(req, res) {
         if (Object.keys(filtersAndSortDetailsObject.sortDetailsObject).length > 0) {
             sortDetailsObject[filtersAndSortDetailsObject.sortDetailsObject.sortBy] = Number(filtersAndSortDetailsObject.sortDetailsObject.sortType);
         }
-        res.json(await productsManagmentFunctions.getAllProductsInsideThePage(Number(queryObject.pageNumber), Number(queryObject.pageSize), filtersAndSortDetailsObject.filtersObject, sortDetailsObject, queryObject.language));
+        res.json(await productsManagmentFunctions.getAllProductsInsideThePage(req?.data?._id, Number(queryObject.pageNumber), Number(queryObject.pageSize), filtersAndSortDetailsObject.filtersObject, sortDetailsObject, queryObject.language));
     }
     catch (err) {
-        console.log(err);
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
@@ -172,20 +171,18 @@ async function getAllFlashProductsInsideThePage(req, res) {
         if (filtersAndSortDetailsObject.sortDetailsObject) {
             sortDetailsObject[filtersAndSortDetailsObject.sortDetailsObject.sortBy] = Number(filtersAndSortDetailsObject.sortDetailsObject.sortType);
         }
-        res.json(await productsManagmentFunctions.getAllFlashProductsInsideThePage(queryObject.pageNumber, queryObject.pageSize, filtersAndSortDetailsObject.filtersObject, sortDetailsObject, queryObject.language));
+        res.json(await productsManagmentFunctions.getAllFlashProductsInsideThePage(req?.data?._id, queryObject.pageNumber, queryObject.pageSize, filtersAndSortDetailsObject.filtersObject, sortDetailsObject, queryObject.language));
     }
     catch (err) {
-        console.log(err);
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
 
 async function getRelatedProductsInTheProduct(req, res) {
     try {
-        res.json(await productsManagmentFunctions.getRelatedProductsInTheProduct(req.params.productId, req.query.language));
+        res.json(await productsManagmentFunctions.getRelatedProductsInTheProduct(req?.data?._id, req.params.productId, req.query.language));
     }
     catch (err) {
-        console.log(err);
         res.status(500).json(getResponseObject(getSuitableTranslations("Internal Server Error !!", req.query.language), true, {}));
     }
 }
