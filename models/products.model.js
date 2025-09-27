@@ -1,6 +1,6 @@
 // Import Product Model Object
 
-const { productModel, categoryModel, adminModel, mongoose } = require("../models/all.models");
+const { productModel, categoryModel, adminModel, mongoose, favoriteProductModel } = require("../models/all.models");
 
 const { getSuitableTranslations } = require("../global/functions");
 
@@ -243,23 +243,35 @@ async function getAllProductsInsideThePage(pageNumber, pageSize, filters, sortDe
                     }
                 }
             ]);
+            let products = await productModel.populate(result[0].products, "categories");
+            const currentDate = new Date();
+            for (let product of products) {
+                product.isExistOffer = product.startDiscountPeriod <= currentDate && endDiscountPeriod >= currentDate ? true : false;
+                product.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false;
+            }
             return {
                 msg: getSuitableTranslations("Get Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
                 error: false,
                 data: {
-                    products: await productModel.populate(result[0].products, "categories"),
+                    products,
                     productsCount: result[0].productsCount.length > 0 ? result[0].productsCount[0].total : 0,
                     currentDate: new Date()
                 },
             }
         }
+        const currentDate = new Date();
+        let products = await productModel.find(filters).sort(sortDetailsObject).skip((pageNumber - 1) * pageSize).limit(pageSize).populate("categories");
+        for (let product of products) {
+            product._doc.isExistOffer = product.startDiscountPeriod <= currentDate && product.endDiscountPeriod >= currentDate ? true : false;
+            product._doc.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false;
+        }
         return {
             msg: getSuitableTranslations("Get All Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
             data: {
-                products: await productModel.find(filters).sort(sortDetailsObject).skip((pageNumber - 1) * pageSize).limit(pageSize).populate("categories"),
+                products,
                 productsCount: await productModel.countDocuments(filters),
-                currentDate: new Date()
+                currentDate,
             },
         }
     }
@@ -273,17 +285,20 @@ async function getAllFlashProductsInsideThePage(pageNumber, pageSize, filters, s
         const currentDate = new Date();
         filters.startDiscountPeriod = { $lte: currentDate };
         filters.endDiscountPeriod = { $gte: currentDate };
+        let products = await productModel
+            .find(filters)
+            .sort(sortDetailsObject)
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .populate("categories");
+        for (let product of products) {
+            product._doc.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false;
+        }
         return {
             msg: getSuitableTranslations("Get All Flash Products Inside The Page: {{pageNumber}} Process Has Been Successfully !!", language, { pageNumber }),
             error: false,
             data: {
-                products: await productModel
-                    .find(filters)
-                    .sort(sortDetailsObject)
-                    .skip((pageNumber - 1) * pageSize)
-                    .limit(pageSize)
-                    .populate("categories"),
-                productsCount: await productModel.countDocuments(filters),
+                products,
                 currentDate: new Date(),
             },
         }
@@ -297,20 +312,18 @@ async function getRelatedProductsInTheProduct(productId, language) {
     try {
         const productInfo = await productModel.findById(productId);
         if (productInfo) {
+            let products = await productModel.aggregate([
+                { $match: { categories: productInfo.categories, _id: { $ne: new mongoose.Types.ObjectId(productId) } } },
+                { $sample: { size: 10 } }
+            ]);
+            for (let product of products) {
+                product.isExistOffer = product.startDiscountPeriod <= currentDate && product.endDiscountPeriod >= currentDate ? true : false;
+                product.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false;
+            }
             return {
                 msg: getSuitableTranslations("Get Sample From Related Products In This Product Process Has Been Successfuly !!", language),
                 error: false,
-                data: await productModel.populate((await productModel.aggregate([
-                    {
-                        $match: {
-                            categories: { $in: productInfo.categories },
-                            _id: { $ne: new mongoose.Types.ObjectId(productId) }
-                        }
-                    },
-                    { $sample: { size: 10 } }
-                ])), {
-                    path: "categories",
-                }),
+                data: products,
             }
         }
         return {
