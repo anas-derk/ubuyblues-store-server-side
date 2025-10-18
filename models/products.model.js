@@ -164,7 +164,7 @@ async function getProductInfo(authorizationId, productId, language) {
         if (productInfo) {
             const currentDate = new Date();
             productInfo._doc.isExistOffer = productInfo.startDiscountPeriod <= currentDate && productInfo.endDiscountPeriod >= currentDate ? true : false;
-            productInfo._doc.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId, userId: authorizationId }) ? true : false; s
+            productInfo._doc.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId, userId: authorizationId }) ? true : false;
             return {
                 msg: getSuitableTranslations("Get Product Info Process Has Been Successfuly !!", language),
                 error: false,
