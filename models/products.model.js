@@ -319,6 +319,7 @@ async function getRelatedProductsInTheProduct(authorizationId, productId, langua
                 { $match: { categories: productInfo.categories, _id: { $ne: new mongoose.Types.ObjectId(productId) } } },
                 { $sample: { size: 10 } }
             ]);
+            const currentDate = new Date();
             for (let product of products) {
                 product.isExistOffer = product.startDiscountPeriod <= currentDate && product.endDiscountPeriod >= currentDate ? true : false;
                 product.isFavoriteProductForUser = authorizationId ? (await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false) : false;
