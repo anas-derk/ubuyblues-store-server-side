@@ -308,7 +308,7 @@ async function getRelatedProductsInTheProduct(authorizationId, productId, langua
         const productInfo = await productModel.findById(productId);
         if (productInfo) {
             let products = await productModel.aggregate([
-                { $match: { categories: productInfo.categories, _id: { $ne: new mongoose.Types.ObjectId(productId) } } },
+                { $match: { categories: { $in: productInfo.categories }, _id: { $ne: new mongoose.Types.ObjectId(productId) } } },
                 { $sample: { size: 10 } }
             ]);
             const currentDate = new Date();
