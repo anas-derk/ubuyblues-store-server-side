@@ -316,6 +316,7 @@ async function getRelatedProductsInTheProduct(authorizationId, productId, langua
                 product.isExistOffer = product.startDiscountPeriod <= currentDate && product.endDiscountPeriod >= currentDate ? true : false;
                 product.isFavoriteProductForUser = authorizationId ? (await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false) : false;
             }
+            products = await productModel.populate(products, "categories");
             return {
                 msg: getSuitableTranslations("Get Sample From Related Products In This Product Process Has Been Successfuly !!", language),
                 error: false,
