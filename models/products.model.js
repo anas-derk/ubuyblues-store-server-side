@@ -241,7 +241,7 @@ async function getAllProductsInsideThePage(authorizationId, pageNumber, pageSize
             let products = await productModel.populate(result[0].products, "categories");
             const currentDate = new Date();
             for (let product of products) {
-                product.isExistOffer = product.startDiscountPeriod <= currentDate && endDiscountPeriod >= currentDate ? true : false;
+                product.isExistOffer = product.startDiscountPeriod <= currentDate && product.endDiscountPeriod >= currentDate ? true : false;
                 product.isFavoriteProductForUser = await favoriteProductModel.findOne({ productId: product._id, userId: authorizationId }) ? true : false;
             }
             return {
