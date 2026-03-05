@@ -112,20 +112,30 @@ async function getProductsByIds(productsIds, language) {
             }
         } else {
             let groupedProducts = {};
-            products.forEach(async (product) => {
+            products.forEach((product) => {
                 const storeId = product.storeId;
-                const store = await storeModel.findById(storeId);
-                product.storeId = store;
                 if (!groupedProducts[storeId]) {
                     groupedProducts[storeId] = [];
                 }
                 groupedProducts[storeId].push(product);
             });
+            const storeIds = Object.keys(groupedProducts);
+            const stores = await storeModel.find({
+                _id: { $in: storeIds }
+            });
+            const storeMap = new Map(
+                stores.map(store => [store._id.toString(), store])
+            );
+            const productByIds = storeIds.map(storeId => ({
+                storeId,
+                storeName: storeMap.get(storeId)?.name ?? null,
+                products: groupedProducts[storeId]
+            }));
             return {
                 msg: getSuitableTranslations("Get Products By Ids Process Has Been Successfully !!", language),
                 error: false,
                 data: {
-                    productByIds: Object.keys(groupedProducts).map((storeId) => ({ storeId, storeName: groupedProducts[storeId].name, products: groupedProducts[storeId] })),
+                    productByIds: productByIds,
                     currentDate: new Date(),
                 },
             }
