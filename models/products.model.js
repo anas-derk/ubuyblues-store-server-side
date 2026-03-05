@@ -128,7 +128,12 @@ async function getProductsByIds(productsIds, language) {
             );
             const productByIds = storeIds.map(storeId => ({
                 storeId,
-                storeName: storeMap.get(storeId)?.name ?? null,
+                storeName: storeMap.get(storeId)?.name ?? {
+                    ar: "متجر غير موجود",
+                    en: "Store Not Found",
+                    de: "Geschäft nicht gefunden",
+                    tr: "Mağaza Bulunamadı"
+                },
                 products: groupedProducts[storeId]
             }));
             return {
