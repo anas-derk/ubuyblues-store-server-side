@@ -1,6 +1,6 @@
 // Import Product Model Object
 
-const { productModel, categoryModel, adminModel, mongoose, favoriteProductModel } = require("../models/all.models");
+const { productModel, categoryModel, adminModel, mongoose, favoriteProductModel, storeModel } = require("../models/all.models");
 
 const { getSuitableTranslations, translateSentensesByAPI } = require("../global/functions");
 
@@ -112,8 +112,10 @@ async function getProductsByIds(productsIds, language) {
             }
         } else {
             let groupedProducts = {};
-            products.forEach((product) => {
+            products.forEach(async (product) => {
                 const storeId = product.storeId;
+                const store = await storeModel.findById(storeId);
+                product.storeId = store;
                 if (!groupedProducts[storeId]) {
                     groupedProducts[storeId] = [];
                 }
@@ -123,7 +125,7 @@ async function getProductsByIds(productsIds, language) {
                 msg: getSuitableTranslations("Get Products By Ids Process Has Been Successfully !!", language),
                 error: false,
                 data: {
-                    productByIds: Object.keys(groupedProducts).map((storeId) => ({ storeId, products: groupedProducts[storeId] })),
+                    productByIds: Object.keys(groupedProducts).map((storeId) => ({ storeId, storeName: groupedProducts[storeId].name, products: groupedProducts[storeId] })),
                     currentDate: new Date(),
                 },
             }
