@@ -153,13 +153,22 @@ async function getProductsByIds(productsIds, language) {
 
 async function getProductsByIdsAndStoreId(storeId, productsIds, language) {
     try {
+        const store = await storeModel.findById(storeId);
+        if (store) {
+            return {
+                msg: getSuitableTranslations("Get Products By Store Id And Ids Process Has Been Successfully !!", language),
+                error: false,
+                data: {
+                    store,
+                    products: await productModel.find({ _id: { $in: productsIds }, storeId, quantity: { $gte: 1 } }).populate("categories"),
+                    currentDate: new Date()
+                },
+            }
+        }
         return {
-            msg: getSuitableTranslations("Get Products By Store Id And Ids Process Has Been Successfully !!", language),
-            error: false,
-            data: {
-                products: await productModel.find({ _id: { $in: productsIds }, storeId, quantity: { $gte: 1 } }).populate("categories"),
-                currentDate: new Date()
-            },
+            msg: getSuitableTranslations("Sorry, This Store Is Not Found !!", language),
+            error: true,
+            data: {},
         }
     }
     catch (err) {
